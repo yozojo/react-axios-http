@@ -1,8 +1,3 @@
-"use strict";
-
-exports.__esModule = true;
-exports["default"] = void 0;
-
 function Interceptor() {
   this.handlers = [];
 }
@@ -23,5 +18,4 @@ Interceptor.prototype.forEach = function forEach(fn) {
   });
 };
 
-var _default = Interceptor;
-exports["default"] = _default;
+export default Interceptor;

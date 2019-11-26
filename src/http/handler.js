@@ -1,14 +1,7 @@
-"use strict";
-
-exports.__esModule = true;
-exports.handleMethod = handleMethod;
-exports.extend = extend;
-exports.isPost = isPost;
-exports.dataOrParams = dataOrParams;
 
 function handleMethod(params) {
-  var method = params.method;
-  var methodMap = {
+  const {method} = params;
+  const methodMap = {
     post: 'Post',
     get: 'Get',
     put: 'Put',
@@ -18,7 +11,7 @@ function handleMethod(params) {
 }
 
 function extend(a, b, thisArg) {
-  for (var key in b) {
+  for (const key in b) {
     if (b.hasOwnProperty(key)) {
       if (thisArg && typeof b[key] === 'function') {
         a[key] = b[key].bind(thisArg);
@@ -27,7 +20,6 @@ function extend(a, b, thisArg) {
       }
     }
   }
-
   return a;
 }
 
@@ -37,19 +29,20 @@ function isPost(method) {
 
 function dataOrParams(method, opt, isFormData) {
   opt = opt || {};
-  var formData = new FormData();
-
-  for (var key in opt) {
+  const formData = new FormData();
+  for (const key in opt) {
     if (opt.hasOwnProperty(key)) {
-      var value = opt[key];
+      const value = opt[key];
       formData.append(key, value);
     }
   }
-
   opt = isFormData ? formData : opt;
-  return isPost(method) ? {
-    data: opt
-  } : {
-    params: opt
-  };
+  return isPost(method) ? { data: opt } : { params: opt };
+}
+
+export {
+  handleMethod,
+  extend,
+  isPost,
+  dataOrParams
 }

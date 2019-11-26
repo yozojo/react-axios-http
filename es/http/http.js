@@ -1,32 +1,23 @@
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-
-exports.__esModule = true;
-exports["default"] = void 0;
-
-var _utilsHttp = _interopRequireDefault(require("@tongdun/utils-http"));
-
-var _interceptor = _interopRequireDefault(require("./interceptor"));
-
-var _handler = require("./handler");
+import tdHttp from '@tongdun/utils-http';
+import Interceptor from './interceptor';
+import { handleMethod, extend } from './handler';
 
 function xhr(method) {
   return function http(params) {
-    return _utilsHttp["default"][method](params);
+    return tdHttp[method](params);
   };
 }
 
 function Http() {
   this.interceptors = {
-    request: new _interceptor["default"](),
-    response: new _interceptor["default"]()
+    request: new Interceptor(),
+    response: new Interceptor()
   };
 }
 
 Http.prototype._request = function (params) {
   try {
-    var method = (0, _handler.handleMethod)(params);
+    var method = handleMethod(params);
     var chain = [xhr(method), undefined];
     var promise = Promise.resolve(params);
     this.interceptors.request.forEach(function (interceptor) {
@@ -51,11 +42,9 @@ function createInstance() {
 
   var instance = Http.prototype._request.bind(context);
 
-  (0, _handler.extend)(instance, Http.prototype, context);
-  (0, _handler.extend)(instance, context);
+  extend(instance, Http.prototype, context);
+  extend(instance, context);
   return instance;
 }
 
-var _default = createInstance();
-
-exports["default"] = _default;
+export default createInstance();

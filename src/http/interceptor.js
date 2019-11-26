@@ -1,8 +1,3 @@
-"use strict";
-
-exports.__esModule = true;
-exports["default"] = void 0;
-
 function Interceptor() {
   this.handlers = [];
 }
@@ -10,18 +5,17 @@ function Interceptor() {
 Interceptor.prototype.use = function use(fulfilled, rejected) {
   this.handlers.push({
     fulfilled: fulfilled,
-    rejected: rejected
+    rejected: rejected,
   });
   return this.handlers.length - 1;
 };
 
 Interceptor.prototype.forEach = function forEach(fn) {
-  this.handlers.forEach(function (h) {
+  this.handlers.forEach(h => {
     if (h !== null) {
       fn(h);
     }
   });
 };
 
-var _default = Interceptor;
-exports["default"] = _default;
+export default Interceptor;

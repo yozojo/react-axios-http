@@ -1,11 +1,3 @@
-"use strict";
-
-exports.__esModule = true;
-exports.handleMethod = handleMethod;
-exports.extend = extend;
-exports.isPost = isPost;
-exports.dataOrParams = dataOrParams;
-
 function handleMethod(params) {
   var method = params.method;
   var methodMap = {
@@ -53,3 +45,5 @@ function dataOrParams(method, opt, isFormData) {
     params: opt
   };
 }
+
+export { handleMethod, extend, isPost, dataOrParams };
