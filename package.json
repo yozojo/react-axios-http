@@ -1,0 +1,30 @@
+{
+  "name": "@tongdun/tdhttp",
+  "version": "1.1.6",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "node test/app.js",
+    "build": "NODE_ENV=production webpack --config webpack.config.js --mode=production"
+  },
+  "author": "zuqiang.you <zuqiang.you@tongdun.net>",
+  "license": "ISC",
+  "dependencies": {
+    "@tongdun/utils-http": "^1.0.2"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "express": "^4.17.1",
+    "uglifyjs-webpack-plugin": "^1.2.4",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  }
+}
