@@ -1,6 +1,6 @@
 {
   "name": "@tongdun/tdhttp",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "author": "zuqiang.you <zuqiang.you@tongdun.net>",
   "license": "ISC",
   "main": "./lib/index.js",

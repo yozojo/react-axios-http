@@ -6,13 +6,6 @@ export default (WrapperComponent, apis = []) => {
   apis = isType(apis, "string") ? [apis] : apis;
   const resultMode = window._TDHTTP_RESULT_MODE;
 
-  const handler = async (func, params, cb = () => {}) => {
-    cb = isType(params, "function") ? params : cb;
-    params = isType(params, "function") ? null : params;
-
-    return await getResult(func, cb, params);
-  };
-
   const getResult = async (func, cb, params) => {
     const nativeHandler = async () => {
       const res = await func(params);
@@ -32,20 +25,25 @@ export default (WrapperComponent, apis = []) => {
     }
   };
 
+  const handler = async (func, params, cb = () => {}) => {
+    cb = isType(params, "function") ? params : cb;
+    params = isType(params, "function") ? null : params;
+
+    return await getResult(func, cb, params);
+  };
+
   const ConnectApi = ({ contextApis, ...otherPorps }) => {
     const connectApis = useMemo(() => {
       const IO = contextApis || {};
 
       const curApis = apis.reduce((pre, cur) => {
-        pre[cur] = IO[cur];
-        return pre;
+        return (pre[cur] = IO[cur]) && pre;
       }, {});
 
       let apisObj = apis.length ? curApis : IO;
 
       apisObj = Object.entries(apisObj).reduce((pre, [key, func]) => {
-        pre[key] = async (params, cb) => await handler(func, params, cb);
-        return pre;
+        return (pre[key] = async (params, cb) => await handler(func, params, cb)) && pre;
       }, {});
 
       return apisObj;
