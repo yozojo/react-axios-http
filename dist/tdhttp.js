@@ -84,7 +84,7 @@
       post: 'Post',
       get: 'Get',
       put: 'Put',
-      getjson: 'GetJsonp',
+      getjsonp: 'GetJsonp',
       "delete": 'Delete'
     };
     return method ? methodMap[method.toLowerCase()] : 'Get';
