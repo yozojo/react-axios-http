@@ -1,7 +1,7 @@
 import connectApi from './connectApi';
-import providerApi from './providerApi';
+import ProviderApi from './providerApi';
 
 export {
   connectApi,
-  providerApi
+  ProviderApi
 };

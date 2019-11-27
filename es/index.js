@@ -1,4 +1,4 @@
 import http from './http';
-import { connectApi, providerApi } from './hoc';
-export { connectApi, providerApi };
+import { connectApi, ProviderApi } from './hoc';
+export { connectApi, ProviderApi };
 export default http;

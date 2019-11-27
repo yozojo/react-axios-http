@@ -1,11 +1,23 @@
+function isPost(method) {
+  return !!method && /post/.test(method.toLowerCase());
+}
+
+function isPut(method) {
+  return !!method && /put/.test(method.toLowerCase());
+}
+
+function getDOP(method, opt, isQuery) {
+  return isPost(method) ? { data: opt } : { [isPut(method) && isQuery ? 'data' : 'params']: opt };
+}
 
 function handleMethod(params) {
-  const {method} = params;
+  const { method } = params;
   const methodMap = {
     post: 'Post',
     get: 'Get',
     put: 'Put',
-    getjson: 'GetJsonp'
+    getjson: 'GetJsonp',
+    delete: 'Delete',
   };
   return method ? methodMap[method.toLowerCase()] : 'Get';
 }
@@ -23,26 +35,19 @@ function extend(a, b, thisArg) {
   return a;
 }
 
-function isPost(method) {
-  return !!method && method.toLowerCase() === 'post';
-}
-
-function dataOrParams(method, opt, isFormData) {
+function dataOrParams(method, opt, isFormData, isQuery) {
   opt = opt || {};
-  const formData = new FormData();
-  for (const key in opt) {
-    if (opt.hasOwnProperty(key)) {
-      const value = opt[key];
-      formData.append(key, value);
+  if (isFormData && !isQuery) {
+    const formData = new FormData();
+    for (const key in opt) {
+      if (opt.hasOwnProperty(key)) {
+        const value = opt[key];
+        formData.append(key, value);
+      }
     }
+    opt = formData;
   }
-  opt = isFormData ? formData : opt;
-  return isPost(method) ? { data: opt } : { params: opt };
+  return getDOP(method, opt, isQuery);
 }
 
-export {
-  handleMethod,
-  extend,
-  isPost,
-  dataOrParams
-}
+export { handleMethod, extend, dataOrParams };

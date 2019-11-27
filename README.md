@@ -5,22 +5,36 @@
 #### 初始化
 
 ```javascript
-
+// ./http
 const http = require('@tongdun/tdhttp');
 
 const apis = {
   // demo
+  getxxx: {
+    // get 默认
+    url: `/scriptManage/clientIp`,
+  }
   postxxx: {
     // post
     url: `/projectManage/show`,
     method: 'post',
+    // isFormData: true 默认false
+    // 是否需要以formData形式传参
   },
-  getxxx: {
-    // get
-    url: `/scriptManage/clientIp`,
-
+  putxxx: {
+    // put
+    url: `/projectManage/show`,
+    method: 'put',
+    // isFormData: true 默认false
+    // 是否需要以formData形式传参
+  },
 };
+
 const IO = http(apis);
+
+// 高级模式下的数据返回结果处理方式
+IO.resultMode = 'native';// 默认 可不用设置
+// IO.resultMode = 'array';//
 
 IO.interceptors.request.use(
   config => {
@@ -42,23 +56,18 @@ export default IO;
 
 ```
 
-#### 项目中调用数据
+#### 项目中基本使用方式
 
 ```javascript
+// 上面文件
 import IO from './http'
 
 IO.getxxx({
     // ...opt
-    id: 1 ,
-    isValid: 2,
-  }).then(
-    res => {
-      // do something
-    },
-    () => {
-      // do something
-    },
-  );
+  }).then(res => {
+    // do something
+  });
+
 ```
 
 ### 说明
@@ -75,3 +84,121 @@ IO.getxxx({
  *   key: value,
  * })
  */
+
+
+#### 高级使用方式
+###### 模仿react-redux方式
+
+```javascript
+
+// 父组件或者根组件
+import { ProviderApi } from "@tongdun/tdhttp";
+import apis from './http'
+import Child from './Child'
+
+ReactDOM.render(
+    <ProviderApi apis={apis}>
+        <Child />
+    </ProviderApi>)
+  document.getElementById("container")
+);
+
+//子组件
+
+import React, { Component } from 'react'
+import { connectApi } from "@tongdun/tdhttp";
+
+// 高级处理模式1 resultMode = 'native';默认
+class Child extends Component {
+
+  // 使用方式1
+  getFetch = async () => {
+    const { postxxx } = this.props;
+    const res = await postxxx(/*对象参数*/);
+    //to do something
+  }
+  // 使用方式2
+  getFetch = () => {
+    const { postxxx } = this.props;
+    postxxx(/*对象参数*/)
+    .then(res => {
+      //to do something
+    });
+  }
+  // 使用方式3
+  getFetch = () => {
+    const { postxxx } = this.props;
+    postxxx(/*对象参数*/, res => {
+      //to do something
+    })
+  }
+  // 使用方式4
+  getFetch = () => {
+    const { postxxx } = this.props;
+    // 无参数时可直接放置函数
+    postxxx(res => {
+      //to do something
+    })
+  }
+  render() {
+    return (
+      <div onClick={this.getFetch}>
+      </div>
+    )
+  }
+}
+
+// 高级处理模式2 resultMode = 'array';
+class Child extends Component {
+
+  // 使用方式1
+  getFetch = async () => {
+    const { postxxx } = this.props;
+    const [err, res] = await postxxx(/*对象参数*/);
+    // err参数不为空则说明请求出现请求异常或者错误
+    if (!err) {
+      //to do something
+    }
+  }
+  // 使用方式2
+  getFetch = () => {
+    const { postxxx } = this.props;
+    postxxx(/*对象参数*/)
+    .then(([err, res]) => {
+      if (!err) {
+        //to do something
+      }
+    });
+  }
+  // 使用方式3
+  getFetch = () => {
+    const { postxxx } = this.props;
+    postxxx(/*对象参数*/, (err, res) => {
+      if (!err) {
+        //to do something
+      }
+    })
+  }
+  // 使用方式4
+  getFetch = () => {
+    const { postxxx } = this.props;
+    // 无参数时可直接放置函数
+    postxxx((err, res) => {
+      if (!err) {
+        //to do something
+      }
+    })
+  }
+  render() {
+    return (
+      <div onClick={this.getFetch}>
+      </div>
+    )
+  }
+}
+
+export default connectApi(Child);
+
+```
+
+

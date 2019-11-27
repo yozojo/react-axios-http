@@ -1,48 +1,66 @@
-import React, { Component } from 'react';
-import { awaitWrap, isType } from './utils';
+import React, { useMemo } from "react";
+import { awaitWrap, isType } from "./utils";
+import ReactContext from "./Context";
 
 export default (WrapperComponent, apis = []) => {
-  apis = isType(apis, 'string') ? [apis] : apis;
+  apis = isType(apis, "string") ? [apis] : apis;
+  const resultMode = window._TDHTTP_RESULT_MODE;
 
-  return class ConnectApi extends Component {
-    constructor(props) {
-      super(props);
+  const handler = async (func, params, cb = () => {}) => {
+    cb = isType(params, "function") ? params : cb;
+    params = isType(params, "function") ? null : params;
 
-      const IO = this.context.apis || {};
+    return await getResult(func, cb, params);
+  };
+
+  const getResult = async (func, cb, params) => {
+    const nativeHandler = async () => {
+      const res = await func(params);
+      return cb(res) || res;
+    };
+    switch (resultMode) {
+      case "native":
+        return await nativeHandler();
+        break;
+      case "array":
+        const [err, res] = await awaitWrap(func(params));
+        return cb(err, res) || [err, res];
+        break;
+      default:
+        return await nativeHandler();
+        break;
+    }
+  };
+
+  const ConnectApi = ({ contextApis, ...otherPorps }) => {
+    const connectApis = useMemo(() => {
+      const IO = contextApis || {};
 
       const curApis = apis.reduce((pre, cur) => {
         pre[cur] = IO[cur];
         return pre;
       }, {});
 
-      apis = apis.length ? curApis : IO;
+      let apisObj = apis.length ? curApis : IO;
 
-      const handler = async (func, params, cb = () => {}) => {
-        let result = null;
-        cb = isType(params, 'function') ? params : cb;
-        params = isType(params, 'function') ? null : params;
-
-        const [err, res] = await awaitWrap(func(params));
-        if (!err && res.success) {
-          result = res.attr || res.data;
-        } else {
-          console.error('请求失败！');
-        }
-        return cb(result) || result;
-      };
-
-      apis = Object.entries(apis).reduce((pre, [key, func]) => {
+      apisObj = Object.entries(apisObj).reduce((pre, [key, func]) => {
         pre[key] = async (params, cb) => await handler(func, params, cb);
         return pre;
       }, {});
 
-      this.state = { apis };
-    }
+      return apisObj;
+    }, [contextApis]);
 
-    render() {
-      const { apis } = this.state;
-
-      return <WrapperComponent {...this.props} {...apis} />;
-    }
+    return <WrapperComponent {...otherPorps} {...connectApis} />;
   };
+
+  const { Consumer } = ReactContext;
+
+  return props => (
+    <Consumer>
+      {contextApis => (
+        <ConnectApi contextApis={contextApis} {...props}></ConnectApi>
+      )}
+    </Consumer>
+  );
 };

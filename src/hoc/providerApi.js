@@ -1,20 +1,23 @@
-import React, { Component } from 'react';
-import { PropTypes } from 'prop-types';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import ReactContext from "./Context";
 
-export default class ProviderApi extends Component {
-  getChildContext() {
-    return { apis: this.props.apis };
-  }
+function ProviderApi({ apis, context, children }) {
+  const contextValue = useMemo(() => apis, [apis]);
 
-  constructor() {
-    super();
-  }
+  const Context = context || ReactContext;
 
-  render() {
-    return this.props.children;
-  }
+  const { Provider } = Context;
+
+  return <Provider value={contextValue}>{children}</Provider>;
 }
 
-ProviderApi.childContextTypes = {
-  apis: PropTypes.object,
-};
+if (process.env.NODE_ENV !== "production") {
+  ProviderApi.propTypes = {
+    apis: PropTypes.object,
+    context: PropTypes.object,
+    children: PropTypes.any
+  };
+}
+
+export default ProviderApi;

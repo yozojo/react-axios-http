@@ -1,6 +1,6 @@
 {
   "name": "@tongdun/tdhttp",
-  "version": "1.1.7",
+  "version": "1.2.6",
   "author": "zuqiang.you <zuqiang.you@tongdun.net>",
   "license": "ISC",
   "main": "./lib/index.js",
@@ -19,14 +19,6 @@
     "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/tdhttp.min.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
     "clean": "rimraf lib dist es"
-  },
-  "peerDependencies": {
-    "react": "^16.8.3"
-  },
-  "peerDependenciesMeta": {
-    "react-dom": {
-      "optional": true
-    }
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
