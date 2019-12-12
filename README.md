@@ -6,7 +6,7 @@
 
 ```javascript
 // ./http
-const http = require('@tongdun/tdhttp');
+import http, { combineApi } from "@tongdun/tdhttp"
 
 const apis = {
   // demo
@@ -44,11 +44,24 @@ const apis = {
   },
 };
 
+/* combineApi合并apis，作用域。
+const IO = http(combineApi({
+  apis_1: apis,
+  apis_2: apis,
+  apis_3: apis,
+},
+true/false 默认true，作用域开启
+)); */
+
 const IO = http(apis);
 
-// 高级模式下的数据返回结果处理方式
-IO.resultMode = 'native';// 默认已设置
-// IO.resultMode = 'array';//
+// const IO = http(apis, {
+//   /* {opt} 默认可不传 */
+//   // 高级模式下的数据返回结果处理方式
+//   resultMode: 'native',// 可选array， 默认已设置native
+//   host: '', // 接口统一host
+//   prefix: '', // 接口统一前缀
+// });
 
 IO.interceptors.request.use(
   config => {

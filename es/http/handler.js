@@ -40,7 +40,13 @@ function extend(a, b, thisArg) {
   return a;
 }
 
-function dataOrParams(method, opt, isFormData, isQuery) {
+function setOpt(_ref2) {
+  var method = _ref2.method,
+      opt = _ref2.opt,
+      _ref2$isFormData = _ref2.isFormData,
+      isFormData = _ref2$isFormData === void 0 ? false : _ref2$isFormData,
+      _ref2$isQuery = _ref2.isQuery,
+      isQuery = _ref2$isQuery === void 0 ? false : _ref2$isQuery;
   opt = opt || {};
 
   if (isFormData && !isQuery) {
@@ -59,4 +65,4 @@ function dataOrParams(method, opt, isFormData, isQuery) {
   return getDOP(method, opt, isQuery);
 }
 
-export { handleMethod, extend, dataOrParams };
+export { handleMethod, extend, setOpt };

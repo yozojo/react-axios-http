@@ -1,15 +1,15 @@
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
-import { dataOrParams, extend } from './handler';
-import IO from '../global';
+import { setOpt, extend } from './handler';
 
-const apiFactory = api => {
-  let { method, isFormData = false, isQuery = false } = api;
+const apiFactory = (api, { prefix, host }) => {
+  const url = host + prefix + api.url;
   return opt => {
-    opt = dataOrParams(method, opt, isFormData, isQuery);
+    opt = setOpt({ ...api, opt });
     return tdHttp({
       ...api,
       ...opt,
+      url,
     });
   };
 };
@@ -24,10 +24,23 @@ const defineProperty = (target, props = []) => {
   });
 };
 
-const http = (apis = {}) => {
+window._TDHTTP_RESULT_MODE = 'native';
+
+const defaultOpt = {
+  resultMode: 'native',
+  host: '',
+  prefix: '',
+};
+
+const IO = {};
+
+const http = (apis = {}, opt = {}) => {
+  opt = Object.assign(defaultOpt, opt);
+  window._TDHTTP_RESULT_MODE = opt.resultMode;
+
   extend(IO, tdHttp);
   Object.keys(apis).forEach(item => {
-    IO[item] = apiFactory(apis[item]);
+    IO[item] = apiFactory(apis[item], opt);
   });
 
   defineProperty(IO, ['interceptors', '_request']);

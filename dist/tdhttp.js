@@ -104,7 +104,13 @@
     return a;
   }
 
-  function dataOrParams(method, opt, isFormData, isQuery) {
+  function setOpt(_ref2) {
+    var method = _ref2.method,
+        opt = _ref2.opt,
+        _ref2$isFormData = _ref2.isFormData,
+        isFormData = _ref2$isFormData === void 0 ? false : _ref2$isFormData,
+        _ref2$isQuery = _ref2.isQuery,
+        isQuery = _ref2$isQuery === void 0 ? false : _ref2$isQuery;
     opt = opt || {};
 
     if (isFormData && !isQuery) {
@@ -170,28 +176,17 @@
 
   var tdHttp$1 = createInstance();
 
-  var IO = {};
-  window._TDHTTP_RESULT_MODE = 'native';
-  Object.defineProperty(IO, 'resultMode', {
-    set: function set(value) {
-      window._TDHTTP_RESULT_MODE = value;
-    },
-    get: function get() {
-      return window._TDHTTP_RESULT_MODE;
-    },
-    enumerable: false,
-    configurable: false
-  });
-
-  var apiFactory = function apiFactory(api) {
-    var method = api.method,
-        _api$isFormData = api.isFormData,
-        isFormData = _api$isFormData === void 0 ? false : _api$isFormData,
-        _api$isQuery = api.isQuery,
-        isQuery = _api$isQuery === void 0 ? false : _api$isQuery;
+  var apiFactory = function apiFactory(api, _ref) {
+    var prefix = _ref.prefix,
+        host = _ref.host;
+    var url = host + prefix + api.url;
     return function (opt) {
-      opt = dataOrParams(method, opt, isFormData, isQuery);
-      return tdHttp$1(_extends({}, api, {}, opt));
+      opt = setOpt(_extends({}, api, {
+        opt: opt
+      }));
+      return tdHttp$1(_extends({}, api, {}, opt, {
+        url: url
+      }));
     };
   };
 
@@ -209,14 +204,28 @@
     });
   };
 
-  var http = function http(apis) {
+  window._TDHTTP_RESULT_MODE = 'native';
+  var defaultOpt = {
+    resultMode: 'native',
+    host: '',
+    prefix: ''
+  };
+  var IO = {};
+
+  var http = function http(apis, opt) {
     if (apis === void 0) {
       apis = {};
     }
 
+    if (opt === void 0) {
+      opt = {};
+    }
+
+    opt = Object.assign(defaultOpt, opt);
+    window._TDHTTP_RESULT_MODE = opt.resultMode;
     extend(IO, tdHttp$1);
     Object.keys(apis).forEach(function (item) {
-      IO[item] = apiFactory(apis[item]);
+      IO[item] = apiFactory(apis[item], opt);
     });
     defineProperty(IO, ['interceptors', '_request']);
     return IO;
@@ -2204,7 +2213,25 @@
     };
   }
 
+  function combineApi(apis, isScope) {
+    if (apis === void 0) {
+      apis = {};
+    }
+
+    if (isScope === void 0) {
+      isScope = true;
+    }
+
+    var apiArr = Object.entries(apis);
+    return apiArr.reduce(function (pre, _ref) {
+      var key = _ref[0],
+          value = _ref[1];
+      return isScope ? (pre[key] = value) && pre : _extends({}, pre, {}, value);
+    }, {});
+  }
+
   exports.ProviderApi = ProviderApi;
+  exports.combineApi = combineApi;
   exports.connectApi = connectApi;
   exports.default = http;
 

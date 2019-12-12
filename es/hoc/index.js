@@ -1,3 +1,4 @@
 import connectApi from './connectApi';
 import ProviderApi from './providerApi';
-export { connectApi, ProviderApi };
+import combineApi from './combineApi';
+export { combineApi, connectApi, ProviderApi };

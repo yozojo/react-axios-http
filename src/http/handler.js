@@ -35,7 +35,7 @@ function extend(a, b, thisArg) {
   return a;
 }
 
-function dataOrParams(method, opt, isFormData, isQuery) {
+function setOpt({ method, opt, isFormData = false, isQuery = false }) {
   opt = opt || {};
   if (isFormData && !isQuery) {
     const formData = new FormData();
@@ -50,4 +50,4 @@ function dataOrParams(method, opt, isFormData, isQuery) {
   return getDOP(method, opt, isQuery);
 }
 
-export { handleMethod, extend, dataOrParams };
+export { handleMethod, extend, setOpt };
