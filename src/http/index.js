@@ -17,14 +17,16 @@ const apiFactory = (api, { prefix, host }) => {
 const defineProperty = (target, props = []) => {
   props.forEach(prop => {
     Object.defineProperty(target, prop, {
-      writable: false,
+      writable: true,
       enumerable: false,
       configurable: false,
     });
   });
 };
 
-window._TDHTTP_RESULT_MODE = 'native';
+const Global = global || window;
+
+Global._TDHTTP_RESULT_MODE = 'native';
 
 const defaultOpt = {
   resultMode: 'native',
@@ -36,7 +38,7 @@ const IO = {};
 
 const http = (apis = {}, opt = {}) => {
   opt = Object.assign(defaultOpt, opt);
-  window._TDHTTP_RESULT_MODE = opt.resultMode;
+  Global._TDHTTP_RESULT_MODE = opt.resultMode;
 
   extend(IO, tdHttp);
   Object.keys(apis).forEach(item => {
