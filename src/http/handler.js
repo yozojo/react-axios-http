@@ -6,8 +6,10 @@ function isPut(method) {
   return !!method && /put/.test(method.toLowerCase());
 }
 
-function getDOP(method, opt, isQuery) {
-  return isPost(method) ? { data: opt } : { [isPut(method) && isQuery ? 'data' : 'params']: opt };
+function getDOP(method, opt, isQuery, others = {}) {
+  return isPost(method)
+    ? { data: opt, ...others }
+    : { [isPut(method) && isQuery ? 'data' : 'params']: opt, ...others };
 }
 
 function handleMethod(params) {
@@ -35,8 +37,7 @@ function extend(a, b, thisArg) {
   return a;
 }
 
-function setOpt({ method, opt, isFormData = false, isQuery = false }) {
-  opt = opt || {};
+function setOpt({ method, opt = {}, isFormData = false, isQuery = false, ...others }) {
   if (isFormData && !isQuery) {
     const formData = new FormData();
     for (const key in opt) {
@@ -47,7 +48,7 @@ function setOpt({ method, opt, isFormData = false, isQuery = false }) {
     }
     opt = formData;
   }
-  return getDOP(method, opt, isQuery);
+  return getDOP(method, opt, isQuery, others);
 }
 
 export { handleMethod, extend, setOpt };

@@ -1,3 +1,6 @@
+import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
+import _extends from "@babel/runtime/helpers/esm/extends";
+
 function isPost(method) {
   return !!method && /post/.test(method.toLowerCase());
 }
@@ -6,12 +9,16 @@ function isPut(method) {
   return !!method && /put/.test(method.toLowerCase());
 }
 
-function getDOP(method, opt, isQuery) {
-  var _ref;
+function getDOP(method, opt, isQuery, others) {
+  var _extends2;
 
-  return isPost(method) ? {
+  if (others === void 0) {
+    others = {};
+  }
+
+  return isPost(method) ? _extends({
     data: opt
-  } : (_ref = {}, _ref[isPut(method) && isQuery ? 'data' : 'params'] = opt, _ref);
+  }, others) : _extends((_extends2 = {}, _extends2[isPut(method) && isQuery ? 'data' : 'params'] = opt, _extends2), others);
 }
 
 function handleMethod(params) {
@@ -40,14 +47,15 @@ function extend(a, b, thisArg) {
   return a;
 }
 
-function setOpt(_ref2) {
-  var method = _ref2.method,
-      opt = _ref2.opt,
-      _ref2$isFormData = _ref2.isFormData,
-      isFormData = _ref2$isFormData === void 0 ? false : _ref2$isFormData,
-      _ref2$isQuery = _ref2.isQuery,
-      isQuery = _ref2$isQuery === void 0 ? false : _ref2$isQuery;
-  opt = opt || {};
+function setOpt(_ref) {
+  var method = _ref.method,
+      _ref$opt = _ref.opt,
+      opt = _ref$opt === void 0 ? {} : _ref$opt,
+      _ref$isFormData = _ref.isFormData,
+      isFormData = _ref$isFormData === void 0 ? false : _ref$isFormData,
+      _ref$isQuery = _ref.isQuery,
+      isQuery = _ref$isQuery === void 0 ? false : _ref$isQuery,
+      others = _objectWithoutPropertiesLoose(_ref, ["method", "opt", "isFormData", "isQuery"]);
 
   if (isFormData && !isQuery) {
     var formData = new FormData();
@@ -62,7 +70,7 @@ function setOpt(_ref2) {
     opt = formData;
   }
 
-  return getDOP(method, opt, isQuery);
+  return getDOP(method, opt, isQuery, others);
 }
 
 export { handleMethod, extend, setOpt };
