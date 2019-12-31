@@ -6,7 +6,7 @@
 
 ```javascript
 // ./http
-import http, { combineApi } from "@tongdun/tdhttp"
+import http, { combineApi } from "react-axios-http"
 
 const apis = {
   // demo
@@ -119,7 +119,7 @@ IO.getxxx({
 ```javascript
 
 // 父组件或者根组件
-import { ProviderApi } from "@tongdun/tdhttp";
+import { ProviderApi } from "react-axios-http";
 import apis from './http'
 import Child from './Child'
 
@@ -133,7 +133,7 @@ ReactDOM.render(
 //子组件
 
 import React, { Component } from 'react'
-import { connectApi } from "@tongdun/tdhttp";
+import { connectApi } from "react-axios-http";
 
 // 高级处理模式1 resultMode = 'native';默认
 class Child extends Component {

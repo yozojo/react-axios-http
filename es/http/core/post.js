@@ -1,10 +1,5 @@
 import Promise from 'es6-promise';
 import axios from 'axios';
-/**
- * get请求封装
- * @param config
- */
-
 export default function (config) {
   var tempConfig = Object.assign(config, {
     method: 'POST'

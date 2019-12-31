@@ -13,7 +13,7 @@ const config = {
   external: ['react'],
   output: {
     format: 'umd',
-    name: 'tdhttp',
+    name: 'react-axios-http',
     globals: {
       react: 'React',
     },

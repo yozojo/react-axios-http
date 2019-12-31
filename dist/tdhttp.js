@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
   typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
-  (global = global || self, factory(global.tdhttp = {}, global.React));
+  (global = global || self, factory(global['react-axios-http'] = {}, global.React));
 }(this, (function (exports, React) { 'use strict';
 
   var React__default = 'default' in React ? React['default'] : React;
@@ -19285,11 +19285,6 @@
 
   var axios$1 = axios_1;
 
-  /**
-   * get请求封装
-   * @param config
-   */
-
   function Get (config) {
     var tempConfig = assign$1(config, {
       method: 'GET'
@@ -20084,15 +20079,6 @@
     return cancel;
   }
 
-  /**
-   * jsonp 请求封装
-   * @param config
-   * param:指定 callback函数的参数名。默认就是callback
-   * timeout: 超时时间 默认 60000
-   * prefix：callback 函数的前缀 默认是 __jp
-   * name：回调函数的方法名。如果不指定，则默认为 __jp0 __jp1，也就是前缀+自增数字
-   */
-
   function GetJsonp (config) {
     return new es6Promise(function (resolve, reject) {
       jsonp_1(config.url, config.params, function (err, data) {
@@ -20104,11 +20090,6 @@
       });
     });
   }
-
-  /**
-   * get请求封装
-   * @param config
-   */
 
   function Post (config) {
     var tempConfig = assign$1(config, {
@@ -20125,11 +20106,6 @@
     });
   }
 
-  /**
-   * get请求封装
-   * @param config
-   */
-
   function Delete (config) {
     var tempConfig = assign$1(config, {
       method: 'DELETE'
@@ -20144,11 +20120,6 @@
       });
     });
   }
-
-  /**
-   * get请求封装
-   * @param config
-   */
 
   function Put (config) {
     var tempConfig = assign$1(config, {
