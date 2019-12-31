@@ -47,6 +47,10 @@ function extend(a, b, thisArg) {
   return a;
 }
 
+function isFormDataFunc(val) {
+  return typeof FormData !== 'undefined' && val instanceof FormData;
+}
+
 function setOpt(_ref) {
   var method = _ref.method,
       _ref$opt = _ref.opt,
@@ -57,7 +61,7 @@ function setOpt(_ref) {
       isQuery = _ref$isQuery === void 0 ? false : _ref$isQuery,
       others = _objectWithoutPropertiesLoose(_ref, ["method", "opt", "isFormData", "isQuery"]);
 
-  if (isFormData && !isQuery) {
+  if (isFormData && !isQuery && !isFormDataFunc(opt)) {
     var formData = new FormData();
 
     for (var key in opt) {

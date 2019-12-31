@@ -1,7 +1,7 @@
 {
-  "name": "@tongdun/tdhttp",
-  "version": "1.4.4",
-  "author": "zuqiang.you <zuqiang.you@tongdun.net>",
+  "name": "tdhttp",
+  "version": "1.0.0",
+  "author": "yozojo <you1115879184@126.com>",
   "license": "ISC",
   "main": "./lib/index.js",
   "unpkg": "dist/index.js",
@@ -22,7 +22,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "@tongdun/utils-http": "^1.0.6",
+    "axios": "^0.19.0",
+    "es6-promise": "^4.2.8",
+    "jsonp": "^0.2.1",
     "loose-envify": "^1.4.0",
     "prop-types": "^15.7.2"
   },
@@ -42,6 +44,8 @@
     "rollup": "^1.20.2",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.0.2",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.1.1"

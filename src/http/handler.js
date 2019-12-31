@@ -37,8 +37,12 @@ function extend(a, b, thisArg) {
   return a;
 }
 
+function isFormDataFunc(val) {
+  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
 function setOpt({ method, opt = {}, isFormData = false, isQuery = false, ...others }) {
-  if (isFormData && !isQuery) {
+  if (isFormData && !isQuery && !isFormDataFunc(opt)) {
     const formData = new FormData();
     for (const key in opt) {
       if (opt.hasOwnProperty(key)) {
@@ -48,6 +52,7 @@ function setOpt({ method, opt = {}, isFormData = false, isQuery = false, ...othe
     }
     opt = formData;
   }
+
   return getDOP(method, opt, isQuery, others);
 }
 
