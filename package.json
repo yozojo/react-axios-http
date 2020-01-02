@@ -1,7 +1,8 @@
 {
   "name": "react-axios-http",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "yozojo <you1115879184@126.com>",
+  "description": "这是一款结合axios和react的封装请求库",
   "license": "ISC",
   "main": "./lib/index.js",
   "unpkg": "dist/index.js",
@@ -15,8 +16,8 @@
   "scripts": {
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "babel src --out-dir es",
-    "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/tdhttp.js",
-    "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/tdhttp.min.js",
+    "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/react-axios-http.js",
+    "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/react-axios-http.min.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
     "clean": "rimraf lib dist es"
   },
