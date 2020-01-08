@@ -4,29 +4,17 @@ import ReactContext from "./Context";
 
 const Global = global || window;
 
-const getResult = async (func, cb, params) => {
+const getResult = async (func, params, handler) => {
   const resultMode = Global._TDHTTP_RESULT_MODE;
 
-  const nativeHandler = async () => {
-    const res = await func(params);
-    return cb(res) || res;
-  };
   switch (resultMode) {
     case "native":
-      return await nativeHandler();
+      return await func(params, handler);
     case "array":
-      const [err, res] = await awaitWrap(func(params));
-      return cb(err, res) || [err, res];
+      return await awaitWrap(func(params, handler));
     default:
-      return await nativeHandler();
-  }
-};
-
-const handler = async (func, params, cb = () => {}) => {
-  cb = isType(params, "function") ? params : cb;
-  params = isType(params, "function") ? null : params;
-
-  return await getResult(func, cb, params);
+      return await func(params, handler);
+  };
 };
 
 const getScope = (arr, IO, isScope = false) => {
@@ -98,7 +86,7 @@ export default (WrapperComponent, scope = []) => {
           for (const fkey in func) {
             if (func.hasOwnProperty(fkey)) {
               funcObj[fkey] = async (params, cb) =>
-                await handler(func[fkey], params, cb);
+                await getResult(func[fkey], params, cb);
             }
           }
 
@@ -106,7 +94,7 @@ export default (WrapperComponent, scope = []) => {
         } else {
           return (
             (pre[key] = async (params, cb) =>
-              await handler(func, params, cb)) && pre
+              await getResult(func, params, cb)) && pre
           );
         }
       }, {});

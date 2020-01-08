@@ -6,92 +6,44 @@ import { awaitWrap, isType } from "./utils";
 import ReactContext from "./Context";
 var Global = global || window;
 
-var getResult = function getResult(func, cb, params) {
-  var resultMode, nativeHandler, _ref, err, res;
-
-  return _regeneratorRuntime.async(function getResult$(_context2) {
+var getResult = function getResult(func, params, handler) {
+  var resultMode;
+  return _regeneratorRuntime.async(function getResult$(_context) {
     while (1) {
-      switch (_context2.prev = _context2.next) {
+      switch (_context.prev = _context.next) {
         case 0:
           resultMode = Global._TDHTTP_RESULT_MODE;
-
-          nativeHandler = function nativeHandler() {
-            var res;
-            return _regeneratorRuntime.async(function nativeHandler$(_context) {
-              while (1) {
-                switch (_context.prev = _context.next) {
-                  case 0:
-                    _context.next = 2;
-                    return _regeneratorRuntime.awrap(func(params));
-
-                  case 2:
-                    res = _context.sent;
-                    return _context.abrupt("return", cb(res) || res);
-
-                  case 4:
-                  case "end":
-                    return _context.stop();
-                }
-              }
-            });
-          };
-
-          _context2.t0 = resultMode;
-          _context2.next = _context2.t0 === "native" ? 5 : _context2.t0 === "array" ? 8 : 14;
+          _context.t0 = resultMode;
+          _context.next = _context.t0 === "native" ? 4 : _context.t0 === "array" ? 7 : 10;
           break;
 
-        case 5:
-          _context2.next = 7;
-          return _regeneratorRuntime.awrap(nativeHandler());
-
-        case 7:
-          return _context2.abrupt("return", _context2.sent);
-
-        case 8:
-          _context2.next = 10;
-          return _regeneratorRuntime.awrap(awaitWrap(func(params)));
-
-        case 10:
-          _ref = _context2.sent;
-          err = _ref[0];
-          res = _ref[1];
-          return _context2.abrupt("return", cb(err, res) || [err, res]);
-
-        case 14:
-          _context2.next = 16;
-          return _regeneratorRuntime.awrap(nativeHandler());
-
-        case 16:
-          return _context2.abrupt("return", _context2.sent);
-
-        case 17:
-        case "end":
-          return _context2.stop();
-      }
-    }
-  });
-};
-
-var handler = function handler(func, params, cb) {
-  return _regeneratorRuntime.async(function handler$(_context3) {
-    while (1) {
-      switch (_context3.prev = _context3.next) {
-        case 0:
-          if (cb === void 0) {
-            cb = function cb() {};
-          }
-
-          cb = isType(params, "function") ? params : cb;
-          params = isType(params, "function") ? null : params;
-          _context3.next = 5;
-          return _regeneratorRuntime.awrap(getResult(func, cb, params));
-
-        case 5:
-          return _context3.abrupt("return", _context3.sent);
+        case 4:
+          _context.next = 6;
+          return _regeneratorRuntime.awrap(func(params, handler));
 
         case 6:
+          return _context.abrupt("return", _context.sent);
+
+        case 7:
+          _context.next = 9;
+          return _regeneratorRuntime.awrap(awaitWrap(func(params, handler)));
+
+        case 9:
+          return _context.abrupt("return", _context.sent);
+
+        case 10:
+          _context.next = 12;
+          return _regeneratorRuntime.awrap(func(params, handler));
+
+        case 12:
+          return _context.abrupt("return", _context.sent);
+
+        case 13:
+          ;
+
+        case 14:
         case "end":
-          return _context3.stop();
+          return _context.stop();
       }
     }
   });
@@ -113,11 +65,11 @@ var getScope = function getScope(arr, IO, isScope) {
       return cloneObj;
     };
 
-    return arr.reduce(function (pre, _ref2) {
+    return arr.reduce(function (pre, _ref) {
       var _extends2;
 
-      var key = _ref2[0],
-          obj = _ref2[1];
+      var key = _ref[0],
+          obj = _ref[1];
       var values = isDeep ? IO[key] : getDeep(obj, IO);
       return isScope ? _extends({}, pre, (_extends2 = {}, _extends2[key] = values, _extends2)) : _extends({}, pre, {}, values);
     }, {});
@@ -157,8 +109,8 @@ export default (function (WrapperComponent, scope) {
 
   scope = isType(scope, "string") ? [scope] : scope;
   var apis = Global._TDHTTP_APIS || [];
-  var scopeArr = apis.filter(function (_ref3) {
-    var key = _ref3[0];
+  var scopeArr = apis.filter(function (_ref2) {
+    var key = _ref2[0];
     return scope.includes(key);
   });
   return (
@@ -183,9 +135,9 @@ export default (function (WrapperComponent, scope) {
       _proto.renderWrapper = function renderWrapper(contextApis) {
         var IO = contextApis || {};
         var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
-        var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref4) {
-          var key = _ref4[0],
-              func = _ref4[1];
+        var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref3) {
+          var key = _ref3[0],
+              func = _ref3[1];
 
           if (isType(func, "object")) {
             var funcObj = {};
@@ -193,19 +145,19 @@ export default (function (WrapperComponent, scope) {
             var _loop = function _loop(fkey) {
               if (func.hasOwnProperty(fkey)) {
                 funcObj[fkey] = function _callee(params, cb) {
-                  return _regeneratorRuntime.async(function _callee$(_context4) {
+                  return _regeneratorRuntime.async(function _callee$(_context2) {
                     while (1) {
-                      switch (_context4.prev = _context4.next) {
+                      switch (_context2.prev = _context2.next) {
                         case 0:
-                          _context4.next = 2;
-                          return _regeneratorRuntime.awrap(handler(func[fkey], params, cb));
+                          _context2.next = 2;
+                          return _regeneratorRuntime.awrap(getResult(func[fkey], params, cb));
 
                         case 2:
-                          return _context4.abrupt("return", _context4.sent);
+                          return _context2.abrupt("return", _context2.sent);
 
                         case 3:
                         case "end":
-                          return _context4.stop();
+                          return _context2.stop();
                       }
                     }
                   });
@@ -220,19 +172,19 @@ export default (function (WrapperComponent, scope) {
             return (pre[key] = funcObj) && pre;
           } else {
             return (pre[key] = function _callee2(params, cb) {
-              return _regeneratorRuntime.async(function _callee2$(_context5) {
+              return _regeneratorRuntime.async(function _callee2$(_context3) {
                 while (1) {
-                  switch (_context5.prev = _context5.next) {
+                  switch (_context3.prev = _context3.next) {
                     case 0:
-                      _context5.next = 2;
-                      return _regeneratorRuntime.awrap(handler(func, params, cb));
+                      _context3.next = 2;
+                      return _regeneratorRuntime.awrap(getResult(func, params, cb));
 
                     case 2:
-                      return _context5.abrupt("return", _context5.sent);
+                      return _context3.abrupt("return", _context3.sent);
 
                     case 3:
                     case "end":
-                      return _context5.stop();
+                      return _context3.stop();
                   }
                 }
               });

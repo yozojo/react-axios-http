@@ -4,13 +4,17 @@ import { setOpt, extend } from './handler';
 
 const apiFactory = (api, { prefix, host }) => {
   const url = host + prefix + api.url;
-  return opt => {
+  return (opt, handler) => {
+    if (typeof opt === 'function') {
+      handler = opt;
+      opt = {};
+    };
     opt = setOpt({ ...api, opt });
     return tdHttp({
       ...api,
       ...opt,
       url,
-    });
+    }, handler);
   };
 };
 

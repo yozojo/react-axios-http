@@ -23,7 +23,7 @@ const apis = {
     // isFormData: true 默认false
     // 是否需要以formData形式传参
     // isQuery: true 默认false
-    // 是否以url Query方式 ?pageNum=1&pageSize=10
+    // post请求下，是否以url Query方式 ?pageNum=1&pageSize=10
   },
   put: {
     // put
@@ -32,7 +32,7 @@ const apis = {
     // isFormData: true 默认false
     // 是否需要以formData形式传参
     // isQuery: true 默认false
-    // 是否以url Query方式 ?pageNum=1&pageSize=10
+    // put请求下，是否以url Query方式 ?pageNum=1&pageSize=10
   },
   delete: {
     // delete
@@ -91,28 +91,51 @@ export default IO;
 // 上面文件
 import IO from './http'
 
-IO.getxxx({
-    // ...opt
-  }).then(res => {
+const opt = {
+  key1: 'value1',
+  key2: 'value2',
+}
+
+const handler = (res) => {
+  return Promise.resolve(res); // 推荐
+  //return Promise.reject(res);
+  // return res; 不推荐
+}
+
+// IO.getxxx(opt, handler)
+// opt是传的参数，不需要传的可不写；
+// handler 是对返回结果的二次加工，可不写；
+
+IO.getxxx(opt, handler)
+  .then(res => {
     // do something
   });
 
+// 如无参数，直接对返回结果的二次加工
+IO.getxxx(handler)
+  .then(res => {
+    // do something
+  });
+
+IO.getxxx().then(res => {
+  // do something
+});
+
 ```
 
-### 说明
+### 基本使用说明
 
-/**
  * 默认get请求
  * 导出文件 import IO from './http'
  * 接口请求使用，直接IO.getxxx(),
  * getxxx为apis中一接口名
- * IO.getxxx(opt)，()中get和post请求无参数可为(空)
+ * IO.getxxx(opt, handler)，()中get和post请求无参数可为(空)
+ * handler 是对返回结果的二次加工，可不写；
  * opt 此参数为post和get请求参数,类型皆为对象，如
  * IO.getxxx({
  *   key: value,
  *   key: value,
- * })
- */
+ * }, handler)
 
 
 #### 高级使用方式
@@ -143,32 +166,22 @@ class Child extends Component {
   // 使用方式1
   getFetch = async () => {
     const { postxxx } = this.props;
-    const res = await postxxx(/*对象参数*/);
+    const res = await postxxx(/*对象参数*/, /* handler 二次加工函数，可不写 */);
+    // 如无参数，直接对返回结果的二次加工
+    // const res = await postxxx(/* handler 二次加工函数，可不写 */);
     //to do something
   }
   // 使用方式2
   getFetch = () => {
     const { postxxx } = this.props;
-    postxxx(/*对象参数*/)
+    postxxx(/*对象参数*/, /* handler 二次加工函数，可不写 */)
+    // 如无参数，直接对返回结果的二次加工
+    // postxxx(/* handler 二次加工函数，可不写 */)
     .then(res => {
       //to do something
     });
   }
-  // 使用方式3
-  getFetch = () => {
-    const { postxxx } = this.props;
-    postxxx(/*对象参数*/, res => {
-      //to do something
-    })
-  }
-  // 使用方式4
-  getFetch = () => {
-    const { postxxx } = this.props;
-    // 无参数时可直接放置函数
-    postxxx(res => {
-      //to do something
-    })
-  }
+
   render() {
     return (
       <div onClick={this.getFetch}>
@@ -177,13 +190,16 @@ class Child extends Component {
   }
 }
 
-// 高级处理模式2 resultMode = 'array';
+// 高级处理模式2 resultMode = 'array，
+// 返回一个数组，错误优先处理方式
 class Child extends Component {
 
   // 使用方式1
   getFetch = async () => {
     const { postxxx } = this.props;
-    const [err, res] = await postxxx(/*对象参数*/);
+    const [err, res] = await postxxx(/*对象参数*/, /* handler 二次加工函数，可不写 */);
+    // 如无参数，直接对返回结果的二次加工
+    // const [err, res] = await postxxx(/* handler 二次加工函数，可不写 */);
     // err参数不为空则说明请求出现请求异常或者错误
     if (!err) {
       //to do something
@@ -192,32 +208,14 @@ class Child extends Component {
   // 使用方式2
   getFetch = () => {
     const { postxxx } = this.props;
-    postxxx(/*对象参数*/)
+    postxxx(/*对象参数*/, /* handler 二次加工函数，可不写 */)
     .then(([err, res]) => {
       if (!err) {
         //to do something
       }
     });
   }
-  // 使用方式3
-  getFetch = () => {
-    const { postxxx } = this.props;
-    postxxx(/*对象参数*/, (err, res) => {
-      if (!err) {
-        //to do something
-      }
-    })
-  }
-  // 使用方式4
-  getFetch = () => {
-    const { postxxx } = this.props;
-    // 无参数时可直接放置函数
-    postxxx((err, res) => {
-      if (!err) {
-        //to do something
-      }
-    })
-  }
+
   render() {
     return (
       <div onClick={this.getFetch}>
@@ -229,5 +227,3 @@ class Child extends Component {
 export default connectApi(Child);
 
 ```
-
-

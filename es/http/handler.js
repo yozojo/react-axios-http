@@ -77,4 +77,13 @@ function setOpt(_ref) {
   return getDOP(method, opt, isQuery, others);
 }
 
-export { handleMethod, extend, setOpt };
+function awaitWrap(promise) {
+  return promise.then(function (res) {
+    return [null, res];
+  })["catch"](function (err) {
+    return [err, null];
+  });
+}
+
+;
+export { handleMethod, extend, setOpt, awaitWrap };

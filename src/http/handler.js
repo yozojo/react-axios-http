@@ -56,4 +56,10 @@ function setOpt({ method, opt = {}, isFormData = false, isQuery = false, ...othe
   return getDOP(method, opt, isQuery, others);
 }
 
-export { handleMethod, extend, setOpt };
+
+function awaitWrap(promise) {
+  return promise.then(res => [null, res]).catch(err => [err, null]);
+};
+
+export { handleMethod, extend, setOpt, awaitWrap };
+

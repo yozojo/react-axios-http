@@ -8,13 +8,19 @@ var apiFactory = function apiFactory(api, _ref) {
   var prefix = _ref.prefix,
       host = _ref.host;
   var url = host + prefix + api.url;
-  return function (opt) {
+  return function (opt, handler) {
+    if (typeof opt === 'function') {
+      handler = opt;
+      opt = {};
+    }
+
+    ;
     opt = setOpt(_extends({}, api, {
       opt: opt
     }));
     return tdHttp(_extends({}, api, {}, opt, {
       url: url
-    }));
+    }), handler);
   };
 };
 
