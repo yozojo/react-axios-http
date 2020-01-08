@@ -134,7 +134,22 @@ export default (function (WrapperComponent, scope) {
       };
 
       _proto.renderWrapper = function renderWrapper(contextApis) {
-        var IO = contextApis || {};
+        if (contextApis === void 0) {
+          contextApis = {};
+        }
+
+        var IO = {};
+
+        for (var key in contextApis) {
+          IO[key] = contextApis[key];
+        }
+
+        ;
+
+        if (!Object.entries(IO).length) {
+          console.warn('请在根组件挂在ProviderApi，并且注入apis');
+        }
+
         var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
         var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref3) {
           var key = _ref3[0],
@@ -193,9 +208,9 @@ export default (function (WrapperComponent, scope) {
           }
         }, {});
 
-        for (var key in connectApis) {
-          if (this.props[key]) {
-            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+        for (var _key in connectApis) {
+          if (this.props[_key]) {
+            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + _key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
           }
         }
 

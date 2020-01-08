@@ -75,8 +75,15 @@ export default (WrapperComponent, scope = []) => {
       return this.Intance && this.Intance.current;
     }
 
-    renderWrapper(contextApis) {
-      const IO = contextApis || {};
+    renderWrapper(contextApis={}) {
+      const IO = {};
+      for (const key in contextApis) {
+        IO[key] = contextApis[key];
+      };
+
+      if (!Object.entries(IO).length) {
+        console.warn('请在根组件挂在ProviderApi，并且注入apis');
+      }
 
       const scopeIO = scopeArr.length
         ? getScope(scopeArr, IO, option.isScope)
