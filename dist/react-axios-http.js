@@ -21298,6 +21298,7 @@
         return cloneObj;
       };
 
+      if (!arr.length) return IO;
       return arr.reduce(function (pre, _ref) {
         var _extends2;
 
@@ -21308,7 +21309,7 @@
       }, {});
     } catch (error) {
       console.error("tdhttp ==> connect: error ===> " + error);
-      return {};
+      return IO;
     }
   };
 

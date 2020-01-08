@@ -29,13 +29,15 @@ const getScope = (arr, IO, isScope = false) => {
       return cloneObj;
     };
 
+    if (!arr.length) return IO;
+
     return arr.reduce((pre, [key, obj]) => {
       const values = isDeep ? IO[key] : getDeep(obj, IO);
       return isScope ? { ...pre, [key]: values } : { ...pre, ...values };
     }, {});
   } catch (error) {
     console.error("tdhttp ==> connect: error ===> " + error);
-    return {};
+    return IO;
   }
 };
 
