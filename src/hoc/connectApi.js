@@ -51,9 +51,9 @@ const getIsScope = (arr, IO, isScope = false) => {
 
 export default (WrapperComponent, scope = []) => {
   let option = {
-    // scope: [],
     scope: "",
-    isScope: false
+    // scope: [],
+    // isScope: false // 默认false
   };
   if (isType(scope, "object")) {
     option = Object.assign(option, scope);
@@ -87,7 +87,7 @@ export default (WrapperComponent, scope = []) => {
 
       const isScope = isType(Object.values(IO)[0], "object");
 
-      if (isScope && !option.isScope) {
+      if (isScope && !isType(option.isScope, "boolean")) {
         option.isScope = isScope;
       }
 
