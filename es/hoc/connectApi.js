@@ -2,7 +2,7 @@ import _inheritsLoose from "@babel/runtime/helpers/esm/inheritsLoose";
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import React, { PureComponent, createRef } from "react";
-import { awaitWrap, isType } from "./utils";
+import { awaitWrap, isType } from "../utils";
 import ReactContext from "./Context";
 var Global = global || window;
 
@@ -150,6 +150,8 @@ export default (function (WrapperComponent, scope) {
           console.warn('请在根组件挂在ProviderApi，并且注入apis');
         }
 
+        var isScope = isType(Object.values(IO)[0], "object");
+        isScope && (option.isScope = isScope);
         var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
         var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref3) {
           var key = _ref3[0],

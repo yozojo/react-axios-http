@@ -1,3 +1,14 @@
+
+const isStandardBrowserEnv = () => {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    return false;
+  }
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined'
+  );
+}
+
 function isPost(method) {
   return !!method && /post/.test(method.toLowerCase());
 }
@@ -56,10 +67,19 @@ function setOpt({ method, opt = {}, isFormData = false, isQuery = false, ...othe
   return getDOP(method, opt, isQuery, others);
 }
 
-
 function awaitWrap(promise) {
   return promise.then(res => [null, res]).catch(err => [err, null]);
 };
 
-export { handleMethod, extend, setOpt, awaitWrap };
+const getType = data => {
+  return Object.prototype.toString
+    .call(data)
+    .slice(8, -1)
+    .toLowerCase();
+};
 
+const isType = (data, type) => {
+  return type === getType(data);
+};
+
+export { handleMethod, extend, setOpt, awaitWrap, isType, getType, isStandardBrowserEnv};

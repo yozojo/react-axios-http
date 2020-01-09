@@ -1,7 +1,7 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import tdHttp from './core';
 import Interceptor from './interceptor';
-import { handleMethod, extend, awaitWrap } from './handler';
+import { handleMethod, extend, awaitWrap } from '../utils';
 
 function xhr(method, handler) {
   return function http(params) {
@@ -67,10 +67,10 @@ function Http() {
   };
 }
 
-Http.prototype._request = function (params) {
+Http.prototype._request = function (params, handler) {
   try {
     var method = handleMethod(params);
-    var chain = [xhr(method), undefined];
+    var chain = [xhr(method, handler), undefined];
     var promise = Promise.resolve(params);
     this.interceptors.request.forEach(function (interceptor) {
       chain.unshift(interceptor.fulfilled, interceptor.rejected);

@@ -2,9 +2,9 @@ import _extends from "@babel/runtime/helpers/esm/extends";
 
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
-import { setOpt, extend } from './handler';
+import { setOpt, extend, isType } from '../utils';
 
-var apiFactory = function apiFactory(api, _ref) {
+var setApi = function setApi(api, _ref) {
   var prefix = _ref.prefix,
       host = _ref.host;
   var url = host + prefix + api.url;
@@ -22,6 +22,19 @@ var apiFactory = function apiFactory(api, _ref) {
       url: url
     }), handler);
   };
+};
+
+var apiFactory = function apiFactory(api, opt) {
+  if (isType(api, 'object') && !api.url) {
+    Object.entries(api).forEach(function (_ref2) {
+      var key = _ref2[0],
+          obj = _ref2[1];
+      api[key] = setApi(obj, opt);
+    });
+    return api;
+  }
+
+  return setApi(api, opt);
 };
 
 var defineProperty = function defineProperty(target, props) {

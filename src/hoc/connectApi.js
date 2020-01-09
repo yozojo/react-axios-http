@@ -1,5 +1,5 @@
 import React, { PureComponent, createRef } from "react";
-import { awaitWrap, isType } from "./utils";
+import { awaitWrap, isType } from "../utils";
 import ReactContext from "./Context";
 
 const Global = global || window;
@@ -84,6 +84,10 @@ export default (WrapperComponent, scope = []) => {
       if (!Object.entries(IO).length) {
         console.warn('请在根组件挂在ProviderApi，并且注入apis');
       }
+
+      const isScope = isType(Object.values(IO)[0], "object");
+
+      isScope && (option.isScope = isScope);
 
       const scopeIO = scopeArr.length
         ? getScope(scopeArr, IO, option.isScope)

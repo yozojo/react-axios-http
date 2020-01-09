@@ -435,6 +435,39 @@
 
   var defineProperty$1 = defineProperty;
 
+  var isEnum = _objectPie.f;
+  var _objectToArray = function (isEntries) {
+    return function (it) {
+      var O = _toIobject(it);
+      var keys = _objectKeys(O);
+      var length = keys.length;
+      var i = 0;
+      var result = [];
+      var key;
+      while (length > i) {
+        key = keys[i++];
+        if (!_descriptors || isEnum.call(O, key)) {
+          result.push(isEntries ? [key, O[key]] : O[key]);
+        }
+      }
+      return result;
+    };
+  };
+
+  // https://github.com/tc39/proposal-object-values-entries
+
+  var $entries = _objectToArray(true);
+
+  _export(_export.S, 'Object', {
+    entries: function entries(it) {
+      return $entries(it);
+    }
+  });
+
+  var entries = _core.Object.entries;
+
+  var entries$1 = entries;
+
   function _extends() {
     _extends = assign$1 || function (target) {
       for (var i = 1; i < arguments.length; i++) {
@@ -20995,6 +21028,14 @@
     });
   }
 
+  var getType = function getType(data) {
+    return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
+  };
+
+  var isType = function isType(data, type) {
+    return type === getType(data);
+  };
+
   function xhr$2(method, handler) {
     return function http(params) {
       var promise, _ref, err, res, result;
@@ -21059,10 +21100,10 @@
     };
   }
 
-  Http.prototype._request = function (params) {
+  Http.prototype._request = function (params, handler) {
     try {
       var method = handleMethod(params);
-      var chain = [xhr$2(method), undefined];
+      var chain = [xhr$2(method, handler), undefined];
 
       var promise = promise$1.resolve(params);
 
@@ -21095,7 +21136,7 @@
 
   var tdHttp$1 = createInstance$1();
 
-  var apiFactory = function apiFactory(api, _ref) {
+  var setApi = function setApi(api, _ref) {
     var prefix = _ref.prefix,
         host = _ref.host;
     var url = host + prefix + api.url;
@@ -21111,6 +21152,20 @@
         url: url
       }), handler);
     };
+  };
+
+  var apiFactory = function apiFactory(api, opt) {
+    if (isType(api, 'object') && !api.url) {
+      entries$1(api).forEach(function (_ref2) {
+        var key = _ref2[0],
+            obj = _ref2[1];
+        api[key] = setApi(obj, opt);
+      });
+
+      return api;
+    }
+
+    return setApi(api, opt);
   };
 
   var defineProperty$2 = function defineProperty(target, props) {
@@ -21157,39 +21212,6 @@
     return IO;
   };
 
-  var isEnum = _objectPie.f;
-  var _objectToArray = function (isEntries) {
-    return function (it) {
-      var O = _toIobject(it);
-      var keys = _objectKeys(O);
-      var length = keys.length;
-      var i = 0;
-      var result = [];
-      var key;
-      while (length > i) {
-        key = keys[i++];
-        if (!_descriptors || isEnum.call(O, key)) {
-          result.push(isEntries ? [key, O[key]] : O[key]);
-        }
-      }
-      return result;
-    };
-  };
-
-  // https://github.com/tc39/proposal-object-values-entries
-
-  var $entries = _objectToArray(true);
-
-  _export(_export.S, 'Object', {
-    entries: function entries(it) {
-      return $entries(it);
-    }
-  });
-
-  var entries = _core.Object.entries;
-
-  var entries$1 = entries;
-
   // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
   _export(_export.S, 'Object', { create: _objectCreate });
 
@@ -21220,20 +21242,6 @@
 
   var values$1 = values;
 
-  var awaitWrap$1 = function awaitWrap(promise) {
-    return promise.then(function (res) {
-      return [null, res];
-    })["catch"](function (err) {
-      return [err, null];
-    });
-  };
-  var getType = function getType(data) {
-    return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
-  };
-  var isType = function isType(data, type) {
-    return type === getType(data);
-  };
-
   var ReactContext = React__default.createContext(null);
 
   var Global$1 = global || window;
@@ -21258,7 +21266,7 @@
 
           case 7:
             _context.next = 9;
-            return regenerator.awrap(awaitWrap$1(func(params, handler)));
+            return regenerator.awrap(awaitWrap(func(params, handler)));
 
           case 9:
             return _context.abrupt("return", _context.sent);
@@ -21381,6 +21389,8 @@
             console.warn('请在根组件挂在ProviderApi，并且注入apis');
           }
 
+          var isScope = isType(values$1(IO)[0], "object");
+          isScope && (option.isScope = isScope);
           var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
 
           var connectApis = entries$1(scopeIO).reduce(function (pre, _ref3) {

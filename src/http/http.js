@@ -1,6 +1,6 @@
 import tdHttp from './core';
-import Interceptor from './interceptor'
-import { handleMethod, extend, awaitWrap } from './handler'
+import Interceptor from './interceptor';
+import { handleMethod, extend, awaitWrap } from '../utils';
 
 function xhr(method, handler) {
   return async function http(params) {
@@ -30,10 +30,10 @@ function Http() {
   };
 }
 
-Http.prototype._request = function(params) {
+Http.prototype._request = function(params, handler) {
   try {
     const method = handleMethod(params);
-    let chain = [xhr(method), undefined];
+    let chain = [xhr(method, handler), undefined];
     let promise = Promise.resolve(params);
 
     this.interceptors.request.forEach(function(interceptor) {
@@ -49,7 +49,6 @@ Http.prototype._request = function(params) {
     }
 
     return promise;
-
   } catch (error) {
     return Promise.reject(error);
   }

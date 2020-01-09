@@ -1,9 +1,10 @@
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
-import { setOpt, extend } from './handler';
+import { setOpt, extend, isType } from '../utils';
 
-const apiFactory = (api, { prefix, host }) => {
+const setApi = (api, { prefix, host }) => {
   const url = host + prefix + api.url;
+
   return (opt, handler) => {
     if (typeof opt === 'function') {
       handler = opt;
@@ -16,6 +17,18 @@ const apiFactory = (api, { prefix, host }) => {
       url,
     }, handler);
   };
+}
+
+const apiFactory = (api, opt) => {
+
+  if (isType(api, 'object') && !api.url) {
+    Object.entries(api).forEach(([key, obj]) => {
+      api[key] = setApi(obj, opt);
+    });
+    return api;
+  }
+
+  return setApi(api, opt);
 };
 
 const defineProperty = (target, props = []) => {
