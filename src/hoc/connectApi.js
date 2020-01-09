@@ -87,7 +87,9 @@ export default (WrapperComponent, scope = []) => {
 
       const isScope = isType(Object.values(IO)[0], "object");
 
-      isScope && (option.isScope = isScope);
+      if (isScope && !option.isScope) {
+        option.isScope = isScope;
+      }
 
       const scopeIO = scopeArr.length
         ? getScope(scopeArr, IO, option.isScope)

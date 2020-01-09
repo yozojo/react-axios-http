@@ -151,7 +151,11 @@ export default (function (WrapperComponent, scope) {
         }
 
         var isScope = isType(Object.values(IO)[0], "object");
-        isScope && (option.isScope = isScope);
+
+        if (isScope && !option.isScope) {
+          option.isScope = isScope;
+        }
+
         var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
         var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref3) {
           var key = _ref3[0],

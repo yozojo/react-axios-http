@@ -21390,7 +21390,11 @@
           }
 
           var isScope = isType(values$1(IO)[0], "object");
-          isScope && (option.isScope = isScope);
+
+          if (isScope && !option.isScope) {
+            option.isScope = isScope;
+          }
+
           var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
 
           var connectApis = entries$1(scopeIO).reduce(function (pre, _ref3) {
