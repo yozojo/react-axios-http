@@ -17,7 +17,7 @@ const apis = {
   get: {
     // get 默认
     url: `/projectManage/show`,
-  }
+  },
   post: {
     // post
     url: `/projectManage/show`,
@@ -139,6 +139,8 @@ IO.getxxx().then(res => {
  *   key: value,
  * }, handler)
 
+
+#### 具体使用请参考 [example目录](./example/);
 
 #### 高级使用方式
 ###### 模仿react-redux方式
