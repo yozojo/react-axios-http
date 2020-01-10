@@ -3,6 +3,7 @@ import _extends from "@babel/runtime/helpers/esm/extends";
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
 import { setOpt, extend, isType } from '../utils';
+import _ from 'lodash';
 
 var setApi = function setApi(api, _ref) {
   var prefix = _ref.prefix,
@@ -26,11 +27,12 @@ var setApi = function setApi(api, _ref) {
 
 var apiFactory = function apiFactory(api, opt) {
   if (isType(api, 'object') && !api.url) {
-    Object.entries(api).forEach(function (_ref2) {
+    _.forEach(_.entries(api), function (_ref2) {
       var key = _ref2[0],
           obj = _ref2[1];
       api[key] = setApi(obj, opt);
     });
+
     return api;
   }
 
@@ -42,7 +44,7 @@ var defineProperty = function defineProperty(target, props) {
     props = [];
   }
 
-  props.forEach(function (prop) {
+  _.forEach(props, function (prop) {
     Object.defineProperty(target, prop, {
       writable: true,
       enumerable: false,
@@ -69,12 +71,14 @@ var http = function http(apis, opt) {
     opt = {};
   }
 
-  opt = Object.assign(defaultOpt, opt);
+  opt = _.assign(defaultOpt, opt);
   Global._TDHTTP_RESULT_MODE = opt.resultMode;
   extend(IO, tdHttp);
-  Object.keys(apis).forEach(function (item) {
+
+  _.forEach(_.keys(apis), function (item) {
     IO[item] = apiFactory(apis[item], opt);
   });
+
   defineProperty(IO, ['interceptors', '_request']);
   return IO;
 };

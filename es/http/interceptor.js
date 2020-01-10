@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 function Interceptor() {
   this.handlers = [];
 }
@@ -11,7 +13,7 @@ Interceptor.prototype.use = function use(fulfilled, rejected) {
 };
 
 Interceptor.prototype.forEach = function forEach(fn) {
-  this.handlers.forEach(function (h) {
+  _.forEach(this.handlers, function (h) {
     if (h !== null) {
       fn(h);
     }

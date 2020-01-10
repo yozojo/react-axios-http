@@ -1,9 +1,10 @@
 import _inheritsLoose from "@babel/runtime/helpers/esm/inheritsLoose";
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _regeneratorRuntime from "@babel/runtime/regenerator";
-import React, { PureComponent, createRef } from "react";
-import { awaitWrap, isType } from "../utils";
-import ReactContext from "./Context";
+import React, { PureComponent, createRef } from 'react';
+import _ from 'lodash';
+import { awaitWrap, isType } from '../utils';
+import ReactContext from './Context';
 var Global = global || window;
 
 var getResult = function getResult(func, params, handler) {
@@ -14,7 +15,7 @@ var getResult = function getResult(func, params, handler) {
         case 0:
           resultMode = Global._TDHTTP_RESULT_MODE;
           _context.t0 = resultMode;
-          _context.next = _context.t0 === "native" ? 4 : _context.t0 === "array" ? 7 : 10;
+          _context.next = _context.t0 === 'native' ? 4 : _context.t0 === 'array' ? 7 : 10;
           break;
 
         case 4:
@@ -39,9 +40,6 @@ var getResult = function getResult(func, params, handler) {
           return _context.abrupt("return", _context.sent);
 
         case 13:
-          ;
-
-        case 14:
         case "end":
           return _context.stop();
       }
@@ -55,18 +53,20 @@ var getScope = function getScope(arr, IO, isScope) {
   }
 
   try {
-    var isDeep = isType(Object.values(IO)[0], "object");
+    var isDeep = isType(_.values(IO)[0], 'object');
 
     var getDeep = function getDeep(obj, IO) {
       var cloneObj = {};
-      Object.keys(obj).forEach(function (key) {
+
+      _.forEach(obj, function (value, key) {
         cloneObj[key] = IO[key];
       });
+
       return cloneObj;
     };
 
-    if (!arr.length) return IO;
-    return arr.reduce(function (pre, _ref) {
+    if (!_.isEmpty(arr)) return IO;
+    return _.reduce(arr, function (pre, _ref) {
       var _extends2;
 
       var key = _ref[0],
@@ -75,7 +75,7 @@ var getScope = function getScope(arr, IO, isScope) {
       return isScope ? _extends({}, pre, (_extends2 = {}, _extends2[key] = values, _extends2)) : _extends({}, pre, {}, values);
     }, {});
   } catch (error) {
-    console.error("tdhttp ==> connect: error ===> " + error);
+    console.error('tdhttp ==> connect: error ===> ' + error);
     return IO;
   }
 };
@@ -98,22 +98,24 @@ export default (function (WrapperComponent, scope) {
   }
 
   var option = {
-    // scope: [],
-    scope: "",
-    isScope: false
+    scope: '' // scope: [],
+    // isScope: false // 默认false
+
   };
 
-  if (isType(scope, "object")) {
-    option = Object.assign(option, scope);
+  if (isType(scope, 'object')) {
+    option = _.assign(option, scope);
     scope = option.scope;
   }
 
-  scope = isType(scope, "string") ? [scope] : scope;
+  scope = isType(scope, 'string') ? [scope] : scope;
   var apis = Global._TDHTTP_APIS || [];
-  var scopeArr = apis.filter(function (_ref2) {
+
+  var scopeArr = _.filter(apis, function (_ref2) {
     var key = _ref2[0];
-    return scope.includes(key);
+    return _.includes(scope, key);
   });
+
   return (
     /*#__PURE__*/
     function (_PureComponent) {
@@ -138,30 +140,22 @@ export default (function (WrapperComponent, scope) {
           contextApis = {};
         }
 
-        var IO = {};
+        var IO = _.cloneDeep(contextApis);
 
-        for (var key in contextApis) {
-          IO[key] = contextApis[key];
+        if (!_.isEmpty(IO)) {
+          console.warn('请在根组件挂载ProviderApi，并且注入apis');
         }
 
-        ;
+        var isScope = isType(_.values(IO)[0], 'object');
 
-        if (!Object.entries(IO).length) {
-          console.warn('请在根组件挂在ProviderApi，并且注入apis');
-        }
-
-        var isScope = isType(Object.values(IO)[0], "object");
-
-        if (isScope && !option.isScope) {
+        if (isScope && !isType(option.isScope, 'boolean')) {
           option.isScope = isScope;
         }
 
         var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
-        var connectApis = Object.entries(scopeIO).reduce(function (pre, _ref3) {
-          var key = _ref3[0],
-              func = _ref3[1];
 
-          if (isType(func, "object")) {
+        var connectApis = _.reduce(scopeIO, function (pre, func, key) {
+          if (isType(func, 'object')) {
             var funcObj = {};
 
             var _loop = function _loop(fkey) {
@@ -214,9 +208,9 @@ export default (function (WrapperComponent, scope) {
           }
         }, {});
 
-        for (var _key in connectApis) {
-          if (this.props[_key]) {
-            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + _key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+        for (var key in connectApis) {
+          if (this.props[key]) {
+            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
           }
         }
 

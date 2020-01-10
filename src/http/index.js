@@ -1,6 +1,7 @@
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
 import { setOpt, extend, isType } from '../utils';
+import _ from 'lodash';
 
 const setApi = (api, { prefix, host }) => {
   const url = host + prefix + api.url;
@@ -22,7 +23,7 @@ const setApi = (api, { prefix, host }) => {
 const apiFactory = (api, opt) => {
 
   if (isType(api, 'object') && !api.url) {
-    Object.entries(api).forEach(([key, obj]) => {
+    _.forEach(_.entries(api), ([key, obj]) => {
       api[key] = setApi(obj, opt);
     });
     return api;
@@ -32,7 +33,7 @@ const apiFactory = (api, opt) => {
 };
 
 const defineProperty = (target, props = []) => {
-  props.forEach(prop => {
+  _.forEach(props, prop => {
     Object.defineProperty(target, prop, {
       writable: true,
       enumerable: false,
@@ -54,11 +55,11 @@ const defaultOpt = {
 const IO = {};
 
 const http = (apis = {}, opt = {}) => {
-  opt = Object.assign(defaultOpt, opt);
+  opt = _.assign(defaultOpt, opt);
   Global._TDHTTP_RESULT_MODE = opt.resultMode;
 
   extend(IO, tdHttp);
-  Object.keys(apis).forEach(item => {
+  _.forEach(_.keys(apis), item => {
     IO[item] = apiFactory(apis[item], opt);
   });
 

@@ -1,4 +1,5 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
+import _ from 'lodash';
 var Global = global || window;
 export default function combineApi(apis, isScope) {
   if (apis === void 0) {
@@ -9,8 +10,9 @@ export default function combineApi(apis, isScope) {
     isScope = true;
   }
 
-  var apiArr = Global._TDHTTP_APIS = Object.entries(apis);
-  return apiArr.reduce(function (pre, _ref) {
+  var apiArr = Global._TDHTTP_APIS = _.entries(apis);
+
+  return _.reduce(apiArr, function (pre, _ref) {
     var key = _ref[0],
         value = _ref[1];
     return isScope ? (pre[key] = value) && pre : _extends({}, pre, {}, value);

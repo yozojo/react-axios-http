@@ -1,6 +1,7 @@
-import React, { PureComponent, createRef } from "react";
-import { awaitWrap, isType } from "../utils";
-import ReactContext from "./Context";
+import React, { PureComponent, createRef } from 'react';
+import _ from 'lodash';
+import { awaitWrap, isType } from '../utils';
+import ReactContext from './Context';
 
 const Global = global || window;
 
@@ -8,35 +9,39 @@ const getResult = async (func, params, handler) => {
   const resultMode = Global._TDHTTP_RESULT_MODE;
 
   switch (resultMode) {
-    case "native":
+    case 'native':
       return await func(params, handler);
-    case "array":
+    case 'array':
       return await awaitWrap(func(params, handler));
     default:
       return await func(params, handler);
-  };
+  }
 };
 
 const getScope = (arr, IO, isScope = false) => {
   try {
-    const isDeep = isType(Object.values(IO)[0], "object");
+    const isDeep = isType(_.values(IO)[0], 'object');
 
     const getDeep = (obj, IO) => {
       const cloneObj = {};
-      Object.keys(obj).forEach(key => {
+      _.forEach(obj, (value, key) => {
         cloneObj[key] = IO[key];
       });
       return cloneObj;
     };
 
-    if (!arr.length) return IO;
+    if (!_.isEmpty(arr)) return IO;
 
-    return arr.reduce((pre, [key, obj]) => {
-      const values = isDeep ? IO[key] : getDeep(obj, IO);
-      return isScope ? { ...pre, [key]: values } : { ...pre, ...values };
-    }, {});
+    return _.reduce(
+      arr,
+      (pre, [key, obj]) => {
+        const values = isDeep ? IO[key] : getDeep(obj, IO);
+        return isScope ? { ...pre, [key]: values } : { ...pre, ...values };
+      },
+      {},
+    );
   } catch (error) {
-    console.error("tdhttp ==> connect: error ===> " + error);
+    console.error('tdhttp ==> connect: error ===> ' + error);
     return IO;
   }
 };
@@ -51,19 +56,19 @@ const getIsScope = (arr, IO, isScope = false) => {
 
 export default (WrapperComponent, scope = []) => {
   let option = {
-    scope: "",
+    scope: '',
     // scope: [],
     // isScope: false // 默认false
   };
-  if (isType(scope, "object")) {
-    option = Object.assign(option, scope);
+  if (isType(scope, 'object')) {
+    option = _.assign(option, scope);
     scope = option.scope;
   }
 
-  scope = isType(scope, "string") ? [scope] : scope;
+  scope = isType(scope, 'string') ? [scope] : scope;
 
   const apis = Global._TDHTTP_APIS || [];
-  const scopeArr = apis.filter(([key]) => scope.includes(key));
+  const scopeArr = _.filter(apis, ([key]) => _.includes(scope, key));
 
   return class ConnectApi extends PureComponent {
     constructor(props) {
@@ -75,19 +80,16 @@ export default (WrapperComponent, scope = []) => {
       return this.Intance && this.Intance.current;
     }
 
-    renderWrapper(contextApis={}) {
-      const IO = {};
-      for (const key in contextApis) {
-        IO[key] = contextApis[key];
-      };
+    renderWrapper(contextApis = {}) {
+      const IO = _.cloneDeep(contextApis);
 
-      if (!Object.entries(IO).length) {
-        console.warn('请在根组件挂在ProviderApi，并且注入apis');
+      if (!_.isEmpty(IO)) {
+        console.warn('请在根组件挂载ProviderApi，并且注入apis');
       }
 
-      const isScope = isType(Object.values(IO)[0], "object");
+      const isScope = isType(_.values(IO)[0], 'object');
 
-      if (isScope && !isType(option.isScope, "boolean")) {
+      if (isScope && !isType(option.isScope, 'boolean')) {
         option.isScope = isScope;
       }
 
@@ -95,24 +97,24 @@ export default (WrapperComponent, scope = []) => {
         ? getScope(scopeArr, IO, option.isScope)
         : getIsScope(apis, IO, option.isScope);
 
-      const connectApis = Object.entries(scopeIO).reduce((pre, [key, func]) => {
-        if (isType(func, "object")) {
-          const funcObj = {};
-          for (const fkey in func) {
-            if (func.hasOwnProperty(fkey)) {
-              funcObj[fkey] = async (params, cb) =>
-                await getResult(func[fkey], params, cb);
+      const connectApis = _.reduce(
+        scopeIO,
+        (pre, func, key) => {
+          if (isType(func, 'object')) {
+            const funcObj = {};
+            for (const fkey in func) {
+              if (func.hasOwnProperty(fkey)) {
+                funcObj[fkey] = async (params, cb) => await getResult(func[fkey], params, cb);
+              }
             }
-          }
 
-          return (pre[key] = funcObj) && pre;
-        } else {
-          return (
-            (pre[key] = async (params, cb) =>
-              await getResult(func, params, cb)) && pre
-          );
-        }
-      }, {});
+            return (pre[key] = funcObj) && pre;
+          } else {
+            return (pre[key] = async (params, cb) => await getResult(func, params, cb)) && pre;
+          }
+        },
+        {},
+      );
 
       for (const key in connectApis) {
         if (this.props[key]) {
@@ -122,21 +124,13 @@ export default (WrapperComponent, scope = []) => {
         }
       }
 
-      return (
-        <WrapperComponent
-          ref={this.Intance}
-          {...this.props}
-          {...connectApis}
-        />
-      );
+      return <WrapperComponent ref={this.Intance} {...this.props} {...connectApis} />;
     }
 
     render() {
       const { Consumer } = ReactContext;
 
-      return (
-        <Consumer>{contextApis => this.renderWrapper(contextApis)}</Consumer>
-      );
+      return <Consumer>{contextApis => this.renderWrapper(contextApis)}</Consumer>;
     }
   };
 };
