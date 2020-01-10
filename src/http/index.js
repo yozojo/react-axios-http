@@ -59,8 +59,8 @@ const http = (apis = {}, opt = {}) => {
   Global._TDHTTP_RESULT_MODE = opt.resultMode;
 
   extend(IO, tdHttp);
-  _.forEach(_.keys(apis), item => {
-    IO[item] = apiFactory(apis[item], opt);
+  _.forEach(apis, (value, key) => {
+    IO[key] = apiFactory(value, opt);
   });
 
   defineProperty(IO, ['interceptors', '_request']);

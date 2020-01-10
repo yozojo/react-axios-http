@@ -38265,8 +38265,8 @@
 	  Global._TDHTTP_RESULT_MODE = opt.resultMode;
 	  extend$1(IO, tdHttp$1);
 
-	  lodash.forEach(lodash.keys(apis), function (item) {
-	    IO[item] = apiFactory(apis[item], opt);
+	  lodash.forEach(apis, function (value, key) {
+	    IO[key] = apiFactory(value, opt);
 	  });
 
 	  defineProperty$2(IO, ['interceptors', '_request']);
@@ -38351,7 +38351,7 @@
 	      return cloneObj;
 	    };
 
-	    if (!lodash.isEmpty(arr)) return IO;
+	    if (lodash.isEmpty(arr)) return IO;
 	    return lodash.reduce(arr, function (pre, _ref) {
 	      var _extends2;
 
@@ -38428,7 +38428,7 @@
 
 	        var IO = lodash.cloneDeep(contextApis);
 
-	        if (!lodash.isEmpty(IO)) {
+	        if (lodash.isEmpty(IO)) {
 	          console.warn('请在根组件挂载ProviderApi，并且注入apis');
 	        }
 

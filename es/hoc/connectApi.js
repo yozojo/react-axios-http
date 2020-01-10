@@ -65,7 +65,7 @@ var getScope = function getScope(arr, IO, isScope) {
       return cloneObj;
     };
 
-    if (!_.isEmpty(arr)) return IO;
+    if (_.isEmpty(arr)) return IO;
     return _.reduce(arr, function (pre, _ref) {
       var _extends2;
 
@@ -142,7 +142,7 @@ export default (function (WrapperComponent, scope) {
 
         var IO = _.cloneDeep(contextApis);
 
-        if (!_.isEmpty(IO)) {
+        if (_.isEmpty(IO)) {
           console.warn('请在根组件挂载ProviderApi，并且注入apis');
         }
 

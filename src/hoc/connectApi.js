@@ -30,7 +30,7 @@ const getScope = (arr, IO, isScope = false) => {
       return cloneObj;
     };
 
-    if (!_.isEmpty(arr)) return IO;
+    if (_.isEmpty(arr)) return IO;
 
     return _.reduce(
       arr,
@@ -83,7 +83,7 @@ export default (WrapperComponent, scope = []) => {
     renderWrapper(contextApis = {}) {
       const IO = _.cloneDeep(contextApis);
 
-      if (!_.isEmpty(IO)) {
+      if (_.isEmpty(IO)) {
         console.warn('请在根组件挂载ProviderApi，并且注入apis');
       }
 
