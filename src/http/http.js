@@ -1,18 +1,17 @@
 import tdHttp from './core';
 import Interceptor from './interceptor';
-import { handleMethod, extend, awaitWrap } from '../utils';
+import { handleMethod, extend, awaitWrap, isType } from '../utils';
 
 function xhr(method, handler) {
   return async function http(params) {
     const promise = tdHttp[method](params);
-    if (typeof handler === 'function') {
+    if (isType(handler, 'function')) {
       try {
         const [err, res] = await awaitWrap(promise);
         const result = handler(res, err);
         if ( result instanceof Promise) {
           return result;
         } else {
-          console.warn('建议加工函数返回的是个Promise对象');
           return Promise.resolve(result);
         }
       } catch (error) {

@@ -10,7 +10,7 @@ var setApi = function setApi(api, _ref) {
       host = _ref.host;
   var url = host + prefix + api.url;
   return function (opt, handler) {
-    if (typeof opt === 'function') {
+    if (isType(handler, 'function')) {
       handler = opt;
       opt = {};
     }

@@ -1,14 +1,6 @@
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
 import _extends from "@babel/runtime/helpers/esm/extends";
 
-var isStandardBrowserEnv = function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
-    return false;
-  }
-
-  return typeof window !== 'undefined' && typeof document !== 'undefined';
-};
-
 function isPost(method) {
   return !!method && /post/.test(method.toLowerCase());
 }
@@ -27,32 +19,6 @@ function getDOP(method, opt, isQuery, others) {
   return isPost(method) ? _extends({
     data: opt
   }, others) : _extends((_extends2 = {}, _extends2[isPut(method) && isQuery ? 'data' : 'params'] = opt, _extends2), others);
-}
-
-function handleMethod(params) {
-  var method = params.method;
-  var methodMap = {
-    post: 'Post',
-    get: 'Get',
-    put: 'Put',
-    getjsonp: 'GetJsonp',
-    "delete": 'Delete'
-  };
-  return method ? methodMap[method.toLowerCase()] : 'Get';
-}
-
-function extend(a, b, thisArg) {
-  for (var key in b) {
-    if (b.hasOwnProperty(key)) {
-      if (thisArg && typeof b[key] === 'function') {
-        a[key] = b[key].bind(thisArg);
-      } else {
-        a[key] = b[key];
-      }
-    }
-  }
-
-  return a;
 }
 
 function isFormDataFunc(val) {
@@ -85,6 +51,32 @@ function setOpt(_ref) {
   return getDOP(method, opt, isQuery, others);
 }
 
+function handleMethod(params) {
+  var method = params.method;
+  var methodMap = {
+    post: 'Post',
+    get: 'Get',
+    put: 'Put',
+    getjsonp: 'GetJsonp',
+    "delete": 'Delete'
+  };
+  return method ? methodMap[method.toLowerCase()] : 'Get';
+}
+
+function extend(a, b, thisArg) {
+  for (var key in b) {
+    if (b.hasOwnProperty(key)) {
+      if (thisArg && typeof b[key] === 'function') {
+        a[key] = b[key].bind(thisArg);
+      } else {
+        a[key] = b[key];
+      }
+    }
+  }
+
+  return a;
+}
+
 function awaitWrap(promise) {
   return promise.then(function (res) {
     return [null, res];
@@ -93,14 +85,20 @@ function awaitWrap(promise) {
   });
 }
 
-;
+function isStandardBrowserEnv() {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    return false;
+  }
 
-var getType = function getType(data) {
+  return typeof window !== 'undefined' && typeof document !== 'undefined';
+}
+
+function getType(data) {
   return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
-};
+}
 
-var isType = function isType(data, type) {
+function isType(data, type) {
   return type === getType(data);
-};
+}
 
 export { handleMethod, extend, setOpt, awaitWrap, isType, getType, isStandardBrowserEnv };

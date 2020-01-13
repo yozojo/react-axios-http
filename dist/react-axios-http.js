@@ -38024,32 +38024,6 @@
 	  }, others) : _extends((_extends2 = {}, _extends2[isPut(method) && isQuery ? 'data' : 'params'] = opt, _extends2), others);
 	}
 
-	function handleMethod(params) {
-	  var method = params.method;
-	  var methodMap = {
-	    post: 'Post',
-	    get: 'Get',
-	    put: 'Put',
-	    getjsonp: 'GetJsonp',
-	    "delete": 'Delete'
-	  };
-	  return method ? methodMap[method.toLowerCase()] : 'Get';
-	}
-
-	function extend$1(a, b, thisArg) {
-	  for (var key in b) {
-	    if (b.hasOwnProperty(key)) {
-	      if (thisArg && typeof b[key] === 'function') {
-	        a[key] = b[key].bind(thisArg);
-	      } else {
-	        a[key] = b[key];
-	      }
-	    }
-	  }
-
-	  return a;
-	}
-
 	function isFormDataFunc(val) {
 	  return typeof FormData !== 'undefined' && val instanceof FormData;
 	}
@@ -38080,6 +38054,32 @@
 	  return getDOP(method, opt, isQuery, others);
 	}
 
+	function handleMethod(params) {
+	  var method = params.method;
+	  var methodMap = {
+	    post: 'Post',
+	    get: 'Get',
+	    put: 'Put',
+	    getjsonp: 'GetJsonp',
+	    "delete": 'Delete'
+	  };
+	  return method ? methodMap[method.toLowerCase()] : 'Get';
+	}
+
+	function extend$1(a, b, thisArg) {
+	  for (var key in b) {
+	    if (b.hasOwnProperty(key)) {
+	      if (thisArg && typeof b[key] === 'function') {
+	        a[key] = b[key].bind(thisArg);
+	      } else {
+	        a[key] = b[key];
+	      }
+	    }
+	  }
+
+	  return a;
+	}
+
 	function awaitWrap(promise) {
 	  return promise.then(function (res) {
 	    return [null, res];
@@ -38088,13 +38088,13 @@
 	  });
 	}
 
-	var getType = function getType(data) {
+	function getType(data) {
 	  return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
-	};
+	}
 
-	var isType = function isType(data, type) {
+	function isType(data, type) {
 	  return type === getType(data);
-	};
+	}
 
 	function xhr$2(method, handler) {
 	  return function http(params) {
@@ -38106,8 +38106,8 @@
 	          case 0:
 	            promise = tdHttp[method](params);
 
-	            if (!(typeof handler === 'function')) {
-	              _context.next = 20;
+	            if (!isType(handler, 'function')) {
+	              _context.next = 19;
 	              break;
 	            }
 
@@ -38129,27 +38129,26 @@
 	            return _context.abrupt("return", result);
 
 	          case 13:
-	            console.warn('建议加工函数返回的是个Promise对象');
 	            return _context.abrupt("return", promise$1.resolve(result));
 
-	          case 15:
-	            _context.next = 20;
+	          case 14:
+	            _context.next = 19;
 	            break;
 
-	          case 17:
-	            _context.prev = 17;
+	          case 16:
+	            _context.prev = 16;
 	            _context.t0 = _context["catch"](2);
 	            console.error(_context.t0);
 
-	          case 20:
+	          case 19:
 	            return _context.abrupt("return", promise);
 
-	          case 21:
+	          case 20:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, null, null, [[2, 17]]);
+	    }, null, null, [[2, 16]]);
 	  };
 	}
 
@@ -38201,7 +38200,7 @@
 	      host = _ref.host;
 	  var url = host + prefix + api.url;
 	  return function (opt, handler) {
-	    if (typeof opt === 'function') {
+	    if (isType(handler, 'function')) {
 	      handler = opt;
 	      opt = {};
 	    }

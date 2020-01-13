@@ -1,7 +1,7 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import tdHttp from './core';
 import Interceptor from './interceptor';
-import { handleMethod, extend, awaitWrap } from '../utils';
+import { handleMethod, extend, awaitWrap, isType } from '../utils';
 
 function xhr(method, handler) {
   return function http(params) {
@@ -13,8 +13,8 @@ function xhr(method, handler) {
           case 0:
             promise = tdHttp[method](params);
 
-            if (!(typeof handler === 'function')) {
-              _context.next = 20;
+            if (!isType(handler, 'function')) {
+              _context.next = 19;
               break;
             }
 
@@ -36,27 +36,26 @@ function xhr(method, handler) {
             return _context.abrupt("return", result);
 
           case 13:
-            console.warn('建议加工函数返回的是个Promise对象');
             return _context.abrupt("return", Promise.resolve(result));
 
-          case 15:
-            _context.next = 20;
+          case 14:
+            _context.next = 19;
             break;
 
-          case 17:
-            _context.prev = 17;
+          case 16:
+            _context.prev = 16;
             _context.t0 = _context["catch"](2);
             console.error(_context.t0);
 
-          case 20:
+          case 19:
             return _context.abrupt("return", promise);
 
-          case 21:
+          case 20:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[2, 17]]);
+    }, null, null, [[2, 16]]);
   };
 }
 
