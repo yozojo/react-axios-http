@@ -38167,11 +38167,10 @@
 
 	    var promise = promise$1.resolve(params);
 
-	    lodash.forEach(this.interceptors.request, function (interceptor) {
+	    this.interceptors.request.forEach(function (interceptor) {
 	      chain.unshift(interceptor.fulfilled, interceptor.rejected);
 	    });
-
-	    lodash.forEach(this.interceptors.response, function (interceptor) {
+	    this.interceptors.response.forEach(function (interceptor) {
 	      chain.push(interceptor.fulfilled, interceptor.rejected);
 	    });
 
@@ -38206,6 +38205,7 @@
 	      handler = opt;
 	      opt = {};
 	    }
+
 	    opt = setOpt(_extends({}, api, {
 	      opt: opt
 	    }));
@@ -38217,9 +38217,7 @@
 
 	var apiFactory = function apiFactory(api, opt) {
 	  if (isType(api, 'object') && !api.url) {
-	    lodash.forEach(lodash.entries(api), function (_ref2) {
-	      var key = _ref2[0],
-	          obj = _ref2[1];
+	    lodash.forEach(api, function (obj, key) {
 	      api[key] = setApi(obj, opt);
 	    });
 
@@ -38265,8 +38263,8 @@
 	  Global._TDHTTP_RESULT_MODE = opt.resultMode;
 	  extend$1(IO, tdHttp$1);
 
-	  lodash.forEach(apis, function (value, key) {
-	    IO[key] = apiFactory(value, opt);
+	  lodash.forEach(apis, function (api, key) {
+	    IO[key] = apiFactory(api, opt);
 	  });
 
 	  defineProperty$2(IO, ['interceptors', '_request']);
@@ -38411,17 +38409,18 @@
 	        var _this;
 
 	        _this = _PureComponent.call(this, props) || this;
-	        _this.Intance = React.createRef();
+	        _this._Instance = React.createRef();
 	        return _this;
 	      }
 
 	      var _proto = ConnectApi.prototype;
 
 	      _proto.getInstance = function getInstance() {
-	        return this.Intance && this.Intance.current;
+	        // 获得connectApi包裹的组件实例
+	        return this._Instance && this._Instance.current;
 	      };
 
-	      _proto.renderWrapper = function renderWrapper(contextApis) {
+	      _proto._renderWrapper = function _renderWrapper(contextApis) {
 	        if (contextApis === void 0) {
 	          contextApis = {};
 	        }
@@ -38501,7 +38500,7 @@
 	        }
 
 	        return React__default.createElement(WrapperComponent, _extends({
-	          ref: this.Intance
+	          ref: this._Instance
 	        }, this.props, connectApis));
 	      };
 
@@ -38510,7 +38509,7 @@
 
 	        var Consumer = ReactContext.Consumer;
 	        return React__default.createElement(Consumer, null, function (contextApis) {
-	          return _this2.renderWrapper(contextApis);
+	          return _this2._renderWrapper(contextApis);
 	        });
 	      };
 

@@ -1,7 +1,6 @@
 import tdHttp from './core';
 import Interceptor from './interceptor';
 import { handleMethod, extend, awaitWrap } from '../utils';
-import _ from 'lodash';
 
 function xhr(method, handler) {
   return async function http(params) {
@@ -37,11 +36,11 @@ Http.prototype._request = function(params, handler) {
     let chain = [xhr(method, handler), undefined];
     let promise = Promise.resolve(params);
 
-    _.forEach(this.interceptors.request, function(interceptor) {
+    this.interceptors.request.forEach(function(interceptor) {
       chain.unshift(interceptor.fulfilled, interceptor.rejected);
     });
 
-    _.forEach(this.interceptors.response, function(interceptor) {
+    this.interceptors.response.forEach(function(interceptor) {
       chain.push(interceptor.fulfilled, interceptor.rejected);
     });
 

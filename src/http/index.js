@@ -10,20 +10,22 @@ const setApi = (api, { prefix, host }) => {
     if (typeof opt === 'function') {
       handler = opt;
       opt = {};
-    };
+    }
     opt = setOpt({ ...api, opt });
-    return tdHttp({
-      ...api,
-      ...opt,
-      url,
-    }, handler);
+    return tdHttp(
+      {
+        ...api,
+        ...opt,
+        url,
+      },
+      handler,
+    );
   };
-}
+};
 
 const apiFactory = (api, opt) => {
-
   if (isType(api, 'object') && !api.url) {
-    _.forEach(_.entries(api), ([key, obj]) => {
+    _.forEach(api, (obj, key) => {
       api[key] = setApi(obj, opt);
     });
     return api;
@@ -59,8 +61,8 @@ const http = (apis = {}, opt = {}) => {
   Global._TDHTTP_RESULT_MODE = opt.resultMode;
 
   extend(IO, tdHttp);
-  _.forEach(apis, (value, key) => {
-    IO[key] = apiFactory(value, opt);
+  _.forEach(apis, (api, key) => {
+    IO[key] = apiFactory(api, opt);
   });
 
   defineProperty(IO, ['interceptors', '_request']);

@@ -73,14 +73,15 @@ export default (WrapperComponent, scope = []) => {
   return class ConnectApi extends PureComponent {
     constructor(props) {
       super(props);
-      this.Intance = createRef();
+      this._Instance = createRef();
     }
 
     getInstance() {
-      return this.Intance && this.Intance.current;
+      // 获得connectApi包裹的组件实例
+      return this._Instance && this._Instance.current;
     }
 
-    renderWrapper(contextApis = {}) {
+    _renderWrapper(contextApis = {}) {
       const IO = _.cloneDeep(contextApis);
 
       if (_.isEmpty(IO)) {
@@ -124,13 +125,13 @@ export default (WrapperComponent, scope = []) => {
         }
       }
 
-      return <WrapperComponent ref={this.Intance} {...this.props} {...connectApis} />;
+      return <WrapperComponent ref={this._Instance} {...this.props} {...connectApis} />;
     }
 
     render() {
       const { Consumer } = ReactContext;
 
-      return <Consumer>{contextApis => this.renderWrapper(contextApis)}</Consumer>;
+      return <Consumer>{contextApis => this._renderWrapper(contextApis)}</Consumer>;
     }
   };
 };

@@ -15,7 +15,6 @@ var setApi = function setApi(api, _ref) {
       opt = {};
     }
 
-    ;
     opt = setOpt(_extends({}, api, {
       opt: opt
     }));
@@ -27,9 +26,7 @@ var setApi = function setApi(api, _ref) {
 
 var apiFactory = function apiFactory(api, opt) {
   if (isType(api, 'object') && !api.url) {
-    _.forEach(_.entries(api), function (_ref2) {
-      var key = _ref2[0],
-          obj = _ref2[1];
+    _.forEach(api, function (obj, key) {
       api[key] = setApi(obj, opt);
     });
 
@@ -75,8 +72,8 @@ var http = function http(apis, opt) {
   Global._TDHTTP_RESULT_MODE = opt.resultMode;
   extend(IO, tdHttp);
 
-  _.forEach(apis, function (value, key) {
-    IO[key] = apiFactory(value, opt);
+  _.forEach(apis, function (api, key) {
+    IO[key] = apiFactory(api, opt);
   });
 
   defineProperty(IO, ['interceptors', '_request']);

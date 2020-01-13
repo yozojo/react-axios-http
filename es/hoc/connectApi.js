@@ -125,17 +125,18 @@ export default (function (WrapperComponent, scope) {
         var _this;
 
         _this = _PureComponent.call(this, props) || this;
-        _this.Intance = createRef();
+        _this._Instance = createRef();
         return _this;
       }
 
       var _proto = ConnectApi.prototype;
 
       _proto.getInstance = function getInstance() {
-        return this.Intance && this.Intance.current;
+        // 获得connectApi包裹的组件实例
+        return this._Instance && this._Instance.current;
       };
 
-      _proto.renderWrapper = function renderWrapper(contextApis) {
+      _proto._renderWrapper = function _renderWrapper(contextApis) {
         if (contextApis === void 0) {
           contextApis = {};
         }
@@ -215,7 +216,7 @@ export default (function (WrapperComponent, scope) {
         }
 
         return React.createElement(WrapperComponent, _extends({
-          ref: this.Intance
+          ref: this._Instance
         }, this.props, connectApis));
       };
 
@@ -224,7 +225,7 @@ export default (function (WrapperComponent, scope) {
 
         var Consumer = ReactContext.Consumer;
         return React.createElement(Consumer, null, function (contextApis) {
-          return _this2.renderWrapper(contextApis);
+          return _this2._renderWrapper(contextApis);
         });
       };
 
