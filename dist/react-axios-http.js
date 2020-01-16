@@ -428,6 +428,48 @@
 	  return _extends.apply(this, arguments);
 	}
 
+	// most Object methods by ES6 should accept primitives
+
+
+
+	var _objectSap = function (KEY, exec) {
+	  var fn = (_core.Object || {})[KEY] || Object[KEY];
+	  var exp = {};
+	  exp[KEY] = exec(fn);
+	  _export(_export.S + _export.F * _fails(function () { fn(1); }), 'Object', exp);
+	};
+
+	// 19.1.2.14 Object.keys(O)
+
+
+
+	_objectSap('keys', function () {
+	  return function keys(it) {
+	    return _objectKeys(_toObject(it));
+	  };
+	});
+
+	var keys = _core.Object.keys;
+
+	var keys$1 = keys;
+
+	function _objectWithoutPropertiesLoose(source, excluded) {
+	  if (source == null) return {};
+	  var target = {};
+
+	  var sourceKeys = keys$1(source);
+
+	  var key, i;
+
+	  for (i = 0; i < sourceKeys.length; i++) {
+	    key = sourceKeys[i];
+	    if (excluded.indexOf(key) >= 0) continue;
+	    target[key] = source[key];
+	  }
+
+	  return target;
+	}
+
 	var runtime_1 = createCommonjsModule(function (module) {
 	/**
 	 * Copyright (c) 2014-present, Facebook, Inc.
@@ -8606,9 +8648,9 @@
 
 	inherits$1(Duplex, Readable);
 
-	var keys = Object.keys(Writable.prototype);
-	for (var v = 0; v < keys.length; v++) {
-	  var method = keys[v];
+	var keys$2 = Object.keys(Writable.prototype);
+	for (var v = 0; v < keys$2.length; v++) {
+	  var method = keys$2[v];
 	  if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
 	}
 	function Duplex(options) {
@@ -37962,48 +38004,6 @@
 	  });
 	};
 
-	// most Object methods by ES6 should accept primitives
-
-
-
-	var _objectSap = function (KEY, exec) {
-	  var fn = (_core.Object || {})[KEY] || Object[KEY];
-	  var exp = {};
-	  exp[KEY] = exec(fn);
-	  _export(_export.S + _export.F * _fails(function () { fn(1); }), 'Object', exp);
-	};
-
-	// 19.1.2.14 Object.keys(O)
-
-
-
-	_objectSap('keys', function () {
-	  return function keys(it) {
-	    return _objectKeys(_toObject(it));
-	  };
-	});
-
-	var keys$1 = _core.Object.keys;
-
-	var keys$2 = keys$1;
-
-	function _objectWithoutPropertiesLoose(source, excluded) {
-	  if (source == null) return {};
-	  var target = {};
-
-	  var sourceKeys = keys$2(source);
-
-	  var key, i;
-
-	  for (i = 0; i < sourceKeys.length; i++) {
-	    key = sourceKeys[i];
-	    if (excluded.indexOf(key) >= 0) continue;
-	    target[key] = source[key];
-	  }
-
-	  return target;
-	}
-
 	function isPost(method) {
 	  return !!method && /post/.test(method.toLowerCase());
 	}
@@ -38197,8 +38197,9 @@
 
 	var setApi = function setApi(api, _ref) {
 	  var prefix = _ref.prefix,
-	      host = _ref.host;
-	  var url = host + prefix + api.url;
+	      others = _objectWithoutPropertiesLoose(_ref, ["prefix"]);
+
+	  var url = prefix + api.url;
 	  return function (opt, handler) {
 	    if (isType(handler, 'function')) {
 	      handler = opt;
@@ -38208,7 +38209,7 @@
 	    opt = setOpt(_extends({}, api, {
 	      opt: opt
 	    }));
-	    return tdHttp$1(_extends({}, api, {}, opt, {
+	    return tdHttp$1(_extends({}, others, {}, api, {}, opt, {
 	      url: url
 	    }), handler);
 	  };
@@ -38244,7 +38245,6 @@
 	Global._TDHTTP_RESULT_MODE = 'native';
 	var defaultOpt = {
 	  resultMode: 'native',
-	  host: '',
 	  prefix: ''
 	};
 	var IO = {};
@@ -38258,12 +38258,15 @@
 	    opt = {};
 	  }
 
-	  opt = lodash.assign(defaultOpt, opt);
-	  Global._TDHTTP_RESULT_MODE = opt.resultMode;
+	  var _$assign = lodash.assign(defaultOpt, opt),
+	      resultMode = _$assign.resultMode,
+	      others = _objectWithoutPropertiesLoose(_$assign, ["resultMode"]);
+
+	  Global._TDHTTP_RESULT_MODE = resultMode;
 	  extend$1(IO, tdHttp$1);
 
 	  lodash.forEach(apis, function (api, key) {
-	    IO[key] = apiFactory(api, opt);
+	    IO[key] = apiFactory(api, others);
 	  });
 
 	  defineProperty$2(IO, ['interceptors', '_request']);
@@ -38375,7 +38378,7 @@
 	  }
 	};
 
-	var connectApi = (function (WrapperComponent, scope) {
+	var connectHoc = function connectHoc(WrapperComponent, scope) {
 	  if (scope === void 0) {
 	    scope = [];
 	  }
@@ -38494,7 +38497,7 @@
 
 	        for (var key in connectApis) {
 	          if (this.props[key]) {
-	            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+	            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
 	          }
 	        }
 
@@ -38515,6 +38518,18 @@
 	      return ConnectApi;
 	    }(React.PureComponent)
 	  );
+	};
+
+	var connectApi = (function (WrapperComponent, scope) {
+	  // 支持装饰器写法
+	  if (isType(WrapperComponent, 'function')) {
+	    return connectHoc(WrapperComponent, scope = []);
+	  } else {
+	    scope = scope || WrapperComponent || [];
+	    return function (WrapperComponent) {
+	      return connectHoc(WrapperComponent, scope);
+	    };
+	  }
 	});
 
 	var reactIs_development = createCommonjsModule(function (module, exports) {

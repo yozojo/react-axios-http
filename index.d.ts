@@ -15,7 +15,6 @@ export function ProviderApi (obj: ProviderProps ): React.Component;
 
 interface OptProps {
   resultMode?: string,
-  host?: string,
   prefix?: string,
 }
 

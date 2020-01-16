@@ -1,6 +1,6 @@
 {
   "name": "react-axios-http",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "yozojo <you1115879184@126.com>",
   "description": "这是一款结合axios和react的封装请求库",
   "license": "ISC",

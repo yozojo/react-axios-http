@@ -1,8 +1,4 @@
 
-## react-axios-http
-  这是一款结合axios和react的封装请求库，
-  主要解决了请求调用处理的统一和接口的统一管理，
-  以及在项目中的接口便捷调用
 
 ### 使用方式
 
@@ -17,7 +13,8 @@ const apis = {
   get: {
     // get 默认
     url: `/projectManage/show`,
-  },
+    //余下参数配置支持axios中的参数
+  }
   post: {
     // post
     url: `/projectManage/show`,
@@ -25,7 +22,9 @@ const apis = {
     // isFormData: true 默认false
     // 是否需要以formData形式传参
     // isQuery: true 默认false
-    // post请求下，是否以url Query方式 ?pageNum=1&pageSize=10
+    // post请求下，是否以url Query方式 ?pageNum=1&pageSize=10，
+
+    //余下参数配置支持axios中的参数
   },
   put: {
     // put
@@ -35,11 +34,15 @@ const apis = {
     // 是否需要以formData形式传参
     // isQuery: true 默认false
     // put请求下，是否以url Query方式 ?pageNum=1&pageSize=10
+
+    //余下参数配置支持axios中的参数
   },
   delete: {
     // delete
     url: `/projectManage/show`,
     method: 'delete',
+
+    //余下参数配置支持axios中的参数
   },
   getJsonp: {
     // jsonp
@@ -63,8 +66,8 @@ const IO = http(apis);
 //   /* {opt} 默认可不传 */
 //   // 高级模式下的数据返回结果处理方式
 //   resultMode: 'native',// 可选array， 默认已设置native
-//   host: '', // 接口统一host
 //   prefix: '', // 接口统一前缀
+//   余下参数配置支持axios中的参数
 // });
 
 IO.interceptors.request.use(
@@ -141,7 +144,6 @@ IO.getxxx().then(res => {
  *   key: value,
  * }, handler)
 
-
 #### 具体使用请参考 [example目录](./example/);
 
 #### 高级使用方式
@@ -167,6 +169,11 @@ import React, { Component } from 'react'
 import { connectApi } from "react-axios-http";
 
 // 高级处理模式1 resultMode = 'native';默认
+
+// 支持装饰器写法
+// 1、@connectApi
+// 2、@connectApi('apis_1')
+// 3、@connectApi(Child，'apis_1')
 class Child extends Component {
 
   // 使用方式1
@@ -195,6 +202,8 @@ class Child extends Component {
     )
   }
 }
+
+export default connectApi(Child);
 
 // 高级处理模式2 resultMode = 'array，
 // 返回一个数组，错误优先处理方式
@@ -233,3 +242,5 @@ class Child extends Component {
 export default connectApi(Child);
 
 ```
+
+

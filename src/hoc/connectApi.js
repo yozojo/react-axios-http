@@ -54,7 +54,9 @@ const getIsScope = (arr, IO, isScope = false) => {
   }
 };
 
-export default (WrapperComponent, scope = []) => {
+
+
+const connectHoc = (WrapperComponent, scope = []) => {
   let option = {
     scope: '',
     // scope: [],
@@ -119,7 +121,7 @@ export default (WrapperComponent, scope = []) => {
 
       for (const key in connectApis) {
         if (this.props[key]) {
-          console.warn(`@tongdun/tdhttp，connectApi，警告！！！
+          console.warn(`react-axios-http，connectApi，警告！！！
           传入的props和apis中有重名，props中的重名参数将被apis覆盖，重名参数为：${key},
           在connectApi的第二个参数为对象，请在其中配置 isScope: true，(选配scope: []/''，使用combineApi中的参数)`);
         }
@@ -135,3 +137,16 @@ export default (WrapperComponent, scope = []) => {
     }
   };
 };
+
+export default (WrapperComponent, scope) => {
+  // 支持装饰器写法
+  if (isType(WrapperComponent, 'function')) {
+    return connectHoc(WrapperComponent, scope = []);
+  } else {
+    scope = scope || WrapperComponent || [];
+    return (WrapperComponent) => {
+      return connectHoc(WrapperComponent, scope)
+    };
+  }
+}
+

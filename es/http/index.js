@@ -1,4 +1,5 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
+import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
 
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
@@ -7,8 +8,9 @@ import _ from 'lodash';
 
 var setApi = function setApi(api, _ref) {
   var prefix = _ref.prefix,
-      host = _ref.host;
-  var url = host + prefix + api.url;
+      others = _objectWithoutPropertiesLoose(_ref, ["prefix"]);
+
+  var url = prefix + api.url;
   return function (opt, handler) {
     if (isType(handler, 'function')) {
       handler = opt;
@@ -18,7 +20,7 @@ var setApi = function setApi(api, _ref) {
     opt = setOpt(_extends({}, api, {
       opt: opt
     }));
-    return tdHttp(_extends({}, api, {}, opt, {
+    return tdHttp(_extends({}, others, {}, api, {}, opt, {
       url: url
     }), handler);
   };
@@ -54,7 +56,6 @@ var Global = global || window;
 Global._TDHTTP_RESULT_MODE = 'native';
 var defaultOpt = {
   resultMode: 'native',
-  host: '',
   prefix: ''
 };
 var IO = {};
@@ -68,12 +69,15 @@ var http = function http(apis, opt) {
     opt = {};
   }
 
-  opt = _.assign(defaultOpt, opt);
-  Global._TDHTTP_RESULT_MODE = opt.resultMode;
+  var _$assign = _.assign(defaultOpt, opt),
+      resultMode = _$assign.resultMode,
+      others = _objectWithoutPropertiesLoose(_$assign, ["resultMode"]);
+
+  Global._TDHTTP_RESULT_MODE = resultMode;
   extend(IO, tdHttp);
 
   _.forEach(apis, function (api, key) {
-    IO[key] = apiFactory(api, opt);
+    IO[key] = apiFactory(api, others);
   });
 
   defineProperty(IO, ['interceptors', '_request']);

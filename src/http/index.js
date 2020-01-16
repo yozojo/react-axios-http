@@ -3,8 +3,8 @@ import tdHttp from './http';
 import { setOpt, extend, isType } from '../utils';
 import _ from 'lodash';
 
-const setApi = (api, { prefix, host }) => {
-  const url = host + prefix + api.url;
+const setApi = (api, { prefix, ...others }) => {
+  const url = prefix + api.url;
 
   return (opt, handler) => {
     if (isType(handler, 'function')) {
@@ -14,6 +14,7 @@ const setApi = (api, { prefix, host }) => {
     opt = setOpt({ ...api, opt });
     return tdHttp(
       {
+        ...others,
         ...api,
         ...opt,
         url,
@@ -50,19 +51,18 @@ Global._TDHTTP_RESULT_MODE = 'native';
 
 const defaultOpt = {
   resultMode: 'native',
-  host: '',
   prefix: '',
 };
 
 const IO = {};
 
 const http = (apis = {}, opt = {}) => {
-  opt = _.assign(defaultOpt, opt);
-  Global._TDHTTP_RESULT_MODE = opt.resultMode;
+  const { resultMode, ...others } = _.assign(defaultOpt, opt);
+  Global._TDHTTP_RESULT_MODE = resultMode;
 
   extend(IO, tdHttp);
   _.forEach(apis, (api, key) => {
-    IO[key] = apiFactory(api, opt);
+    IO[key] = apiFactory(api, others);
   });
 
   defineProperty(IO, ['interceptors', '_request']);
