@@ -2,13 +2,30 @@ import tdHttp from './core';
 import Interceptor from './interceptor';
 import { handleMethod, extend, awaitWrap, isType } from '../utils';
 
-function xhr(method, handler) {
-  return async function http(config) {
-    const promise = await tdHttp[method](config)
-      .then(data => ({
-        config,
-        data,
-      }));
+function getAdapter(params) {
+  let { adapter, ...config } = params;
+  const method = handleMethod(params);
+  const hasAdapter = isType(adapter, 'function');
+  adapter = hasAdapter ? adapter : tdHttp[method];
+
+  return {
+    config,
+    adapter,
+    hasAdapter,
+  };
+}
+
+function xhr(handler) {
+  return async function http(params) {
+    const { config, adapter, hasAdapter } = getAdapter(params);
+    const promise = await adapter(config).then(data =>
+      hasAdapter
+        ? data
+        : {
+            config,
+            data,
+          },
+    );
     if (isType(handler, 'function')) {
       try {
         const [err, res] = await awaitWrap(promise);
@@ -35,8 +52,7 @@ function Http() {
 
 Http.prototype._request = function(params, handler) {
   try {
-    const method = handleMethod(params);
-    let chain = [xhr(method, handler), undefined];
+    let chain = [xhr(handler), undefined];
     let promise = Promise.resolve(params);
 
     this.interceptors.request.forEach(function(interceptor) {

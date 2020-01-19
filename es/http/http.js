@@ -1,61 +1,86 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
+import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
 import tdHttp from './core';
 import Interceptor from './interceptor';
 import { handleMethod, extend, awaitWrap, isType } from '../utils';
 
-function xhr(method, handler) {
+function getAdapter(params) {
+  var adapter = params.adapter,
+      config = _objectWithoutPropertiesLoose(params, ["adapter"]);
+
+  var method = handleMethod(params);
+  var hasAdapter = isType(adapter, 'function');
+  adapter = hasAdapter ? adapter : tdHttp[method];
+  return {
+    config: config,
+    adapter: adapter,
+    hasAdapter: hasAdapter
+  };
+}
+
+function xhr(handler) {
   return function http(params) {
-    var promise, _ref, err, res, result;
+    var _getAdapter, config, adapter, hasAdapter, promise, _ref, err, res, result;
 
     return _regeneratorRuntime.async(function http$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            promise = tdHttp[method](params);
+            _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
+            _context.next = 3;
+            return _regeneratorRuntime.awrap(adapter(config).then(function (data) {
+              return hasAdapter ? data : {
+                config: config,
+                data: data
+              };
+            }));
+
+          case 3:
+            promise = _context.sent;
 
             if (!isType(handler, 'function')) {
-              _context.next = 19;
+              _context.next = 22;
               break;
             }
 
-            _context.prev = 2;
-            _context.next = 5;
+            _context.prev = 5;
+            _context.next = 8;
             return _regeneratorRuntime.awrap(awaitWrap(promise));
 
-          case 5:
+          case 8:
             _ref = _context.sent;
             err = _ref[0];
             res = _ref[1];
             result = handler(res, err);
 
             if (!(result instanceof Promise)) {
-              _context.next = 13;
+              _context.next = 16;
               break;
             }
 
             return _context.abrupt("return", result);
 
-          case 13:
+          case 16:
             return _context.abrupt("return", Promise.resolve(result));
 
-          case 14:
-            _context.next = 19;
+          case 17:
+            _context.next = 22;
             break;
 
-          case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](2);
+          case 19:
+            _context.prev = 19;
+            _context.t0 = _context["catch"](5);
             console.error(_context.t0);
 
-          case 19:
+          case 22:
             return _context.abrupt("return", promise);
 
-          case 20:
+          case 23:
           case "end":
             return _context.stop();
         }
       }
-    }, null, null, [[2, 16]]);
+    }, null, null, [[5, 19]]);
   };
 }
 
@@ -68,8 +93,7 @@ function Http() {
 
 Http.prototype._request = function (params, handler) {
   try {
-    var method = handleMethod(params);
-    var chain = [xhr(method, handler), undefined];
+    var chain = [xhr(handler), undefined];
     var promise = Promise.resolve(params);
     this.interceptors.request.forEach(function (interceptor) {
       chain.unshift(interceptor.fulfilled, interceptor.rejected);

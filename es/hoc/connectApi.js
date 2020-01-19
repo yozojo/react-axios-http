@@ -7,39 +7,37 @@ import { awaitWrap, isType } from '../utils';
 import ReactContext from './Context';
 var Global = global || window;
 
-var getResult = function getResult(func, params, handler) {
-  var resultMode;
+var getResult = function getResult(func, params, handler, resultMode) {
   return _regeneratorRuntime.async(function getResult$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          resultMode = Global._TDHTTP_RESULT_MODE;
           _context.t0 = resultMode;
-          _context.next = _context.t0 === 'native' ? 4 : _context.t0 === 'array' ? 7 : 10;
+          _context.next = _context.t0 === 'native' ? 3 : _context.t0 === 'array' ? 6 : 9;
           break;
 
-        case 4:
-          _context.next = 6;
+        case 3:
+          _context.next = 5;
           return _regeneratorRuntime.awrap(func(params, handler));
+
+        case 5:
+          return _context.abrupt("return", _context.sent);
 
         case 6:
-          return _context.abrupt("return", _context.sent);
-
-        case 7:
-          _context.next = 9;
+          _context.next = 8;
           return _regeneratorRuntime.awrap(awaitWrap(func(params, handler)));
 
-        case 9:
+        case 8:
           return _context.abrupt("return", _context.sent);
 
-        case 10:
-          _context.next = 12;
+        case 9:
+          _context.next = 11;
           return _regeneratorRuntime.awrap(func(params, handler));
 
-        case 12:
+        case 11:
           return _context.abrupt("return", _context.sent);
 
-        case 13:
+        case 12:
         case "end":
           return _context.stop();
       }
@@ -92,12 +90,11 @@ var getIsScope = function getIsScope(arr, IO, isScope) {
   }
 };
 
-var connectHoc = function connectHoc(WrapperComponent, scope) {
-  if (scope === void 0) {
-    scope = [];
-  }
-
+var getOption = function getOption(scope, IO) {
+  var resultMode = Global._TDHTTP_RESULT_MODE;
+  var apis = Global._TDHTTP_APIS || [];
   var option = {
+    resultMode: resultMode,
     scope: '' // scope: [],
     // isScope: false // 默认false
 
@@ -109,12 +106,29 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
   }
 
   scope = isType(scope, 'string') ? [scope] : scope;
-  var apis = Global._TDHTTP_APIS || [];
 
   var scopeArr = _.filter(apis, function (_ref2) {
     var key = _ref2[0];
     return _.includes(scope, key);
   });
+
+  var isScope = isType(_.values(IO)[0], 'object');
+
+  if (isScope && !isType(option.isScope, 'boolean')) {
+    option.isScope = isScope;
+  }
+
+  var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+  return {
+    scopeIO: scopeIO,
+    option: option
+  };
+};
+
+var connectHoc = function connectHoc(WrapperComponent, scope) {
+  if (scope === void 0) {
+    scope = [];
+  }
 
   return (
     /*#__PURE__*/
@@ -147,13 +161,9 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
           console.warn('请在根组件挂载ProviderApi，并且注入apis');
         }
 
-        var isScope = isType(_.values(IO)[0], 'object');
-
-        if (isScope && !isType(option.isScope, 'boolean')) {
-          option.isScope = isScope;
-        }
-
-        var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+        var _getOption = getOption(scope, IO),
+            scopeIO = _getOption.scopeIO,
+            option = _getOption.option;
 
         var connectApis = _.reduce(scopeIO, function (pre, func, key) {
           if (isType(func, 'object')) {
@@ -167,7 +177,7 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
                       switch (_context2.prev = _context2.next) {
                         case 0:
                           _context2.next = 2;
-                          return _regeneratorRuntime.awrap(getResult(func[fkey], params, cb));
+                          return _regeneratorRuntime.awrap(getResult(func[fkey], params, cb, option.resultMode));
 
                         case 2:
                           return _context2.abrupt("return", _context2.sent);
@@ -194,7 +204,7 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
                   switch (_context3.prev = _context3.next) {
                     case 0:
                       _context3.next = 2;
-                      return _regeneratorRuntime.awrap(getResult(func, params, cb));
+                      return _regeneratorRuntime.awrap(getResult(func, params, cb, option.resultMode));
 
                     case 2:
                       return _context3.abrupt("return", _context3.sent);
@@ -211,7 +221,7 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
 
         for (var key in connectApis) {
           if (this.props[key]) {
-            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
           }
         }
 

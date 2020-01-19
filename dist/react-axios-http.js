@@ -38096,59 +38096,83 @@
 	  return type === getType(data);
 	}
 
-	function xhr$2(method, handler) {
+	function getAdapter(params) {
+	  var adapter = params.adapter,
+	      config = _objectWithoutPropertiesLoose(params, ["adapter"]);
+
+	  var method = handleMethod(params);
+	  var hasAdapter = isType(adapter, 'function');
+	  adapter = hasAdapter ? adapter : tdHttp[method];
+	  return {
+	    config: config,
+	    adapter: adapter,
+	    hasAdapter: hasAdapter
+	  };
+	}
+
+	function xhr$2(handler) {
 	  return function http(params) {
-	    var promise, _ref, err, res, result;
+	    var _getAdapter, config, adapter, hasAdapter, promise, _ref, err, res, result;
 
 	    return regenerator.async(function http$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
-	            promise = tdHttp[method](params);
+	            _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
+	            _context.next = 3;
+	            return regenerator.awrap(adapter(config).then(function (data) {
+	              return hasAdapter ? data : {
+	                config: config,
+	                data: data
+	              };
+	            }));
+
+	          case 3:
+	            promise = _context.sent;
 
 	            if (!isType(handler, 'function')) {
-	              _context.next = 19;
+	              _context.next = 22;
 	              break;
 	            }
 
-	            _context.prev = 2;
-	            _context.next = 5;
+	            _context.prev = 5;
+	            _context.next = 8;
 	            return regenerator.awrap(awaitWrap(promise));
 
-	          case 5:
+	          case 8:
 	            _ref = _context.sent;
 	            err = _ref[0];
 	            res = _ref[1];
 	            result = handler(res, err);
 
 	            if (!(result instanceof promise$1)) {
-	              _context.next = 13;
+	              _context.next = 16;
 	              break;
 	            }
 
 	            return _context.abrupt("return", result);
 
-	          case 13:
+	          case 16:
 	            return _context.abrupt("return", promise$1.resolve(result));
 
-	          case 14:
-	            _context.next = 19;
+	          case 17:
+	            _context.next = 22;
 	            break;
 
-	          case 16:
-	            _context.prev = 16;
-	            _context.t0 = _context["catch"](2);
+	          case 19:
+	            _context.prev = 19;
+	            _context.t0 = _context["catch"](5);
 	            console.error(_context.t0);
 
-	          case 19:
+	          case 22:
 	            return _context.abrupt("return", promise);
 
-	          case 20:
+	          case 23:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, null, null, [[2, 16]]);
+	    }, null, null, [[5, 19]]);
 	  };
 	}
 
@@ -38161,8 +38185,7 @@
 
 	Http.prototype._request = function (params, handler) {
 	  try {
-	    var method = handleMethod(params);
-	    var chain = [xhr$2(method, handler), undefined];
+	    var chain = [xhr$2(handler), undefined];
 
 	    var promise = promise$1.resolve(params);
 
@@ -38293,39 +38316,37 @@
 
 	var Global$1 = global || window;
 
-	var getResult = function getResult(func, params, handler) {
-	  var resultMode;
+	var getResult = function getResult(func, params, handler, resultMode) {
 	  return regenerator.async(function getResult$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
 	        case 0:
-	          resultMode = Global$1._TDHTTP_RESULT_MODE;
 	          _context.t0 = resultMode;
-	          _context.next = _context.t0 === 'native' ? 4 : _context.t0 === 'array' ? 7 : 10;
+	          _context.next = _context.t0 === 'native' ? 3 : _context.t0 === 'array' ? 6 : 9;
 	          break;
 
-	        case 4:
-	          _context.next = 6;
+	        case 3:
+	          _context.next = 5;
 	          return regenerator.awrap(func(params, handler));
+
+	        case 5:
+	          return _context.abrupt("return", _context.sent);
 
 	        case 6:
-	          return _context.abrupt("return", _context.sent);
-
-	        case 7:
-	          _context.next = 9;
+	          _context.next = 8;
 	          return regenerator.awrap(awaitWrap(func(params, handler)));
 
-	        case 9:
+	        case 8:
 	          return _context.abrupt("return", _context.sent);
 
-	        case 10:
-	          _context.next = 12;
+	        case 9:
+	          _context.next = 11;
 	          return regenerator.awrap(func(params, handler));
 
-	        case 12:
+	        case 11:
 	          return _context.abrupt("return", _context.sent);
 
-	        case 13:
+	        case 12:
 	        case "end":
 	          return _context.stop();
 	      }
@@ -38378,12 +38399,11 @@
 	  }
 	};
 
-	var connectHoc = function connectHoc(WrapperComponent, scope) {
-	  if (scope === void 0) {
-	    scope = [];
-	  }
-
+	var getOption = function getOption(scope, IO) {
+	  var resultMode = Global$1._TDHTTP_RESULT_MODE;
+	  var apis = Global$1._TDHTTP_APIS || [];
 	  var option = {
+	    resultMode: resultMode,
 	    scope: '' // scope: [],
 	    // isScope: false // 默认false
 
@@ -38395,12 +38415,29 @@
 	  }
 
 	  scope = isType(scope, 'string') ? [scope] : scope;
-	  var apis = Global$1._TDHTTP_APIS || [];
 
 	  var scopeArr = lodash.filter(apis, function (_ref2) {
 	    var key = _ref2[0];
 	    return lodash.includes(scope, key);
 	  });
+
+	  var isScope = isType(lodash.values(IO)[0], 'object');
+
+	  if (isScope && !isType(option.isScope, 'boolean')) {
+	    option.isScope = isScope;
+	  }
+
+	  var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+	  return {
+	    scopeIO: scopeIO,
+	    option: option
+	  };
+	};
+
+	var connectHoc = function connectHoc(WrapperComponent, scope) {
+	  if (scope === void 0) {
+	    scope = [];
+	  }
 
 	  return (
 	    /*#__PURE__*/
@@ -38433,13 +38470,9 @@
 	          console.warn('请在根组件挂载ProviderApi，并且注入apis');
 	        }
 
-	        var isScope = isType(lodash.values(IO)[0], 'object');
-
-	        if (isScope && !isType(option.isScope, 'boolean')) {
-	          option.isScope = isScope;
-	        }
-
-	        var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+	        var _getOption = getOption(scope, IO),
+	            scopeIO = _getOption.scopeIO,
+	            option = _getOption.option;
 
 	        var connectApis = lodash.reduce(scopeIO, function (pre, func, key) {
 	          if (isType(func, 'object')) {
@@ -38453,7 +38486,7 @@
 	                      switch (_context2.prev = _context2.next) {
 	                        case 0:
 	                          _context2.next = 2;
-	                          return regenerator.awrap(getResult(func[fkey], params, cb));
+	                          return regenerator.awrap(getResult(func[fkey], params, cb, option.resultMode));
 
 	                        case 2:
 	                          return _context2.abrupt("return", _context2.sent);
@@ -38480,7 +38513,7 @@
 	                  switch (_context3.prev = _context3.next) {
 	                    case 0:
 	                      _context3.next = 2;
-	                      return regenerator.awrap(getResult(func, params, cb));
+	                      return regenerator.awrap(getResult(func, params, cb, option.resultMode));
 
 	                    case 2:
 	                      return _context3.abrupt("return", _context3.sent);
@@ -38497,7 +38530,7 @@
 
 	        for (var key in connectApis) {
 	          if (this.props[key]) {
-	            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+	            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
 	          }
 	        }
 
