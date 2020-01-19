@@ -27,7 +27,7 @@ class App extends PureComponent {
   }
 }
 // 1
-// 只将query下的接口注入props中
+// 只将目录下http中apis中的query模块的接口注入props中；
 export default connectApi(App, 'query');
 
 // 2

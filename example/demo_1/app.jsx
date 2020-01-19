@@ -7,11 +7,30 @@ import { connectApi } from 'react-axios-http';
 // 3、@connectApi(Child，'apis_1')
 class App extends PureComponent {
 
+  // 使用方式1
   getFetch = async () => {
     const { query } = this.props;
-    const res = await query.getEventProgress();
-    console.log(res);
-  };
+    const res = await query.getEventProgress({
+      pageNum: 1,
+      pageSize: 10
+    }/*对象参数*/, /* handler 二次加工函数，可不写 */);
+    // 若无参数，直接对返回结果的二次加工
+    // const res = await query.getEventProgress(/* handler 二次加工函数，可不写 */);
+    //to do something
+  }
+  // 使用方式2
+  getFetch = () => {
+    const { query } = this.props;
+    query.getEventProgress({
+      pageNum: 1,
+      pageSize: 10
+    }/*对象参数*/, /* handler 二次加工函数，可不写 */)
+    // 若无参数，直接对返回结果的二次加工
+    // query.getEventProgress(/* handler 二次加工函数，可不写 */)
+    .then(res => {
+      //to do something
+    });
+  }
 
   render() {
     return (
@@ -21,5 +40,5 @@ class App extends PureComponent {
     )
   }
 }
-
+// 只将目录下http中apis中的query模块的接口注入props中；
 export default connectApi(App);
