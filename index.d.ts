@@ -1,9 +1,15 @@
 
 import * as React from 'react';
 
-export function combineApi(apis: object, isScope?: boolean): any;
+interface Apis {
+  [key: string]: any
+}
 
-export function connectApi (WrapperComponent: React.Component, scope?: string| string[]): React.Component;
+interface ConnectApiOpt {
+  scope: string | string[],
+  isScope?: boolean,
+  resultMode?: string
+}
 
 interface ProviderProps {
   apis: string[],
@@ -11,13 +17,17 @@ interface ProviderProps {
   children?: React.ReactNode
 }
 
-export function ProviderApi (obj: ProviderProps ): React.Component;
-
 interface OptProps {
   resultMode?: string,
   prefix?: string,
 }
 
-declare function http(apis: object, opt?: OptProps): any;
+export function combineApi(apis: Apis, isScope?: boolean): any;
+
+export function connectApi(WrapperComponent: React.Component | string | string[], scope?: string | string[] | ConnectApiOpt): React.Component;
+
+export function ProviderApi(obj: ProviderProps): React.Component;
+
+declare function http(apis: Apis, opt?: OptProps): any;
 
 export default http;

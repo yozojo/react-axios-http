@@ -5,9 +5,7 @@ import ReactContext from './Context';
 
 const Global = global || window;
 
-const getResult = async (func, params, handler) => {
-  const resultMode = Global._TDHTTP_RESULT_MODE;
-
+const getResult = async (func, params, handler, resultMode) => {
   switch (resultMode) {
     case 'native':
       return await func(params, handler);
@@ -54,14 +52,17 @@ const getIsScope = (arr, IO, isScope = false) => {
   }
 };
 
+const getOption = (scope, IO) => {
+  const resultMode = Global._TDHTTP_RESULT_MODE;
+  const apis = Global._TDHTTP_APIS || [];
 
-
-const connectHoc = (WrapperComponent, scope = []) => {
   let option = {
+    resultMode,
     scope: '',
     // scope: [],
     // isScope: false // 默认false
   };
+
   if (isType(scope, 'object')) {
     option = _.assign(option, scope);
     scope = option.scope;
@@ -69,9 +70,25 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
   scope = isType(scope, 'string') ? [scope] : scope;
 
-  const apis = Global._TDHTTP_APIS || [];
   const scopeArr = _.filter(apis, ([key]) => _.includes(scope, key));
 
+  const isScope = isType(_.values(IO)[0], 'object');
+
+  if (isScope && !isType(option.isScope, 'boolean')) {
+    option.isScope = isScope;
+  }
+
+  const scopeIO = scopeArr.length
+    ? getScope(scopeArr, IO, option.isScope)
+    : getIsScope(apis, IO, option.isScope);
+
+  return {
+    scopeIO,
+    option,
+  };
+};
+
+const connectHoc = (WrapperComponent, scope = []) => {
   return class ConnectApi extends PureComponent {
     constructor(props) {
       super(props);
@@ -90,15 +107,7 @@ const connectHoc = (WrapperComponent, scope = []) => {
         console.warn('请在根组件挂载ProviderApi，并且注入apis');
       }
 
-      const isScope = isType(_.values(IO)[0], 'object');
-
-      if (isScope && !isType(option.isScope, 'boolean')) {
-        option.isScope = isScope;
-      }
-
-      const scopeIO = scopeArr.length
-        ? getScope(scopeArr, IO, option.isScope)
-        : getIsScope(apis, IO, option.isScope);
+      const { scopeIO, option } = getOption(scope, IO);
 
       const connectApis = _.reduce(
         scopeIO,
@@ -107,13 +116,17 @@ const connectHoc = (WrapperComponent, scope = []) => {
             const funcObj = {};
             for (const fkey in func) {
               if (func.hasOwnProperty(fkey)) {
-                funcObj[fkey] = async (params, cb) => await getResult(func[fkey], params, cb);
+                funcObj[fkey] = async (params, cb) =>
+                  await getResult(func[fkey], params, cb, option.resultMode);
               }
             }
 
             return (pre[key] = funcObj) && pre;
           } else {
-            return (pre[key] = async (params, cb) => await getResult(func, params, cb)) && pre;
+            return (
+              (pre[key] = async (params, cb) =>
+                await getResult(func, params, cb, option.resultMode)) && pre
+            );
           }
         },
         {},
@@ -121,7 +134,7 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
       for (const key in connectApis) {
         if (this.props[key]) {
-          console.warn(`react-axios-http，connectApi，警告！！！
+          console.warn(`@tongdun/tdhttp，connectApi，警告！！！
           传入的props和apis中有重名，props中的重名参数将被apis覆盖，重名参数为：${key},
           在connectApi的第二个参数为对象，请在其中配置 isScope: true，(选配scope: []/''，使用combineApi中的参数)`);
         }
@@ -141,12 +154,11 @@ const connectHoc = (WrapperComponent, scope = []) => {
 export default (WrapperComponent, scope) => {
   // 支持装饰器写法
   if (isType(WrapperComponent, 'function')) {
-    return connectHoc(WrapperComponent, scope = []);
+    return connectHoc(WrapperComponent, (scope = []));
   } else {
     scope = scope || WrapperComponent || [];
-    return (WrapperComponent) => {
-      return connectHoc(WrapperComponent, scope)
+    return WrapperComponent => {
+      return connectHoc(WrapperComponent, scope);
     };
   }
-}
-
+};

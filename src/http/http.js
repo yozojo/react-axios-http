@@ -3,13 +3,17 @@ import Interceptor from './interceptor';
 import { handleMethod, extend, awaitWrap, isType } from '../utils';
 
 function xhr(method, handler) {
-  return async function http(params) {
-    const promise = tdHttp[method](params);
+  return async function http(config) {
+    const promise = await tdHttp[method](config)
+      .then(data => ({
+        config,
+        data,
+      }));
     if (isType(handler, 'function')) {
       try {
         const [err, res] = await awaitWrap(promise);
         const result = handler(res, err);
-        if ( result instanceof Promise) {
+        if (result instanceof Promise) {
           return result;
         } else {
           return Promise.resolve(result);
