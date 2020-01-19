@@ -12,7 +12,7 @@ var setApi = function setApi(api, _ref) {
 
   var url = prefix + api.url;
   return function (opt, handler) {
-    if (isType(handler, 'function')) {
+    if (isType(opt, 'function')) {
       handler = opt;
       opt = {};
     }

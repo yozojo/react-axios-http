@@ -1,15 +1,21 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
+import _extends from "@babel/runtime/helpers/esm/extends";
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
-import tdHttp from './core';
-import Interceptor from './interceptor';
-import { handleMethod, extend, awaitWrap, isType } from '../utils';
+import tdHttp from "./core";
+import Interceptor from "./interceptor";
+import { handleMethod, extend, awaitWrap, isType } from "../utils";
 
 function getAdapter(params) {
   var adapter = params.adapter,
-      config = _objectWithoutPropertiesLoose(params, ["adapter"]);
+      others = _objectWithoutPropertiesLoose(params, ["adapter"]);
 
   var method = handleMethod(params);
-  var hasAdapter = isType(adapter, 'function');
+
+  var config = _extends({}, others, {
+    method: method
+  });
+
+  var hasAdapter = isType(adapter, "function");
   adapter = hasAdapter ? adapter : tdHttp[method];
   return {
     config: config,
@@ -18,69 +24,73 @@ function getAdapter(params) {
   };
 }
 
+var getResult = function getResult(params) {
+  var _getAdapter, config, adapter, hasAdapter, data;
+
+  return _regeneratorRuntime.async(function getResult$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
+          _context.next = 3;
+          return _regeneratorRuntime.awrap(adapter(config));
+
+        case 3:
+          data = _context.sent;
+          return _context.abrupt("return", hasAdapter ? data : {
+            config: config,
+            data: data
+          });
+
+        case 5:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+};
+
 function xhr(handler) {
   return function http(params) {
-    var _getAdapter, config, adapter, hasAdapter, promise, _ref, err, res, result;
-
-    return _regeneratorRuntime.async(function http$(_context) {
+    var result, res;
+    return _regeneratorRuntime.async(function http$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
-            _context.next = 3;
-            return _regeneratorRuntime.awrap(adapter(config).then(function (data) {
-              return hasAdapter ? data : {
-                config: config,
-                data: data
-              };
-            }));
+            _context2.next = 2;
+            return _regeneratorRuntime.awrap(getResult(params));
 
-          case 3:
-            promise = _context.sent;
+          case 2:
+            result = _context2.sent;
 
-            if (!isType(handler, 'function')) {
-              _context.next = 22;
+            if (!isType(handler, "function")) {
+              _context2.next = 10;
               break;
             }
 
-            _context.prev = 5;
-            _context.next = 8;
-            return _regeneratorRuntime.awrap(awaitWrap(promise));
+            res = handler(result);
 
-          case 8:
-            _ref = _context.sent;
-            err = _ref[0];
-            res = _ref[1];
-            result = handler(res, err);
-
-            if (!(result instanceof Promise)) {
-              _context.next = 16;
+            if (!isType(res, "undefined")) {
+              _context2.next = 9;
               break;
             }
 
-            return _context.abrupt("return", result);
-
-          case 16:
-            return _context.abrupt("return", Promise.resolve(result));
-
-          case 17:
-            _context.next = 22;
+            console.warn('请在加工函数中返回结果，否则加工函数的操作结果无效');
+            _context2.next = 10;
             break;
 
-          case 19:
-            _context.prev = 19;
-            _context.t0 = _context["catch"](5);
-            console.error(_context.t0);
+          case 9:
+            return _context2.abrupt("return", res);
 
-          case 22:
-            return _context.abrupt("return", promise);
+          case 10:
+            return _context2.abrupt("return", result);
 
-          case 23:
+          case 11:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, null, null, [[5, 19]]);
+    });
   };
 }
 

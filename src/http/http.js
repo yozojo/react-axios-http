@@ -34,15 +34,11 @@ function xhr(handler) {
     const result = await getResult(params);
 
     if (isType(handler, "function")) {
-      try {
-        const res = handler(result);
-        if (res instanceof Promise) {
-          return res;
-        } else {
-          return Promise.resolve(res);
-        }
-      } catch (error) {
-        console.error(error);
+      const res = handler(result);
+      if (isType(res, "undefined")) {
+        console.warn('请在加工函数中返回结果，否则加工函数的操作结果无效');
+      } else {
+        return res;
       }
     }
     return result;
