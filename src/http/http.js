@@ -1,52 +1,58 @@
-import tdHttp from './core';
-import Interceptor from './interceptor';
-import { handleMethod, extend, awaitWrap, isType } from '../utils';
+import tdHttp from "./core";
+import Interceptor from "./interceptor";
+import { handleMethod, extend, awaitWrap, isType } from "../utils";
 
 function getAdapter(params) {
-  let { adapter, ...config } = params;
+  let { adapter, ...others } = params;
   const method = handleMethod(params);
-  const hasAdapter = isType(adapter, 'function');
+  const config = { ...others, method };
+
+  const hasAdapter = isType(adapter, "function");
   adapter = hasAdapter ? adapter : tdHttp[method];
 
   return {
     config,
     adapter,
-    hasAdapter,
+    hasAdapter
   };
 }
 
+const getResult = async params => {
+  const { config, adapter, hasAdapter } = getAdapter(params);
+  const data = await adapter(config);
+
+  return hasAdapter
+    ? data
+    : {
+        config,
+        data
+      };
+};
+
 function xhr(handler) {
   return async function http(params) {
-    const { config, adapter, hasAdapter } = getAdapter(params);
-    const promise = await adapter(config).then(data =>
-      hasAdapter
-        ? data
-        : {
-            config,
-            data,
-          },
-    );
-    if (isType(handler, 'function')) {
+    const result = await getResult(params);
+
+    if (isType(handler, "function")) {
       try {
-        const [err, res] = await awaitWrap(promise);
-        const result = handler(res, err);
-        if (result instanceof Promise) {
-          return result;
+        const res = handler(result);
+        if (res instanceof Promise) {
+          return res;
         } else {
-          return Promise.resolve(result);
+          return Promise.resolve(res);
         }
       } catch (error) {
         console.error(error);
       }
     }
-    return promise;
+    return result;
   };
 }
 
 function Http() {
   this.interceptors = {
     request: new Interceptor(),
-    response: new Interceptor(),
+    response: new Interceptor()
   };
 }
 

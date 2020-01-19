@@ -6,6 +6,7 @@ import ReactContext from './Context';
 const Global = global || window;
 
 const getResult = async (func, params, handler, resultMode) => {
+  console.log(params,handler, 'handler')
   switch (resultMode) {
     case 'native':
       return await func(params, handler);

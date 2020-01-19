@@ -105,12 +105,9 @@ const opt = {
   key2: 'value2',
 }
 
-const handler = (res, err) => {
-  // res为返回的结果,err为请求报错时的错误信息，默认为null。
-  return Promise.resolve(res); // 推荐
-  //return Promise.reject(res); // 推荐
-  // 建议加工函数返回的是个Promise对象;
-  // return res; 不推荐，但是也可以使用，默认包装成Promise对象。
+const handler = (res) => {
+  // res为返回的结果。
+  return res;
 }
 
 // IO.getxxx(opt, handler)

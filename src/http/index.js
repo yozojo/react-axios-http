@@ -7,7 +7,7 @@ const setApi = (api, { prefix, ...others }) => {
   const url = prefix + api.url;
 
   return (opt, handler) => {
-    if (isType(handler, 'function')) {
+    if (isType(opt, 'function')) {
       handler = opt;
       opt = {};
     }
