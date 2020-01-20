@@ -1,19 +1,19 @@
-import tdHttp from "./core";
-import Interceptor from "./interceptor";
-import { handleMethod, extend, awaitWrap, isType } from "../utils";
+import tdHttp from './core';
+import Interceptor from './interceptor';
+import { handleMethod, extend, isType } from '../utils';
 
 function getAdapter(params) {
   let { adapter, ...others } = params;
   const method = handleMethod(params);
   const config = { ...others, method };
 
-  const hasAdapter = isType(adapter, "function");
+  const hasAdapter = isType(adapter, 'function');
   adapter = hasAdapter ? adapter : tdHttp[method];
 
   return {
     config,
     adapter,
-    hasAdapter
+    hasAdapter,
   };
 }
 
@@ -25,7 +25,7 @@ const getResult = async params => {
     ? data
     : {
         config,
-        data
+        data,
       };
 };
 
@@ -33,10 +33,10 @@ function xhr(handler) {
   return async function http(params) {
     const result = await getResult(params);
 
-    if (isType(handler, "function")) {
+    if (isType(handler, 'function')) {
       const res = handler(result);
-      if (isType(res, "undefined")) {
-        console.warn('请在加工函数中返回结果，否则加工函数的操作结果无效');
+      if (isType(res, 'undefined')) {
+        console.warn('请在加工函数中返回结果');
       } else {
         return res;
       }
@@ -48,31 +48,27 @@ function xhr(handler) {
 function Http() {
   this.interceptors = {
     request: new Interceptor(),
-    response: new Interceptor()
+    response: new Interceptor(),
   };
 }
 
 Http.prototype._request = function(params, handler) {
-  try {
-    let chain = [xhr(handler), undefined];
-    let promise = Promise.resolve(params);
+  let chain = [xhr(handler), undefined];
+  let promise = Promise.resolve(params);
 
-    this.interceptors.request.forEach(function(interceptor) {
-      chain.unshift(interceptor.fulfilled, interceptor.rejected);
-    });
+  this.interceptors.request.forEach(function(interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
 
-    this.interceptors.response.forEach(function(interceptor) {
-      chain.push(interceptor.fulfilled, interceptor.rejected);
-    });
+  this.interceptors.response.forEach(function(interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
 
-    while (chain.length) {
-      promise = promise.then(chain.shift(), chain.shift());
-    }
-
-    return promise;
-  } catch (error) {
-    return Promise.reject(error);
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
   }
+
+  return promise;
 };
 
 function createInstance() {

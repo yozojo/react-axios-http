@@ -1,9 +1,9 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
-import tdHttp from "./core";
-import Interceptor from "./interceptor";
-import { handleMethod, extend, awaitWrap, isType } from "../utils";
+import tdHttp from './core';
+import Interceptor from './interceptor';
+import { handleMethod, extend, isType } from '../utils';
 
 function getAdapter(params) {
   var adapter = params.adapter,
@@ -15,7 +15,7 @@ function getAdapter(params) {
     method: method
   });
 
-  var hasAdapter = isType(adapter, "function");
+  var hasAdapter = isType(adapter, 'function');
   adapter = hasAdapter ? adapter : tdHttp[method];
   return {
     config: config,
@@ -63,19 +63,19 @@ function xhr(handler) {
           case 2:
             result = _context2.sent;
 
-            if (!isType(handler, "function")) {
+            if (!isType(handler, 'function')) {
               _context2.next = 10;
               break;
             }
 
             res = handler(result);
 
-            if (!isType(res, "undefined")) {
+            if (!isType(res, 'undefined')) {
               _context2.next = 9;
               break;
             }
 
-            console.warn('请在加工函数中返回结果，否则加工函数的操作结果无效');
+            console.warn('请在加工函数中返回结果');
             _context2.next = 10;
             break;
 
@@ -102,24 +102,20 @@ function Http() {
 }
 
 Http.prototype._request = function (params, handler) {
-  try {
-    var chain = [xhr(handler), undefined];
-    var promise = Promise.resolve(params);
-    this.interceptors.request.forEach(function (interceptor) {
-      chain.unshift(interceptor.fulfilled, interceptor.rejected);
-    });
-    this.interceptors.response.forEach(function (interceptor) {
-      chain.push(interceptor.fulfilled, interceptor.rejected);
-    });
+  var chain = [xhr(handler), undefined];
+  var promise = Promise.resolve(params);
+  this.interceptors.request.forEach(function (interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
+  this.interceptors.response.forEach(function (interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
 
-    while (chain.length) {
-      promise = promise.then(chain.shift(), chain.shift());
-    }
-
-    return promise;
-  } catch (error) {
-    return Promise.reject(error);
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
   }
+
+  return promise;
 };
 
 function createInstance() {

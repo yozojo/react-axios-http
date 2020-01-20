@@ -59,9 +59,8 @@ const getOption = (scope, IO) => {
 
   let option = {
     resultMode,
-    scope: '',
-    // scope: [],
-    // isScope: false // 默认false
+    isScope: false,
+    scope: '', // []
   };
 
   if (isType(scope, 'object')) {
@@ -71,16 +70,16 @@ const getOption = (scope, IO) => {
 
   scope = isType(scope, 'string') ? [scope] : scope;
 
-  const scopeArr = _.filter(apis, ([key]) => _.includes(scope, key));
+  const scopes = _.filter(apis, ([key]) => _.includes(scope, key));
 
   const isScope = isType(_.values(IO)[0], 'object');
 
-  if (isScope && !isType(option.isScope, 'boolean')) {
+  if (isScope && !option.isScope) {
     option.isScope = isScope;
   }
 
-  const scopeIO = scopeArr.length
-    ? getScope(scopeArr, IO, option.isScope)
+  const scopeIO = scopes.length
+    ? getScope(scopes, IO, option.isScope)
     : getIsScope(apis, IO, option.isScope);
 
   return {
@@ -115,12 +114,10 @@ const connectHoc = (WrapperComponent, scope = []) => {
         (pre, func, key) => {
           if (isType(func, 'object')) {
             const funcObj = {};
-            for (const fkey in func) {
-              if (func.hasOwnProperty(fkey)) {
-                funcObj[fkey] = async (params, cb) =>
-                  await getResult(func[fkey], params, cb, option.resultMode);
-              }
-            }
+            _.forEach(func, (value, key) => {
+              funcObj[key] = async (params, cb) =>
+                  await getResult(value, params, cb, option.resultMode);
+            });
 
             return (pre[key] = funcObj) && pre;
           } else {
@@ -135,7 +132,7 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
       for (const key in connectApis) {
         if (this.props[key]) {
-          console.warn(`@tongdun/tdhttp，connectApi，警告！！！
+          console.warn(`react-axios-http，connectApi，警告！！！
           传入的props和apis中有重名，props中的重名参数将被apis覆盖，重名参数为：${key},
           在connectApi的第二个参数为对象，请在其中配置 isScope: true，(选配scope: []/''，使用combineApi中的参数)`);
         }

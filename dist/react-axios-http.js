@@ -38106,7 +38106,7 @@
 	    method: method
 	  });
 
-	  var hasAdapter = isType(adapter, "function");
+	  var hasAdapter = isType(adapter, 'function');
 	  adapter = hasAdapter ? adapter : tdHttp[method];
 	  return {
 	    config: config,
@@ -38154,19 +38154,19 @@
 	          case 2:
 	            result = _context2.sent;
 
-	            if (!isType(handler, "function")) {
+	            if (!isType(handler, 'function')) {
 	              _context2.next = 10;
 	              break;
 	            }
 
 	            res = handler(result);
 
-	            if (!isType(res, "undefined")) {
+	            if (!isType(res, 'undefined')) {
 	              _context2.next = 9;
 	              break;
 	            }
 
-	            console.warn('请在加工函数中返回结果，否则加工函数的操作结果无效');
+	            console.warn('请在加工函数中返回结果');
 	            _context2.next = 10;
 	            break;
 
@@ -38193,26 +38193,22 @@
 	}
 
 	Http.prototype._request = function (params, handler) {
-	  try {
-	    var chain = [xhr$2(handler), undefined];
+	  var chain = [xhr$2(handler), undefined];
 
-	    var promise = promise$1.resolve(params);
+	  var promise = promise$1.resolve(params);
 
-	    this.interceptors.request.forEach(function (interceptor) {
-	      chain.unshift(interceptor.fulfilled, interceptor.rejected);
-	    });
-	    this.interceptors.response.forEach(function (interceptor) {
-	      chain.push(interceptor.fulfilled, interceptor.rejected);
-	    });
+	  this.interceptors.request.forEach(function (interceptor) {
+	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+	  });
+	  this.interceptors.response.forEach(function (interceptor) {
+	    chain.push(interceptor.fulfilled, interceptor.rejected);
+	  });
 
-	    while (chain.length) {
-	      promise = promise.then(chain.shift(), chain.shift());
-	    }
-
-	    return promise;
-	  } catch (error) {
-	    return promise$1.reject(error);
+	  while (chain.length) {
+	    promise = promise.then(chain.shift(), chain.shift());
 	  }
+
+	  return promise;
 	};
 
 	function createInstance$1() {
@@ -38413,8 +38409,8 @@
 	  var apis = Global$1._TDHTTP_APIS || [];
 	  var option = {
 	    resultMode: resultMode,
-	    scope: '' // scope: [],
-	    // isScope: false // 默认false
+	    isScope: false,
+	    scope: '' // []
 
 	  };
 
@@ -38425,18 +38421,18 @@
 
 	  scope = isType(scope, 'string') ? [scope] : scope;
 
-	  var scopeArr = lodash.filter(apis, function (_ref2) {
+	  var scopes = lodash.filter(apis, function (_ref2) {
 	    var key = _ref2[0];
 	    return lodash.includes(scope, key);
 	  });
 
 	  var isScope = isType(lodash.values(IO)[0], 'object');
 
-	  if (isScope && !isType(option.isScope, 'boolean')) {
+	  if (isScope && !option.isScope) {
 	    option.isScope = isScope;
 	  }
 
-	  var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+	  var scopeIO = scopes.length ? getScope(scopes, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
 	  return {
 	    scopeIO: scopeIO,
 	    option: option
@@ -38487,32 +38483,26 @@
 	          if (isType(func, 'object')) {
 	            var funcObj = {};
 
-	            var _loop = function _loop(fkey) {
-	              if (func.hasOwnProperty(fkey)) {
-	                funcObj[fkey] = function _callee(params, cb) {
-	                  return regenerator.async(function _callee$(_context2) {
-	                    while (1) {
-	                      switch (_context2.prev = _context2.next) {
-	                        case 0:
-	                          _context2.next = 2;
-	                          return regenerator.awrap(getResult$1(func[fkey], params, cb, option.resultMode));
+	            lodash.forEach(func, function (value, key) {
+	              funcObj[key] = function _callee(params, cb) {
+	                return regenerator.async(function _callee$(_context2) {
+	                  while (1) {
+	                    switch (_context2.prev = _context2.next) {
+	                      case 0:
+	                        _context2.next = 2;
+	                        return regenerator.awrap(getResult$1(value, params, cb, option.resultMode));
 
-	                        case 2:
-	                          return _context2.abrupt("return", _context2.sent);
+	                      case 2:
+	                        return _context2.abrupt("return", _context2.sent);
 
-	                        case 3:
-	                        case "end":
-	                          return _context2.stop();
-	                      }
+	                      case 3:
+	                      case "end":
+	                        return _context2.stop();
 	                    }
-	                  });
-	                };
-	              }
-	            };
-
-	            for (var fkey in func) {
-	              _loop(fkey);
-	            }
+	                  }
+	                });
+	              };
+	            });
 
 	            return (pre[key] = funcObj) && pre;
 	          } else {
@@ -38539,7 +38529,7 @@
 
 	        for (var key in connectApis) {
 	          if (this.props[key]) {
-	            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+	            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
 	          }
 	        }
 

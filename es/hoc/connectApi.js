@@ -95,8 +95,8 @@ var getOption = function getOption(scope, IO) {
   var apis = Global._TDHTTP_APIS || [];
   var option = {
     resultMode: resultMode,
-    scope: '' // scope: [],
-    // isScope: false // 默认false
+    isScope: false,
+    scope: '' // []
 
   };
 
@@ -107,18 +107,18 @@ var getOption = function getOption(scope, IO) {
 
   scope = isType(scope, 'string') ? [scope] : scope;
 
-  var scopeArr = _.filter(apis, function (_ref2) {
+  var scopes = _.filter(apis, function (_ref2) {
     var key = _ref2[0];
     return _.includes(scope, key);
   });
 
   var isScope = isType(_.values(IO)[0], 'object');
 
-  if (isScope && !isType(option.isScope, 'boolean')) {
+  if (isScope && !option.isScope) {
     option.isScope = isScope;
   }
 
-  var scopeIO = scopeArr.length ? getScope(scopeArr, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
+  var scopeIO = scopes.length ? getScope(scopes, IO, option.isScope) : getIsScope(apis, IO, option.isScope);
   return {
     scopeIO: scopeIO,
     option: option
@@ -169,32 +169,26 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
           if (isType(func, 'object')) {
             var funcObj = {};
 
-            var _loop = function _loop(fkey) {
-              if (func.hasOwnProperty(fkey)) {
-                funcObj[fkey] = function _callee(params, cb) {
-                  return _regeneratorRuntime.async(function _callee$(_context2) {
-                    while (1) {
-                      switch (_context2.prev = _context2.next) {
-                        case 0:
-                          _context2.next = 2;
-                          return _regeneratorRuntime.awrap(getResult(func[fkey], params, cb, option.resultMode));
+            _.forEach(func, function (value, key) {
+              funcObj[key] = function _callee(params, cb) {
+                return _regeneratorRuntime.async(function _callee$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        _context2.next = 2;
+                        return _regeneratorRuntime.awrap(getResult(value, params, cb, option.resultMode));
 
-                        case 2:
-                          return _context2.abrupt("return", _context2.sent);
+                      case 2:
+                        return _context2.abrupt("return", _context2.sent);
 
-                        case 3:
-                        case "end":
-                          return _context2.stop();
-                      }
+                      case 3:
+                      case "end":
+                        return _context2.stop();
                     }
-                  });
-                };
-              }
-            };
-
-            for (var fkey in func) {
-              _loop(fkey);
-            }
+                  }
+                });
+              };
+            });
 
             return (pre[key] = funcObj) && pre;
           } else {
@@ -221,7 +215,7 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
 
         for (var key in connectApis) {
           if (this.props[key]) {
-            console.warn("@tongdun/tdhttp\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
           }
         }
 
