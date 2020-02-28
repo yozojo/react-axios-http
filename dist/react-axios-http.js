@@ -39580,7 +39580,7 @@
 	  var apis = _ref.apis,
 	      context = _ref.context,
 	      children = _ref.children;
-	  var contextValue = useMemo(function () {
+	  var contextValue = React.useMemo(function () {
 	    return apis;
 	  }, [apis]);
 	  var Context = context || ReactContext;
