@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactContext from './Context';
-import { Global } from '../utils';
-import _ from 'lodash';
 
 function ProviderApi({ apis, context, children }) {
-  const contextValue = _.isArray(apis) ? apis : Global._TDHTTP_TRUE_APIS || [];
+  const contextValue = useMemo(() => apis, [apis]);
 
   const Context = context || ReactContext;
 

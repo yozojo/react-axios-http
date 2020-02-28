@@ -39580,7 +39580,9 @@
 	  var apis = _ref.apis,
 	      context = _ref.context,
 	      children = _ref.children;
-	  var contextValue = lodash.isArray(apis) ? apis : Global._TDHTTP_TRUE_APIS || [];
+	  var contextValue = useMemo(function () {
+	    return apis;
+	  }, [apis]);
 	  var Context = context || ReactContext;
 	  var Provider = Context.Provider;
 	  return React__default.createElement(Provider, {
@@ -39607,7 +39609,7 @@
 
 	  var apiArr = Global._TDHTTP_APIS = lodash.entries(apis);
 
-	  return Global._TDHTTP_TRUE_APIS = lodash.reduce(apiArr, function (pre, _ref) {
+	  return lodash.reduce(apiArr, function (pre, _ref) {
 	    var key = _ref[0],
 	        value = _ref[1];
 	    return isScope ? (pre[key] = value) && pre : _extends({}, pre, {}, value);
