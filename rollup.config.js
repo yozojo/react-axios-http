@@ -14,6 +14,7 @@ const config = {
   output: {
     format: 'umd',
     name: 'react-axios-http',
+    exports: 'named',
     globals: {
       react: 'React',
     },

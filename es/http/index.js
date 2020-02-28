@@ -3,7 +3,7 @@ import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWith
 
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
-import { setOpt, extend, isType } from '../utils';
+import { Global, setOpt, extend, isType } from '../utils';
 import _ from 'lodash';
 
 var setApi = function setApi(api, _ref) {
@@ -52,7 +52,6 @@ var defineProperty = function defineProperty(target, props) {
   });
 };
 
-var Global = global || window;
 Global._TDHTTP_RESULT_MODE = 'native';
 var defaultOpt = {
   resultMode: 'native',

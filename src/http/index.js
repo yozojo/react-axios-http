@@ -1,6 +1,6 @@
 /* 封装tdHttp拦截接口 */
 import tdHttp from './http';
-import { setOpt, extend, isType } from '../utils';
+import { Global, setOpt, extend, isType } from '../utils';
 import _ from 'lodash';
 
 const setApi = (api, { prefix, ...others }) => {
@@ -44,8 +44,6 @@ const defineProperty = (target, props = []) => {
     });
   });
 };
-
-const Global = global || window;
 
 Global._TDHTTP_RESULT_MODE = 'native';
 

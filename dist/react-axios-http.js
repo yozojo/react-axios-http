@@ -38096,6 +38096,8 @@
 	  return type === getType(data);
 	}
 
+	var Global = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
 	function getAdapter(params) {
 	  var adapter = params.adapter,
 	      others = _objectWithoutPropertiesLoose(params, ["adapter"]);
@@ -38269,7 +38271,6 @@
 	  });
 	};
 
-	var Global = global || window;
 	Global._TDHTTP_RESULT_MODE = 'native';
 	var defaultOpt = {
 	  resultMode: 'native',
@@ -38301,25 +38302,7 @@
 	  return IO;
 	};
 
-	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-	_export(_export.S, 'Object', { create: _objectCreate });
-
-	var $Object$1 = _core.Object;
-	var create = function create(P, D) {
-	  return $Object$1.create(P, D);
-	};
-
-	var create$1 = create;
-
-	function _inheritsLoose(subClass, superClass) {
-	  subClass.prototype = create$1(superClass.prototype);
-	  subClass.prototype.constructor = subClass;
-	  subClass.__proto__ = superClass;
-	}
-
 	var ReactContext = React__default.createContext(null);
-
-	var Global$1 = global || window;
 
 	var getResult$1 = function getResult(func, params, handler, resultMode) {
 	  return regenerator.async(function getResult$(_context) {
@@ -38405,8 +38388,8 @@
 	};
 
 	var getOption = function getOption(scope, IO) {
-	  var resultMode = Global$1._TDHTTP_RESULT_MODE;
-	  var apis = Global$1._TDHTTP_APIS || [];
+	  var resultMode = Global._TDHTTP_RESULT_MODE;
+	  var apis = Global._TDHTTP_APIS || [];
 	  var option = {
 	    resultMode: resultMode,
 	    isScope: false,
@@ -38444,118 +38427,92 @@
 	    scope = [];
 	  }
 
-	  return (
-	    /*#__PURE__*/
-	    function (_PureComponent) {
-	      _inheritsLoose(ConnectApi, _PureComponent);
-
-	      function ConnectApi(props) {
-	        var _this;
-
-	        _this = _PureComponent.call(this, props) || this;
-	        _this._Instance = React.createRef();
-	        return _this;
+	  return React.forwardRef(function (props, ref) {
+	    var _renderWrapper = function _renderWrapper(contextApis) {
+	      if (contextApis === void 0) {
+	        contextApis = {};
 	      }
 
-	      var _proto = ConnectApi.prototype;
+	      var IO = lodash.cloneDeep(contextApis);
 
-	      _proto.getInstance = function getInstance() {
-	        // 获得connectApi包裹的组件实例
-	        return this._Instance && this._Instance.current;
-	      };
+	      if (lodash.isEmpty(IO)) {
+	        console.warn('请在根组件挂载ProviderApi，并且注入apis');
+	      }
 
-	      _proto._renderWrapper = function _renderWrapper(contextApis) {
-	        if (contextApis === void 0) {
-	          contextApis = {};
-	        }
+	      var _getOption = getOption(scope, IO),
+	          scopeIO = _getOption.scopeIO,
+	          option = _getOption.option;
 
-	        var IO = lodash.cloneDeep(contextApis);
+	      var connectApis = lodash.reduce(scopeIO, function (pre, func, key) {
+	        if (isType(func, 'object')) {
+	          var funcObj = {};
 
-	        if (lodash.isEmpty(IO)) {
-	          console.warn('请在根组件挂载ProviderApi，并且注入apis');
-	        }
-
-	        var _getOption = getOption(scope, IO),
-	            scopeIO = _getOption.scopeIO,
-	            option = _getOption.option;
-
-	        var connectApis = lodash.reduce(scopeIO, function (pre, func, key) {
-	          if (isType(func, 'object')) {
-	            var funcObj = {};
-
-	            lodash.forEach(func, function (value, key) {
-	              funcObj[key] = function _callee(params, cb) {
-	                return regenerator.async(function _callee$(_context2) {
-	                  while (1) {
-	                    switch (_context2.prev = _context2.next) {
-	                      case 0:
-	                        _context2.next = 2;
-	                        return regenerator.awrap(getResult$1(value, params, cb, option.resultMode));
-
-	                      case 2:
-	                        return _context2.abrupt("return", _context2.sent);
-
-	                      case 3:
-	                      case "end":
-	                        return _context2.stop();
-	                    }
-	                  }
-	                });
-	              };
-	            });
-
-	            return (pre[key] = funcObj) && pre;
-	          } else {
-	            return (pre[key] = function _callee2(params, cb) {
-	              return regenerator.async(function _callee2$(_context3) {
+	          lodash.forEach(func, function (value, key) {
+	            funcObj[key] = function _callee(params, cb) {
+	              return regenerator.async(function _callee$(_context2) {
 	                while (1) {
-	                  switch (_context3.prev = _context3.next) {
+	                  switch (_context2.prev = _context2.next) {
 	                    case 0:
-	                      _context3.next = 2;
-	                      return regenerator.awrap(getResult$1(func, params, cb, option.resultMode));
+	                      _context2.next = 2;
+	                      return regenerator.awrap(getResult$1(value, params, cb, option.resultMode));
 
 	                    case 2:
-	                      return _context3.abrupt("return", _context3.sent);
+	                      return _context2.abrupt("return", _context2.sent);
 
 	                    case 3:
 	                    case "end":
-	                      return _context3.stop();
+	                      return _context2.stop();
 	                  }
 	                }
 	              });
-	            }) && pre;
-	          }
-	        }, {});
+	            };
+	          });
 
-	        for (var key in connectApis) {
-	          if (this.props[key]) {
-	            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
-	          }
+	          return (pre[key] = funcObj) && pre;
+	        } else {
+	          return (pre[key] = function _callee2(params, cb) {
+	            return regenerator.async(function _callee2$(_context3) {
+	              while (1) {
+	                switch (_context3.prev = _context3.next) {
+	                  case 0:
+	                    _context3.next = 2;
+	                    return regenerator.awrap(getResult$1(func, params, cb, option.resultMode));
+
+	                  case 2:
+	                    return _context3.abrupt("return", _context3.sent);
+
+	                  case 3:
+	                  case "end":
+	                    return _context3.stop();
+	                }
+	              }
+	            });
+	          }) && pre;
 	        }
+	      }, {});
 
-	        return React__default.createElement(WrapperComponent, _extends({
-	          ref: this._Instance
-	        }, this.props, connectApis));
-	      };
+	      for (var key in connectApis) {
+	        if (props[key]) {
+	          console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+	        }
+	      }
 
-	      _proto.render = function render() {
-	        var _this2 = this;
+	      return React__default.createElement(WrapperComponent, _extends({
+	        ref: ref
+	      }, props, connectApis));
+	    };
 
-	        var Consumer = ReactContext.Consumer;
-	        return React__default.createElement(Consumer, null, function (contextApis) {
-	          return _this2._renderWrapper(contextApis);
-	        });
-	      };
-
-	      return ConnectApi;
-	    }(React.PureComponent)
-	  );
+	    var Consumer = ReactContext.Consumer;
+	    return React__default.createElement(Consumer, null, function (contextApis) {
+	      return _renderWrapper(contextApis);
+	    });
+	  });
 	};
 
 	var connectApi = (function (WrapperComponent, scope) {
 	  // 支持装饰器写法
 	  if (isType(WrapperComponent, 'function')) {
-	    return connectHoc(WrapperComponent, scope = []);
+	    return connectHoc(WrapperComponent, scope);
 	  } else {
 	    scope = scope || WrapperComponent || [];
 	    return function (WrapperComponent) {
@@ -39623,9 +39580,7 @@
 	  var apis = _ref.apis,
 	      context = _ref.context,
 	      children = _ref.children;
-	  var contextValue = React.useMemo(function () {
-	    return apis;
-	  }, [apis]);
+	  var contextValue = lodash.isArray(apis) ? apis : Global._TDHTTP_TRUE_APIS || [];
 	  var Context = context || ReactContext;
 	  var Provider = Context.Provider;
 	  return React__default.createElement(Provider, {
@@ -39641,7 +39596,6 @@
 	  };
 	}
 
-	var Global$2 = global || window;
 	function combineApi(apis, isScope) {
 	  if (apis === void 0) {
 	    apis = {};
@@ -39651,9 +39605,9 @@
 	    isScope = true;
 	  }
 
-	  var apiArr = Global$2._TDHTTP_APIS = lodash.entries(apis);
+	  var apiArr = Global._TDHTTP_APIS = lodash.entries(apis);
 
-	  return lodash.reduce(apiArr, function (pre, _ref) {
+	  return Global._TDHTTP_TRUE_APIS = lodash.reduce(apiArr, function (pre, _ref) {
 	    var key = _ref[0],
 	        value = _ref[1];
 	    return isScope ? (pre[key] = value) && pre : _extends({}, pre, {}, value);

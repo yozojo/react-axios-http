@@ -22,11 +22,11 @@ interface ConfigProps {
   prefix?: string,
 }
 
-export function combineApi(apis: ApisProps, isScope?: boolean): any;
+export declare function combineApi(apis: ApisProps, isScope?: boolean): any;
 
-export function connectApi(WrapperComponent: React.Component | string | string[], scope?: string | string[] | ConnectApiProps): React.Component;
+export declare function connectApi(WrapperComponent: React.Component | string | string[], scope?: string | string[] | ConnectApiProps): React.Component;
 
-export function ProviderApi(obj: ProviderProps): React.Component;
+export declare function ProviderApi(obj: ProviderProps): React.Component;
 
 declare function http(apis: ApisProps, config?: ConfigProps): any;
 

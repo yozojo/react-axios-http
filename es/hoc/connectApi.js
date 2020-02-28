@@ -1,11 +1,9 @@
-import _inheritsLoose from "@babel/runtime/helpers/esm/inheritsLoose";
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _regeneratorRuntime from "@babel/runtime/regenerator";
-import React, { PureComponent, createRef } from 'react';
+import React, { forwardRef } from 'react';
 import _ from 'lodash';
-import { awaitWrap, isType } from '../utils';
+import { Global, awaitWrap, isType } from '../utils';
 import ReactContext from './Context';
-var Global = global || window;
 
 var getResult = function getResult(func, params, handler, resultMode) {
   return _regeneratorRuntime.async(function getResult$(_context) {
@@ -130,118 +128,92 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
     scope = [];
   }
 
-  return (
-    /*#__PURE__*/
-    function (_PureComponent) {
-      _inheritsLoose(ConnectApi, _PureComponent);
-
-      function ConnectApi(props) {
-        var _this;
-
-        _this = _PureComponent.call(this, props) || this;
-        _this._Instance = createRef();
-        return _this;
+  return forwardRef(function (props, ref) {
+    var _renderWrapper = function _renderWrapper(contextApis) {
+      if (contextApis === void 0) {
+        contextApis = {};
       }
 
-      var _proto = ConnectApi.prototype;
+      var IO = _.cloneDeep(contextApis);
 
-      _proto.getInstance = function getInstance() {
-        // 获得connectApi包裹的组件实例
-        return this._Instance && this._Instance.current;
-      };
+      if (_.isEmpty(IO)) {
+        console.warn('请在根组件挂载ProviderApi，并且注入apis');
+      }
 
-      _proto._renderWrapper = function _renderWrapper(contextApis) {
-        if (contextApis === void 0) {
-          contextApis = {};
-        }
+      var _getOption = getOption(scope, IO),
+          scopeIO = _getOption.scopeIO,
+          option = _getOption.option;
 
-        var IO = _.cloneDeep(contextApis);
+      var connectApis = _.reduce(scopeIO, function (pre, func, key) {
+        if (isType(func, 'object')) {
+          var funcObj = {};
 
-        if (_.isEmpty(IO)) {
-          console.warn('请在根组件挂载ProviderApi，并且注入apis');
-        }
-
-        var _getOption = getOption(scope, IO),
-            scopeIO = _getOption.scopeIO,
-            option = _getOption.option;
-
-        var connectApis = _.reduce(scopeIO, function (pre, func, key) {
-          if (isType(func, 'object')) {
-            var funcObj = {};
-
-            _.forEach(func, function (value, key) {
-              funcObj[key] = function _callee(params, cb) {
-                return _regeneratorRuntime.async(function _callee$(_context2) {
-                  while (1) {
-                    switch (_context2.prev = _context2.next) {
-                      case 0:
-                        _context2.next = 2;
-                        return _regeneratorRuntime.awrap(getResult(value, params, cb, option.resultMode));
-
-                      case 2:
-                        return _context2.abrupt("return", _context2.sent);
-
-                      case 3:
-                      case "end":
-                        return _context2.stop();
-                    }
-                  }
-                });
-              };
-            });
-
-            return (pre[key] = funcObj) && pre;
-          } else {
-            return (pre[key] = function _callee2(params, cb) {
-              return _regeneratorRuntime.async(function _callee2$(_context3) {
+          _.forEach(func, function (value, key) {
+            funcObj[key] = function _callee(params, cb) {
+              return _regeneratorRuntime.async(function _callee$(_context2) {
                 while (1) {
-                  switch (_context3.prev = _context3.next) {
+                  switch (_context2.prev = _context2.next) {
                     case 0:
-                      _context3.next = 2;
-                      return _regeneratorRuntime.awrap(getResult(func, params, cb, option.resultMode));
+                      _context2.next = 2;
+                      return _regeneratorRuntime.awrap(getResult(value, params, cb, option.resultMode));
 
                     case 2:
-                      return _context3.abrupt("return", _context3.sent);
+                      return _context2.abrupt("return", _context2.sent);
 
                     case 3:
                     case "end":
-                      return _context3.stop();
+                      return _context2.stop();
                   }
                 }
               });
-            }) && pre;
-          }
-        }, {});
+            };
+          });
 
-        for (var key in connectApis) {
-          if (this.props[key]) {
-            console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
-          }
+          return (pre[key] = funcObj) && pre;
+        } else {
+          return (pre[key] = function _callee2(params, cb) {
+            return _regeneratorRuntime.async(function _callee2$(_context3) {
+              while (1) {
+                switch (_context3.prev = _context3.next) {
+                  case 0:
+                    _context3.next = 2;
+                    return _regeneratorRuntime.awrap(getResult(func, params, cb, option.resultMode));
+
+                  case 2:
+                    return _context3.abrupt("return", _context3.sent);
+
+                  case 3:
+                  case "end":
+                    return _context3.stop();
+                }
+              }
+            });
+          }) && pre;
         }
+      }, {});
 
-        return React.createElement(WrapperComponent, _extends({
-          ref: this._Instance
-        }, this.props, connectApis));
-      };
+      for (var key in connectApis) {
+        if (props[key]) {
+          console.warn("react-axios-http\uFF0CconnectApi\uFF0C\u8B66\u544A\uFF01\uFF01\uFF01\n          \u4F20\u5165\u7684props\u548Capis\u4E2D\u6709\u91CD\u540D\uFF0Cprops\u4E2D\u7684\u91CD\u540D\u53C2\u6570\u5C06\u88ABapis\u8986\u76D6\uFF0C\u91CD\u540D\u53C2\u6570\u4E3A\uFF1A" + key + ",\n          \u5728connectApi\u7684\u7B2C\u4E8C\u4E2A\u53C2\u6570\u4E3A\u5BF9\u8C61\uFF0C\u8BF7\u5728\u5176\u4E2D\u914D\u7F6E isScope: true\uFF0C(\u9009\u914Dscope: []/''\uFF0C\u4F7F\u7528combineApi\u4E2D\u7684\u53C2\u6570)");
+        }
+      }
 
-      _proto.render = function render() {
-        var _this2 = this;
+      return React.createElement(WrapperComponent, _extends({
+        ref: ref
+      }, props, connectApis));
+    };
 
-        var Consumer = ReactContext.Consumer;
-        return React.createElement(Consumer, null, function (contextApis) {
-          return _this2._renderWrapper(contextApis);
-        });
-      };
-
-      return ConnectApi;
-    }(PureComponent)
-  );
+    var Consumer = ReactContext.Consumer;
+    return React.createElement(Consumer, null, function (contextApis) {
+      return _renderWrapper(contextApis);
+    });
+  });
 };
 
 export default (function (WrapperComponent, scope) {
   // 支持装饰器写法
   if (isType(WrapperComponent, 'function')) {
-    return connectHoc(WrapperComponent, scope = []);
+    return connectHoc(WrapperComponent, scope);
   } else {
     scope = scope || WrapperComponent || [];
     return function (WrapperComponent) {

@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-import ReactContext from "./Context";
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactContext from './Context';
+import { Global } from '../utils';
+import _ from 'lodash';
 
 function ProviderApi(_ref) {
   var apis = _ref.apis,
       context = _ref.context,
       children = _ref.children;
-  var contextValue = useMemo(function () {
-    return apis;
-  }, [apis]);
+  var contextValue = _.isArray(apis) ? apis : Global._TDHTTP_TRUE_APIS || [];
   var Context = context || ReactContext;
   var Provider = Context.Provider;
   return React.createElement(Provider, {
@@ -16,7 +16,7 @@ function ProviderApi(_ref) {
   }, children);
 }
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   ProviderApi.propTypes = {
     apis: PropTypes.object,
     context: PropTypes.object,

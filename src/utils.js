@@ -78,4 +78,6 @@ function isType(data, type) {
   return type === getType(data);
 }
 
-export { handleMethod, extend, setOpt, awaitWrap, isType, getType, isStandardBrowserEnv };
+const Global = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+export { handleMethod, extend, setOpt, awaitWrap, isType, getType, Global, isStandardBrowserEnv };

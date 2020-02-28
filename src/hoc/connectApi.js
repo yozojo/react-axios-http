@@ -1,12 +1,9 @@
-import React, { PureComponent, createRef } from 'react';
+import React, { forwardRef } from 'react';
 import _ from 'lodash';
-import { awaitWrap, isType } from '../utils';
+import { Global, awaitWrap, isType } from '../utils';
 import ReactContext from './Context';
 
-const Global = global || window;
-
 const getResult = async (func, params, handler, resultMode) => {
-
   switch (resultMode) {
     case 'native':
       return await func(params, handler);
@@ -89,18 +86,9 @@ const getOption = (scope, IO) => {
 };
 
 const connectHoc = (WrapperComponent, scope = []) => {
-  return class ConnectApi extends PureComponent {
-    constructor(props) {
-      super(props);
-      this._Instance = createRef();
-    }
 
-    getInstance() {
-      // 获得connectApi包裹的组件实例
-      return this._Instance && this._Instance.current;
-    }
-
-    _renderWrapper(contextApis = {}) {
+  return forwardRef((props, ref) => {
+    const _renderWrapper = (contextApis = {}) => {
       const IO = _.cloneDeep(contextApis);
 
       if (_.isEmpty(IO)) {
@@ -116,7 +104,7 @@ const connectHoc = (WrapperComponent, scope = []) => {
             const funcObj = {};
             _.forEach(func, (value, key) => {
               funcObj[key] = async (params, cb) =>
-                  await getResult(value, params, cb, option.resultMode);
+                await getResult(value, params, cb, option.resultMode);
             });
 
             return (pre[key] = funcObj) && pre;
@@ -131,28 +119,27 @@ const connectHoc = (WrapperComponent, scope = []) => {
       );
 
       for (const key in connectApis) {
-        if (this.props[key]) {
+        if (props[key]) {
           console.warn(`react-axios-http，connectApi，警告！！！
           传入的props和apis中有重名，props中的重名参数将被apis覆盖，重名参数为：${key},
           在connectApi的第二个参数为对象，请在其中配置 isScope: true，(选配scope: []/''，使用combineApi中的参数)`);
         }
       }
 
-      return <WrapperComponent ref={this._Instance} {...this.props} {...connectApis} />;
-    }
+      return <WrapperComponent ref={ref} {...props} {...connectApis} />;
+    };
 
-    render() {
-      const { Consumer } = ReactContext;
+    const { Consumer } = ReactContext;
 
-      return <Consumer>{contextApis => this._renderWrapper(contextApis)}</Consumer>;
-    }
-  };
+    return <Consumer>{contextApis => _renderWrapper(contextApis)}</Consumer>;
+  });
+
 };
 
 export default (WrapperComponent, scope) => {
   // 支持装饰器写法
   if (isType(WrapperComponent, 'function')) {
-    return connectHoc(WrapperComponent, (scope = []));
+    return connectHoc(WrapperComponent, scope);
   } else {
     scope = scope || WrapperComponent || [];
     return WrapperComponent => {
