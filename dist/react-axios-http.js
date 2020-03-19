@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
 	typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
-	(global = global || self, factory(global['react-axios-http'] = {}, global.React));
+	(global = global || self, factory(global.ReactAxiosHttp = {}, global.React));
 }(this, (function (exports, React) { 'use strict';
 
 	var React__default = 'default' in React ? React['default'] : React;
@@ -38223,9 +38223,40 @@
 	  return instance;
 	}
 
-	var tdHttp$1 = createInstance$1();
+	Global._TDHTTP_RESULT_MODE = 'native';
 
-	var setApi = function setApi(api, _ref) {
+	var http$1 = function http(apis, opt) {
+	  if (apis === void 0) {
+	    apis = {};
+	  }
+
+	  if (opt === void 0) {
+	    opt = {};
+	  }
+
+	  var tdHttp = createInstance$1();
+	  var defaultOpt = {
+	    resultMode: 'native',
+	    prefix: ''
+	  };
+	  var IO = {};
+
+	  var _$assign = lodash.assign(defaultOpt, opt),
+	      resultMode = _$assign.resultMode,
+	      others = _objectWithoutPropertiesLoose(_$assign, ["resultMode"]);
+
+	  Global._TDHTTP_RESULT_MODE = resultMode;
+	  extend$1(IO, tdHttp);
+
+	  lodash.forEach(apis, function (api, key) {
+	    IO[key] = apiFactory(api, others, tdHttp);
+	  });
+
+	  defineProperty$2(IO, ['interceptors', '_request']);
+	  return IO;
+	};
+
+	var setApi = function setApi(api, _ref, tdHttp) {
 	  var prefix = _ref.prefix,
 	      others = _objectWithoutPropertiesLoose(_ref, ["prefix"]);
 
@@ -38239,22 +38270,22 @@
 	    opt = setOpt(_extends({}, api, {
 	      opt: opt
 	    }));
-	    return tdHttp$1(_extends({}, others, {}, api, {}, opt, {
+	    return tdHttp(_extends({}, others, {}, api, {}, opt, {
 	      url: url
 	    }), handler);
 	  };
 	};
 
-	var apiFactory = function apiFactory(api, opt) {
+	var apiFactory = function apiFactory(api, opt, tdHttp) {
 	  if (isType(api, 'object') && !api.url) {
 	    lodash.forEach(api, function (obj, key) {
-	      api[key] = setApi(obj, opt);
+	      api[key] = setApi(obj, opt, tdHttp);
 	    });
 
 	    return api;
 	  }
 
-	  return setApi(api, opt);
+	  return setApi(api, opt, tdHttp);
 	};
 
 	var defineProperty$2 = function defineProperty(target, props) {
@@ -38269,37 +38300,6 @@
 	      configurable: false
 	    });
 	  });
-	};
-
-	Global._TDHTTP_RESULT_MODE = 'native';
-	var defaultOpt = {
-	  resultMode: 'native',
-	  prefix: ''
-	};
-	var IO = {};
-
-	var http$1 = function http(apis, opt) {
-	  if (apis === void 0) {
-	    apis = {};
-	  }
-
-	  if (opt === void 0) {
-	    opt = {};
-	  }
-
-	  var _$assign = lodash.assign(defaultOpt, opt),
-	      resultMode = _$assign.resultMode,
-	      others = _objectWithoutPropertiesLoose(_$assign, ["resultMode"]);
-
-	  Global._TDHTTP_RESULT_MODE = resultMode;
-	  extend$1(IO, tdHttp$1);
-
-	  lodash.forEach(apis, function (api, key) {
-	    IO[key] = apiFactory(api, others);
-	  });
-
-	  defineProperty$2(IO, ['interceptors', '_request']);
-	  return IO;
 	};
 
 	var ReactContext = React__default.createContext(null);

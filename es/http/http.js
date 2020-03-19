@@ -118,7 +118,7 @@ Http.prototype._request = function (params, handler) {
   return promise;
 };
 
-function createInstance() {
+export default function createInstance() {
   var context = new Http();
 
   var instance = Http.prototype._request.bind(context);
@@ -127,5 +127,3 @@ function createInstance() {
   extend(instance, context);
   return instance;
 }
-
-export default createInstance();

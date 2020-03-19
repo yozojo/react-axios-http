@@ -1,9 +1,33 @@
-/* 封装tdHttp拦截接口 */
-import tdHttp from './http';
+import createHttpInstance from './http';
 import { Global, setOpt, extend, isType } from '../utils';
 import _ from 'lodash';
 
-const setApi = (api, { prefix, ...others }) => {
+Global._TDHTTP_RESULT_MODE = 'native';
+
+const http = (apis = {}, opt = {}) => {
+  const tdHttp = createHttpInstance();
+
+  const defaultOpt = {
+    resultMode: 'native',
+    prefix: '',
+  };
+
+  const IO = {};
+
+  const { resultMode, ...others } = _.assign(defaultOpt, opt);
+  Global._TDHTTP_RESULT_MODE = resultMode;
+
+  extend(IO, tdHttp);
+  _.forEach(apis, (api, key) => {
+    IO[key] = apiFactory(api, others, tdHttp);
+  });
+
+  defineProperty(IO, ['interceptors', '_request']);
+
+  return IO;
+};
+
+const setApi = (api, { prefix, ...others }, tdHttp) => {
   const url = prefix + api.url;
 
   return (opt, handler) => {
@@ -24,15 +48,15 @@ const setApi = (api, { prefix, ...others }) => {
   };
 };
 
-const apiFactory = (api, opt) => {
+const apiFactory = (api, opt, tdHttp) => {
   if (isType(api, 'object') && !api.url) {
     _.forEach(api, (obj, key) => {
-      api[key] = setApi(obj, opt);
+      api[key] = setApi(obj, opt, tdHttp);
     });
     return api;
   }
 
-  return setApi(api, opt);
+  return setApi(api, opt, tdHttp);
 };
 
 const defineProperty = (target, props = []) => {
@@ -43,29 +67,6 @@ const defineProperty = (target, props = []) => {
       configurable: false,
     });
   });
-};
-
-Global._TDHTTP_RESULT_MODE = 'native';
-
-const defaultOpt = {
-  resultMode: 'native',
-  prefix: '',
-};
-
-const IO = {};
-
-const http = (apis = {}, opt = {}) => {
-  const { resultMode, ...others } = _.assign(defaultOpt, opt);
-  Global._TDHTTP_RESULT_MODE = resultMode;
-
-  extend(IO, tdHttp);
-  _.forEach(apis, (api, key) => {
-    IO[key] = apiFactory(api, others);
-  });
-
-  defineProperty(IO, ['interceptors', '_request']);
-
-  return IO;
 };
 
 export default http;
