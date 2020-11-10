@@ -1,7 +1,9 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
+
+/* 封装tdHttp拦截接口 */
 import createHttpInstance from './http';
-import { Global, setOpt, extend, isType } from '../utils';
+import { Global, setOpt, extend, isType, stringifyQuery } from '../utils';
 import _ from 'lodash';
 Global._TDHTTP_RESULT_MODE = 'native';
 
@@ -17,7 +19,8 @@ var http = function http(apis, opt) {
   var tdHttp = createHttpInstance();
   var defaultOpt = {
     resultMode: 'native',
-    prefix: ''
+    prefix: '',
+    query: {}
   };
   var IO = {};
 
@@ -38,10 +41,16 @@ var http = function http(apis, opt) {
 
 var setApi = function setApi(api, _ref, tdHttp) {
   var prefix = _ref.prefix,
-      others = _objectWithoutPropertiesLoose(_ref, ["prefix"]);
+      query = _ref.query,
+      others = _objectWithoutPropertiesLoose(_ref, ["prefix", "query"]);
 
-  var url = prefix + api.url;
-  return function (opt, handler) {
+  var url = prefix + api.url + stringifyQuery(query);
+
+  var config = _extends({}, others, api, {
+    url: url
+  });
+
+  function getData(opt, handler) {
     if (isType(opt, 'function')) {
       handler = opt;
       opt = {};
@@ -50,10 +59,13 @@ var setApi = function setApi(api, _ref, tdHttp) {
     opt = setOpt(_extends({}, api, {
       opt: opt
     }));
-    return tdHttp(_extends({}, others, {}, api, {}, opt, {
+    return tdHttp(_extends({}, config, opt, {
       url: url
     }), handler);
-  };
+  }
+
+  getData.config = config;
+  return getData;
 };
 
 var apiFactory = function apiFactory(api, opt, tdHttp) {

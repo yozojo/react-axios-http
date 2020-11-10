@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import ReactContext from './Context';
+import ReactContext from './context';
 
 function ProviderApi(_ref) {
   var apis = _ref.apis,
@@ -11,7 +11,7 @@ function ProviderApi(_ref) {
   }, [apis]);
   var Context = context || ReactContext;
   var Provider = Context.Provider;
-  return React.createElement(Provider, {
+  return /*#__PURE__*/React.createElement(Provider, {
     value: contextValue
   }, children);
 }

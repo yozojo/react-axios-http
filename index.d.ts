@@ -24,9 +24,9 @@ interface ConfigProps {
 
 export declare function combineApi(apis: ApisProps, isScope?: boolean): any;
 
-export declare function connectApi(WrapperComponent: React.Component | string | string[], scope?: string | string[] | ConnectApiProps): React.Component;
+export declare function connectApi(WrapperComponent: React.Component | string | string[], scope?: string | string[] | ConnectApiProps): any;
 
-export declare function ProviderApi(obj: ProviderProps): React.Component;
+export declare function ProviderApi(obj: ProviderProps): any;
 
 declare function http(apis: ApisProps, config?: ConfigProps): any;
 

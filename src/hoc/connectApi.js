@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import _ from 'lodash';
-import { Global, awaitWrap, isType } from '../utils';
-import ReactContext from './Context';
+import { Global, awaitWrap, isType, extend } from '../utils';
+import ReactContext from './context';
 
 const getResult = async (func, params, handler, resultMode) => {
   switch (resultMode) {
@@ -86,7 +86,6 @@ const getOption = (scope, IO) => {
 };
 
 const connectHoc = (WrapperComponent, scope = []) => {
-
   return forwardRef((props, ref) => {
     const _renderWrapper = (contextApis = {}) => {
       const IO = _.cloneDeep(contextApis);
@@ -105,14 +104,15 @@ const connectHoc = (WrapperComponent, scope = []) => {
             _.forEach(func, (value, key) => {
               funcObj[key] = async (params, cb) =>
                 await getResult(value, params, cb, option.resultMode);
+              extend(funcObj[key], value);
             });
 
             return (pre[key] = funcObj) && pre;
           } else {
-            return (
-              (pre[key] = async (params, cb) =>
-                await getResult(func, params, cb, option.resultMode)) && pre
-            );
+            pre[key] = async (params, cb) => await getResult(func, params, cb, option.resultMode);
+            extend(pre[key], func);
+
+            return pre;
           }
         },
         {},
@@ -120,7 +120,7 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
       for (const key in connectApis) {
         if (props[key]) {
-          console.warn(`react-axios-http，connectApi，警告！！！
+          console.warn(`@tongdun/tdhttp，connectApi，警告！！！
           传入的props和apis中有重名，props中的重名参数将被apis覆盖，重名参数为：${key},
           在connectApi的第二个参数为对象，请在其中配置 isScope: true，(选配scope: []/''，使用combineApi中的参数)`);
         }
@@ -133,7 +133,6 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
     return <Consumer>{contextApis => _renderWrapper(contextApis)}</Consumer>;
   });
-
 };
 
 export default (WrapperComponent, scope) => {

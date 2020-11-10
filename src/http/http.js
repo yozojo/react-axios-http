@@ -1,4 +1,4 @@
-import tdHttp from './core';
+import tdHttp from '@tongdun/utils-http';
 import Interceptor from './interceptor';
 import { handleMethod, extend, isType } from '../utils';
 

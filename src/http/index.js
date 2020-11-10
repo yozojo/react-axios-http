@@ -1,5 +1,6 @@
+/* 封装tdHttp拦截接口 */
 import createHttpInstance from './http';
-import { Global, setOpt, extend, isType } from '../utils';
+import { Global, setOpt, extend, isType, stringifyQuery } from '../utils';
 import _ from 'lodash';
 
 Global._TDHTTP_RESULT_MODE = 'native';
@@ -10,6 +11,7 @@ const http = (apis = {}, opt = {}) => {
   const defaultOpt = {
     resultMode: 'native',
     prefix: '',
+    query: {},
   };
 
   const IO = {};
@@ -27,25 +29,35 @@ const http = (apis = {}, opt = {}) => {
   return IO;
 };
 
-const setApi = (api, { prefix, ...others }, tdHttp) => {
-  const url = prefix + api.url;
+const setApi = (api, { prefix, query, ...others }, tdHttp) => {
+  const url = prefix + api.url + stringifyQuery(query);
 
-  return (opt, handler) => {
+  const config = {
+    ...others,
+    ...api,
+    url
+  }
+
+  function getData(opt, handler) {
     if (isType(opt, 'function')) {
       handler = opt;
       opt = {};
     }
     opt = setOpt({ ...api, opt });
+
     return tdHttp(
       {
-        ...others,
-        ...api,
+        ...config,
         ...opt,
         url,
       },
       handler,
     );
-  };
+  }
+
+  getData.config = config;
+
+  return getData;
 };
 
 const apiFactory = (api, opt, tdHttp) => {

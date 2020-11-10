@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import ReactContext from './Context';
+import ReactContext from './context';
 
 function ProviderApi({ apis, context, children }) {
   const contextValue = useMemo(() => apis, [apis]);
