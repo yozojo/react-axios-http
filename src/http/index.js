@@ -33,12 +33,11 @@ const http = (apis = {}, opt = {}) => {
 const setApi = (api, props, tdHttp) => {
   const { prefix, query, ...others } = props;
 
-  const url =
-    isType(api.url) === "function"
-      ? api.url({ ...api, ...props })
-      : prefix + api.url + stringifyQuery(query);
+  const url = isType(api.url, "function")
+    ? api.url({ ...api, ...props })
+    : prefix + api.url + stringifyQuery(query);
 
-  if (isType(url) !== "string") {
+  if (isType(url, "string")) {
     return console.warn("url如果是函数传入请执行后return string类型");
   }
 
