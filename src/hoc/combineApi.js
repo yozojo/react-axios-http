@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import reduce from 'lodash/reduce';
 import { Global } from '../utils';
 
 export default function combineApi(apis = {}, isScope = true) {
   const apiArr = Global._TDHTTP_APIS = _.entries(apis);
 
-  return _.reduce(apiArr, (pre, [key, value]) => {
+  return reduce(apiArr, (pre, [key, value]) => {
     return isScope ? (pre[key] = value) && pre : { ...pre, ...value };
   }, {});
 }

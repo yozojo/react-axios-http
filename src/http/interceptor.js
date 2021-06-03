@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import forEach from 'lodash/forEach';
 
 function Interceptor() {
   this.handlers = [];
 }
 
-Interceptor.prototype.use = function use(fulfilled, rejected) {
+Interceptor.prototype.use = function (fulfilled, rejected) {
   this.handlers.push({
     fulfilled: fulfilled,
     rejected: rejected,
@@ -12,8 +12,8 @@ Interceptor.prototype.use = function use(fulfilled, rejected) {
   return this.handlers.length - 1;
 };
 
-Interceptor.prototype.forEach = function forEach(fn) {
-  _.forEach(this.handlers, h => {
+Interceptor.prototype.forEach = function (fn) {
+  forEach(this.handlers, h => {
     if (h !== null) {
       fn(h);
     }

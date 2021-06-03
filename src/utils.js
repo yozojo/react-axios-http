@@ -3,22 +3,28 @@ function isWhichMethod(target, method) {
 }
 
 function getDOP(method, opt, isQuery, others = {}) {
-  if (isWhichMethod(method, 'post')) {
+  if (isWhichMethod(method, "post")) {
     return { data: opt, ...others };
   } else {
-    if (isWhichMethod(method, 'get') || isWhichMethod(method, 'jsonp')) {
+    if (isWhichMethod(method, "get") || isWhichMethod(method, "jsonp")) {
       return { params: opt, ...others };
     } else {
-      return { [isQuery ? 'params' : 'data']: opt, ...others };
+      return { [isQuery ? "params" : "data"]: opt, ...others };
     }
   }
 }
 
 function isFormDataFunc(val) {
-  return typeof FormData !== 'undefined' && val instanceof FormData;
+  return typeof FormData !== "undefined" && val instanceof FormData;
 }
 
-function setOpt({ method = 'get', opt = {}, isFormData = false, isQuery = false, ...others }) {
+function setOpt({
+  method = "get",
+  opt = {},
+  isFormData = false,
+  isQuery = false,
+  ...others
+}) {
   if (isFormData && !isFormDataFunc(opt)) {
     const formData = new FormData();
     for (const key in opt) {
@@ -36,19 +42,19 @@ function setOpt({ method = 'get', opt = {}, isFormData = false, isQuery = false,
 function handleMethod(params) {
   const { method } = params;
   const methodMap = {
-    post: 'Post',
-    get: 'Get',
-    put: 'Put',
-    jsonp: 'GetJsonp',
-    delete: 'Delete',
+    post: "Post",
+    get: "Get",
+    put: "Put",
+    jsonp: "GetJsonp",
+    delete: "Delete",
   };
-  return method ? methodMap[method.toLowerCase()] : 'Get';
+  return method ? methodMap[method.toLowerCase()] : "Get";
 }
 
 function extend(a, b, thisArg) {
   for (const key in b) {
     if (b.hasOwnProperty(key)) {
-      if (thisArg && typeof b[key] === 'function') {
+      if (thisArg && typeof b[key] === "function") {
         a[key] = b[key].bind(thisArg);
       } else {
         a[key] = b[key];
@@ -59,14 +65,14 @@ function extend(a, b, thisArg) {
 }
 
 function awaitWrap(promise) {
-  return promise.then(res => [null, res]).catch(err => [err, null]);
+  return promise.then((res) => [null, res]).catch((err) => [err, null]);
 }
 
 function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+  if (typeof navigator !== "undefined" && navigator.product === "ReactNative") {
     return false;
   }
-  return typeof window !== 'undefined' && typeof document !== 'undefined';
+  return typeof window !== "undefined" && typeof document !== "undefined";
 }
 
 function getType(data) {
@@ -78,10 +84,13 @@ function isType(data, type) {
 }
 
 const encodeReserveRE = /[!'()*]/g;
-const encodeReserveReplacer = c => '%' + c.charCodeAt(0).toString(16);
+const encodeReserveReplacer = (c) => "%" + c.charCodeAt(0).toString(16);
 const commaRE = /%2C/g;
 
-const encode = str => encodeURIComponent(str).replace(encodeReserveRE, encodeReserveReplacer).replace(commaRE, ',');
+const encode = (str) =>
+  encodeURIComponent(str)
+    .replace(encodeReserveRE, encodeReserveReplacer)
+    .replace(commaRE, ",");
 
 const decode = decodeURIComponent;
 
@@ -89,9 +98,9 @@ function resolveQuery(query, extraQuery = {}, _parseQuery) {
   const parse = _parseQuery || parseQuery;
   let parsedQuery;
   try {
-    parsedQuery = parse(query || '');
+    parsedQuery = parse(query || "");
   } catch (e) {
-    process.env.NODE_ENV !== 'production';
+    process.env.NODE_ENV !== "production";
     parsedQuery = {};
   }
   for (const key in extraQuery) {
@@ -103,16 +112,16 @@ function resolveQuery(query, extraQuery = {}, _parseQuery) {
 function parseQuery(query) {
   const res = {};
 
-  query = query.trim().replace(/^(\?|#|&)/, '');
+  query = query.trim().replace(/^(\?|#|&)/, "");
 
   if (!query) {
     return res;
   }
 
-  query.split('&').forEach(param => {
-    const parts = param.replace(/\+/g, ' ').split('=');
+  query.split("&").forEach((param) => {
+    const parts = param.replace(/\+/g, " ").split("=");
     const key = decode(parts.shift());
-    const val = parts.length > 0 ? decode(parts.join('=')) : null;
+    const val = parts.length > 0 ? decode(parts.join("=")) : null;
 
     if (res[key] === undefined) {
       res[key] = val;
@@ -129,11 +138,11 @@ function parseQuery(query) {
 function stringifyQuery(obj) {
   const res = obj
     ? Object.keys(obj)
-        .map(key => {
+        .map((key) => {
           const val = obj[key];
 
           if (val === undefined) {
-            return '';
+            return "";
           }
 
           if (val === null) {
@@ -142,36 +151,47 @@ function stringifyQuery(obj) {
 
           if (Array.isArray(val)) {
             const result = [];
-            val.forEach(val2 => {
+            val.forEach((val2) => {
               if (val2 === undefined) {
                 return;
               }
               if (val2 === null) {
                 result.push(encode(key));
               } else {
-                result.push(encode(key) + '=' + encode(val2));
+                result.push(encode(key) + "=" + encode(val2));
               }
             });
-            return result.join('&');
+            return result.join("&");
           }
 
-          return encode(key) + '=' + encode(val);
+          return encode(key) + "=" + encode(val);
         })
-        .filter(x => x.length > 0)
-        .join('&')
+        .filter((x) => x.length > 0)
+        .join("&")
     : null;
-  return res ? `?${res}` : '';
+  return res ? `?${res}` : "";
 }
 
 const Global =
-  typeof globalThis !== 'undefined'
+  typeof globalThis !== "undefined"
     ? globalThis
-    : typeof window !== 'undefined'
+    : typeof window !== "undefined"
     ? window
-    : typeof global !== 'undefined'
+    : typeof global !== "undefined"
     ? global
-    : typeof self !== 'undefined'
+    : typeof self !== "undefined"
     ? self
     : {};
 
-export { resolveQuery, stringifyQuery, handleMethod, extend, setOpt, awaitWrap, isType, getType, Global, isStandardBrowserEnv };
+export {
+  resolveQuery,
+  stringifyQuery,
+  handleMethod,
+  extend,
+  setOpt,
+  awaitWrap,
+  isType,
+  getType,
+  Global,
+  isStandardBrowserEnv,
+};

@@ -2,10 +2,11 @@ import _extends from "@babel/runtime/helpers/esm/extends";
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
 
 /* 封装tdHttp拦截接口 */
-import createHttpInstance from './http';
-import { Global, setOpt, extend, isType, stringifyQuery } from '../utils';
-import _ from 'lodash';
-Global._TDHTTP_RESULT_MODE = 'native';
+import createHttpInstance from "./http";
+import { Global, setOpt, extend, isType, stringifyQuery } from "../utils";
+import forEach from "lodash/forEach";
+import assign from "lodash/assign";
+Global._TDHTTP_RESULT_MODE = "native";
 
 var http = function http(apis, opt) {
   if (apis === void 0) {
@@ -18,40 +19,42 @@ var http = function http(apis, opt) {
 
   var tdHttp = createHttpInstance();
   var defaultOpt = {
-    resultMode: 'native',
-    prefix: '',
+    resultMode: "native",
+    prefix: "",
     query: {}
   };
   var IO = {};
 
-  var _$assign = _.assign(defaultOpt, opt),
-      resultMode = _$assign.resultMode,
-      others = _objectWithoutPropertiesLoose(_$assign, ["resultMode"]);
+  var _assign = assign(defaultOpt, opt),
+      resultMode = _assign.resultMode,
+      others = _objectWithoutPropertiesLoose(_assign, ["resultMode"]);
 
   Global._TDHTTP_RESULT_MODE = resultMode;
   extend(IO, tdHttp);
-
-  _.forEach(apis, function (api, key) {
+  forEach(apis, function (api, key) {
     IO[key] = apiFactory(api, others, tdHttp);
   });
-
-  defineProperty(IO, ['interceptors', '_request']);
+  defineProperty(IO, ["interceptors", "_request"]);
   return IO;
 };
 
-var setApi = function setApi(api, _ref, tdHttp) {
-  var prefix = _ref.prefix,
-      query = _ref.query,
-      others = _objectWithoutPropertiesLoose(_ref, ["prefix", "query"]);
+var setApi = function setApi(api, props, tdHttp) {
+  var prefix = props.prefix,
+      query = props.query,
+      others = _objectWithoutPropertiesLoose(props, ["prefix", "query"]);
 
-  var url = prefix + api.url + stringifyQuery(query);
+  var url = isType(api.url) === "function" ? api.url(_extends({}, api, props)) : prefix + api.url + stringifyQuery(query);
+
+  if (isType(url) !== "string") {
+    return console.warn("url如果是函数传入请执行后return string类型");
+  }
 
   var config = _extends({}, others, api, {
     url: url
   });
 
   function getData(opt, handler) {
-    if (isType(opt, 'function')) {
+    if (isType(opt, "function")) {
       handler = opt;
       opt = {};
     }
@@ -69,11 +72,10 @@ var setApi = function setApi(api, _ref, tdHttp) {
 };
 
 var apiFactory = function apiFactory(api, opt, tdHttp) {
-  if (isType(api, 'object') && !api.url) {
-    _.forEach(api, function (obj, key) {
+  if (isType(api, "object") && !api.url) {
+    forEach(api, function (obj, key) {
       api[key] = setApi(obj, opt, tdHttp);
     });
-
     return api;
   }
 
@@ -85,7 +87,7 @@ var defineProperty = function defineProperty(target, props) {
     props = [];
   }
 
-  _.forEach(props, function (prop) {
+  forEach(props, function (prop) {
     Object.defineProperty(target, prop, {
       writable: true,
       enumerable: false,

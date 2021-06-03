@@ -1,10 +1,17 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import _asyncToGenerator from "@babel/runtime/helpers/esm/asyncToGenerator";
-import React, { forwardRef } from 'react';
-import _ from 'lodash';
-import { Global, awaitWrap, isType, extend } from '../utils';
-import ReactContext from './context';
+import React, { forwardRef } from "react";
+import values from "lodash/values";
+import forEach from "lodash/forEach";
+import isEmpty from "lodash/isEmpty";
+import reduce from "lodash/reduce";
+import assign from "lodash/assign";
+import filter from "lodash/filter";
+import includes from "lodash/includes";
+import cloneDeep from "lodash/cloneDeep";
+import { Global, awaitWrap, isType, extend } from "../utils";
+import ReactContext from "./context";
 
 var getResult = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(func, params, handler, resultMode) {
@@ -13,7 +20,7 @@ var getResult = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.t0 = resultMode;
-            _context.next = _context.t0 === 'native' ? 3 : _context.t0 === 'array' ? 6 : 9;
+            _context.next = _context.t0 === "native" ? 3 : _context.t0 === "array" ? 6 : 9;
             break;
 
           case 3:
@@ -56,20 +63,18 @@ var getScope = function getScope(arr, IO, isScope) {
   }
 
   try {
-    var isDeep = isType(_.values(IO)[0], 'object');
+    var isDeep = isType(values(IO)[0], "object");
 
     var getDeep = function getDeep(obj, IO) {
       var cloneObj = {};
-
-      _.forEach(obj, function (value, key) {
+      forEach(obj, function (value, key) {
         cloneObj[key] = IO[key];
       });
-
       return cloneObj;
     };
 
-    if (_.isEmpty(arr)) return IO;
-    return _.reduce(arr, function (pre, _ref2) {
+    if (isEmpty(arr)) return IO;
+    return reduce(arr, function (pre, _ref2) {
       var _extends2;
 
       var key = _ref2[0],
@@ -78,7 +83,7 @@ var getScope = function getScope(arr, IO, isScope) {
       return isScope ? _extends({}, pre, (_extends2 = {}, _extends2[key] = values, _extends2)) : _extends({}, pre, values);
     }, {});
   } catch (error) {
-    console.error('tdhttp ==> connect: error ===> ' + error);
+    console.error("tdhttp ==> connect: error ===> " + error);
     return IO;
   }
 };
@@ -101,23 +106,21 @@ var getOption = function getOption(scope, IO) {
   var option = {
     resultMode: resultMode,
     isScope: false,
-    scope: '' // []
+    scope: "" // []
 
   };
 
-  if (isType(scope, 'object')) {
-    option = _.assign(option, scope);
+  if (isType(scope, "object")) {
+    option = assign(option, scope);
     scope = option.scope;
   }
 
-  scope = isType(scope, 'string') ? [scope] : scope;
-
-  var scopes = _.filter(apis, function (_ref3) {
+  scope = isType(scope, "string") ? [scope] : scope;
+  var scopes = filter(apis, function (_ref3) {
     var key = _ref3[0];
-    return _.includes(scope, key);
+    return includes(scope, key);
   });
-
-  var isScope = isType(_.values(IO)[0], 'object');
+  var isScope = isType(values(IO)[0], "object");
 
   if (isScope && !option.isScope) {
     option.isScope = isScope;
@@ -141,21 +144,20 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
         contextApis = {};
       }
 
-      var IO = _.cloneDeep(contextApis);
+      var IO = cloneDeep(contextApis);
 
-      if (_.isEmpty(IO)) {
-        console.warn('请在根组件挂载ProviderApi，并且注入apis');
+      if (isEmpty(IO)) {
+        console.warn("请在根组件挂载ProviderApi，并且注入apis");
       }
 
       var _getOption = getOption(scope, IO),
           scopeIO = _getOption.scopeIO,
           option = _getOption.option;
 
-      var connectApis = _.reduce(scopeIO, function (pre, func, key) {
-        if (isType(func, 'object')) {
+      var connectApis = reduce(scopeIO, function (pre, func, key) {
+        if (isType(func, "object")) {
           var funcObj = {};
-
-          _.forEach(func, function (value, key) {
+          forEach(func, function (value, key) {
             funcObj[key] = /*#__PURE__*/function () {
               var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(params, cb) {
                 return _regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -183,7 +185,6 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
 
             extend(funcObj[key], value);
           });
-
           return (pre[key] = funcObj) && pre;
         } else {
           pre[key] = /*#__PURE__*/function () {
@@ -236,7 +237,7 @@ var connectHoc = function connectHoc(WrapperComponent, scope) {
 
 export default (function (WrapperComponent, scope) {
   // 支持装饰器写法
-  if (isType(WrapperComponent, 'function')) {
+  if (isType(WrapperComponent, "function")) {
     return connectHoc(WrapperComponent, scope);
   } else {
     scope = scope || WrapperComponent || [];

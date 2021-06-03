@@ -1,13 +1,20 @@
-import React, { forwardRef } from 'react';
-import _ from 'lodash';
-import { Global, awaitWrap, isType, extend } from '../utils';
-import ReactContext from './context';
+import React, { forwardRef } from "react";
+import values from "lodash/values";
+import forEach from "lodash/forEach";
+import isEmpty from "lodash/isEmpty";
+import reduce from "lodash/reduce";
+import assign from "lodash/assign";
+import filter from "lodash/filter";
+import includes from "lodash/includes";
+import cloneDeep from "lodash/cloneDeep";
+import { Global, awaitWrap, isType, extend } from "../utils";
+import ReactContext from "./context";
 
 const getResult = async (func, params, handler, resultMode) => {
   switch (resultMode) {
-    case 'native':
+    case "native":
       return await func(params, handler);
-    case 'array':
+    case "array":
       return await awaitWrap(func(params, handler));
     default:
       return await func(params, handler);
@@ -16,28 +23,28 @@ const getResult = async (func, params, handler, resultMode) => {
 
 const getScope = (arr, IO, isScope = false) => {
   try {
-    const isDeep = isType(_.values(IO)[0], 'object');
+    const isDeep = isType(values(IO)[0], "object");
 
     const getDeep = (obj, IO) => {
       const cloneObj = {};
-      _.forEach(obj, (value, key) => {
+      forEach(obj, (value, key) => {
         cloneObj[key] = IO[key];
       });
       return cloneObj;
     };
 
-    if (_.isEmpty(arr)) return IO;
+    if (isEmpty(arr)) return IO;
 
-    return _.reduce(
+    return reduce(
       arr,
       (pre, [key, obj]) => {
         const values = isDeep ? IO[key] : getDeep(obj, IO);
         return isScope ? { ...pre, [key]: values } : { ...pre, ...values };
       },
-      {},
+      {}
     );
   } catch (error) {
-    console.error('tdhttp ==> connect: error ===> ' + error);
+    console.error("tdhttp ==> connect: error ===> " + error);
     return IO;
   }
 };
@@ -57,19 +64,19 @@ const getOption = (scope, IO) => {
   let option = {
     resultMode,
     isScope: false,
-    scope: '', // []
+    scope: "", // []
   };
 
-  if (isType(scope, 'object')) {
-    option = _.assign(option, scope);
+  if (isType(scope, "object")) {
+    option = assign(option, scope);
     scope = option.scope;
   }
 
-  scope = isType(scope, 'string') ? [scope] : scope;
+  scope = isType(scope, "string") ? [scope] : scope;
 
-  const scopes = _.filter(apis, ([key]) => _.includes(scope, key));
+  const scopes = filter(apis, ([key]) => includes(scope, key));
 
-  const isScope = isType(_.values(IO)[0], 'object');
+  const isScope = isType(values(IO)[0], "object");
 
   if (isScope && !option.isScope) {
     option.isScope = isScope;
@@ -88,20 +95,20 @@ const getOption = (scope, IO) => {
 const connectHoc = (WrapperComponent, scope = []) => {
   return forwardRef((props, ref) => {
     const _renderWrapper = (contextApis = {}) => {
-      const IO = _.cloneDeep(contextApis);
+      const IO = cloneDeep(contextApis);
 
-      if (_.isEmpty(IO)) {
-        console.warn('请在根组件挂载ProviderApi，并且注入apis');
+      if (isEmpty(IO)) {
+        console.warn("请在根组件挂载ProviderApi，并且注入apis");
       }
 
       const { scopeIO, option } = getOption(scope, IO);
 
-      const connectApis = _.reduce(
+      const connectApis = reduce(
         scopeIO,
         (pre, func, key) => {
-          if (isType(func, 'object')) {
+          if (isType(func, "object")) {
             const funcObj = {};
-            _.forEach(func, (value, key) => {
+            forEach(func, (value, key) => {
               funcObj[key] = async (params, cb) =>
                 await getResult(value, params, cb, option.resultMode);
               extend(funcObj[key], value);
@@ -109,13 +116,14 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
             return (pre[key] = funcObj) && pre;
           } else {
-            pre[key] = async (params, cb) => await getResult(func, params, cb, option.resultMode);
+            pre[key] = async (params, cb) =>
+              await getResult(func, params, cb, option.resultMode);
             extend(pre[key], func);
 
             return pre;
           }
         },
-        {},
+        {}
       );
 
       for (const key in connectApis) {
@@ -131,17 +139,17 @@ const connectHoc = (WrapperComponent, scope = []) => {
 
     const { Consumer } = ReactContext;
 
-    return <Consumer>{contextApis => _renderWrapper(contextApis)}</Consumer>;
+    return <Consumer>{(contextApis) => _renderWrapper(contextApis)}</Consumer>;
   });
 };
 
 export default (WrapperComponent, scope) => {
   // 支持装饰器写法
-  if (isType(WrapperComponent, 'function')) {
+  if (isType(WrapperComponent, "function")) {
     return connectHoc(WrapperComponent, scope);
   } else {
     scope = scope || WrapperComponent || [];
-    return WrapperComponent => {
+    return (WrapperComponent) => {
       return connectHoc(WrapperComponent, scope);
     };
   }
