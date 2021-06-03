@@ -37,8 +37,8 @@ const setApi = (api, props, tdHttp) => {
     ? api.url({ ...api, ...props })
     : prefix + api.url + stringifyQuery(query);
 
-  if (isType(url, "string")) {
-    return console.warn("url如果是函数传入请执行后return string类型");
+  if (!isType(url, "string")) {
+    throw new Error("url如果是函数传入请执行后return string类型");
   }
 
   const config = {

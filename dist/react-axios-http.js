@@ -3965,10 +3965,10 @@
 	      query = props.query,
 	      others = _objectWithoutPropertiesLoose(props, ["prefix", "query"]);
 
-	  var url = isType(api.url) === "function" ? api.url(_extends({}, api, props)) : prefix + api.url + stringifyQuery(query);
+	  var url = isType(api.url, "function") ? api.url(_extends({}, api, props)) : prefix + api.url + stringifyQuery(query);
 
-	  if (isType(url) !== "string") {
-	    return console.warn("url如果是函数传入请执行后return string类型");
+	  if (!isType(url, "string")) {
+	    throw new Error("url如果是函数传入请执行后return string类型");
 	  }
 
 	  var config = _extends({}, others, api, {
