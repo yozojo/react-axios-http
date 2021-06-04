@@ -3,7 +3,7 @@ import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWith
 
 /* 封装tdHttp拦截接口 */
 import createHttpInstance from "./http";
-import { Global, setOpt, extend, isType, stringifyQuery } from "../utils";
+import { Global, setOpt, extend, isType } from "../utils";
 import forEach from "lodash/forEach";
 import assign from "lodash/assign";
 Global._TDHTTP_RESULT_MODE = "native";
@@ -20,8 +20,7 @@ var http = function http(apis, opt) {
   var tdHttp = createHttpInstance();
   var defaultOpt = {
     resultMode: "native",
-    prefix: "",
-    query: {}
+    prefix: ""
   };
   var IO = {};
 
@@ -40,18 +39,7 @@ var http = function http(apis, opt) {
 
 var setApi = function setApi(api, props, tdHttp) {
   var prefix = props.prefix,
-      query = props.query,
-      others = _objectWithoutPropertiesLoose(props, ["prefix", "query"]);
-
-  var url = isType(api.url, "function") ? api.url(_extends({}, api, props)) : prefix + api.url + stringifyQuery(query);
-
-  if (!isType(url, "string")) {
-    throw new Error("url如果是函数传入请执行后return string类型");
-  }
-
-  var config = _extends({}, others, api, {
-    url: url
-  });
+      others = _objectWithoutPropertiesLoose(props, ["prefix"]);
 
   function getData(opt, handler) {
     if (isType(opt, "function")) {
@@ -62,12 +50,21 @@ var setApi = function setApi(api, props, tdHttp) {
     opt = setOpt(_extends({}, api, {
       opt: opt
     }));
+    var url = isType(api.url, "function") ? api.url(_extends({}, opt, props)) : prefix + api.url;
+
+    if (!isType(url, "string")) {
+      throw new Error("url如果是函数传入请执行后return string类型");
+    }
+
+    var config = _extends({}, others, api, {
+      url: url
+    });
+
     return tdHttp(_extends({}, config, opt, {
       url: url
     }), handler);
   }
 
-  getData.config = config;
   return getData;
 };
 

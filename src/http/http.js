@@ -1,4 +1,4 @@
-import tdHttp from '@tongdun/utils-http';
+import tdHttp from './core';
 import Interceptor from './interceptor';
 import { handleMethod, extend, isType } from '../utils';
 
@@ -52,15 +52,15 @@ function Http() {
   };
 }
 
-Http.prototype._request = function(params, handler) {
+Http.prototype._request = function (params, handler) {
   let chain = [xhr(handler), undefined];
   let promise = Promise.resolve(params);
 
-  this.interceptors.request.forEach(function(interceptor) {
+  this.interceptors.request.forEach(function (interceptor) {
     chain.unshift(interceptor.fulfilled, interceptor.rejected);
   });
 
-  this.interceptors.response.forEach(function(interceptor) {
+  this.interceptors.response.forEach(function (interceptor) {
     chain.push(interceptor.fulfilled, interceptor.rejected);
   });
 

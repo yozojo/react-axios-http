@@ -2,7 +2,7 @@ import _regeneratorRuntime from "@babel/runtime/regenerator";
 import _asyncToGenerator from "@babel/runtime/helpers/esm/asyncToGenerator";
 import _extends from "@babel/runtime/helpers/esm/extends";
 import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/esm/objectWithoutPropertiesLoose";
-import tdHttp from '@tongdun/utils-http';
+import tdHttp from './core';
 import Interceptor from './interceptor';
 import { handleMethod, extend, isType } from '../utils';
 

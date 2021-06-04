@@ -1,6 +1,6 @@
 /* 封装tdHttp拦截接口 */
 import createHttpInstance from "./http";
-import { Global, setOpt, extend, isType, stringifyQuery } from "../utils";
+import { Global, setOpt, extend, isType } from "../utils";
 import forEach from "lodash/forEach";
 import assign from "lodash/assign";
 
@@ -12,7 +12,6 @@ const http = (apis = {}, opt = {}) => {
   const defaultOpt = {
     resultMode: "native",
     prefix: "",
-    query: {},
   };
 
   const IO = {};
@@ -31,21 +30,7 @@ const http = (apis = {}, opt = {}) => {
 };
 
 const setApi = (api, props, tdHttp) => {
-  const { prefix, query, ...others } = props;
-
-  const url = isType(api.url, "function")
-    ? api.url({ ...api, ...props })
-    : prefix + api.url + stringifyQuery(query);
-
-  if (!isType(url, "string")) {
-    throw new Error("url如果是函数传入请执行后return string类型");
-  }
-
-  const config = {
-    ...others,
-    ...api,
-    url,
-  };
+  const { prefix, ...others } = props;
 
   function getData(opt, handler) {
     if (isType(opt, "function")) {
@@ -53,6 +38,20 @@ const setApi = (api, props, tdHttp) => {
       opt = {};
     }
     opt = setOpt({ ...api, opt });
+
+    const url = isType(api.url, "function")
+      ? api.url({ ...opt, ...props })
+      : prefix + api.url;
+
+    if (!isType(url, "string")) {
+      throw new Error("url如果是函数传入请执行后return string类型");
+    }
+
+    const config = {
+      ...others,
+      ...api,
+      url,
+    };
 
     return tdHttp(
       {
@@ -63,8 +62,6 @@ const setApi = (api, props, tdHttp) => {
       handler
     );
   }
-
-  getData.config = config;
 
   return getData;
 };

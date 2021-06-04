@@ -4,6 +4,7 @@ import babel from 'rollup-plugin-babel'
 import replace from 'rollup-plugin-replace'
 import commonjs from 'rollup-plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
+import json from 'rollup-plugin-json';
 
 const env = process.env.NODE_ENV
 
@@ -19,6 +20,7 @@ const config = {
     }
   },
   plugins: [
+    json(),
     nodeResolve(),
     babel({
       exclude: '**/node_modules/**',

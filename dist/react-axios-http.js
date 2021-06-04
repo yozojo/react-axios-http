@@ -1,19 +1,26 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
-	(global = global || self, factory(global.ReactAxiosHttp = {}, global.React));
-}(this, (function (exports, React) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('http'), require('https'), require('url'), require('stream'), require('assert'), require('debug'), require('zlib'), require('react')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'http', 'https', 'url', 'stream', 'assert', 'debug', 'zlib', 'react'], factory) :
+	(global = global || self, factory(global.ReactAxiosHttp = {}, global.http$1, global.https, global.url, global.stream, global.assert, global.debug$1, global.zlib, global.React));
+}(this, (function (exports, http$1, https, url, stream, assert, debug$1, zlib, React) { 'use strict';
 
+	http$1 = http$1 && Object.prototype.hasOwnProperty.call(http$1, 'default') ? http$1['default'] : http$1;
+	https = https && Object.prototype.hasOwnProperty.call(https, 'default') ? https['default'] : https;
+	url = url && Object.prototype.hasOwnProperty.call(url, 'default') ? url['default'] : url;
+	stream = stream && Object.prototype.hasOwnProperty.call(stream, 'default') ? stream['default'] : stream;
+	assert = assert && Object.prototype.hasOwnProperty.call(assert, 'default') ? assert['default'] : assert;
+	debug$1 = debug$1 && Object.prototype.hasOwnProperty.call(debug$1, 'default') ? debug$1['default'] : debug$1;
+	zlib = zlib && Object.prototype.hasOwnProperty.call(zlib, 'default') ? zlib['default'] : zlib;
 	var React__default = 'default' in React ? React['default'] : React;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-	function unwrapExports (x) {
-		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-	}
-
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
+	}
+
+	function getCjsExportFromNamespace (n) {
+		return n && n['default'] || n;
 	}
 
 	var _global = createCommonjsModule(function (module) {
@@ -813,10 +820,10 @@
 	  } return fn.apply(that, args);
 	};
 
-	var process = _global.process;
+	var process$1 = _global.process;
 	var setTask = _global.setImmediate;
 	var clearTask = _global.clearImmediate;
-	var MessageChannel$1 = _global.MessageChannel;
+	var MessageChannel = _global.MessageChannel;
 	var Dispatch = _global.Dispatch;
 	var counter = 0;
 	var queue = {};
@@ -851,9 +858,9 @@
 	    delete queue[id];
 	  };
 	  // Node.js 0.8-
-	  if (_cof(process) == 'process') {
+	  if (_cof(process$1) == 'process') {
 	    defer = function (id) {
-	      process.nextTick(_ctx(run, id, 1));
+	      process$1.nextTick(_ctx(run, id, 1));
 	    };
 	  // Sphere (JS game engine) Dispatch API
 	  } else if (Dispatch && Dispatch.now) {
@@ -861,8 +868,8 @@
 	      Dispatch.now(_ctx(run, id, 1));
 	    };
 	  // Browsers with MessageChannel, includes WebWorkers
-	  } else if (MessageChannel$1) {
-	    channel = new MessageChannel$1();
+	  } else if (MessageChannel) {
+	    channel = new MessageChannel();
 	    port = channel.port2;
 	    channel.port1.onmessage = listener;
 	    defer = _ctx(port.postMessage, port, 1);
@@ -895,16 +902,16 @@
 
 	var macrotask = _task.set;
 	var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
-	var process$1 = _global.process;
+	var process$2 = _global.process;
 	var Promise$1 = _global.Promise;
-	var isNode = _cof(process$1) == 'process';
+	var isNode = _cof(process$2) == 'process';
 
 	var _microtask = function () {
 	  var head, last, notify;
 
 	  var flush = function () {
 	    var parent, fn;
-	    if (isNode && (parent = process$1.domain)) parent.exit();
+	    if (isNode && (parent = process$2.domain)) parent.exit();
 	    while (head) {
 	      fn = head.fn;
 	      head = head.next;
@@ -922,7 +929,7 @@
 	  // Node.js
 	  if (isNode) {
 	    notify = function () {
-	      process$1.nextTick(flush);
+	      process$2.nextTick(flush);
 	    };
 	  // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
 	  } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
@@ -1053,11 +1060,11 @@
 
 	var PROMISE = 'Promise';
 	var TypeError$1 = _global.TypeError;
-	var process$2 = _global.process;
-	var versions = process$2 && process$2.versions;
+	var process$3 = _global.process;
+	var versions = process$3 && process$3.versions;
 	var v8 = versions && versions.v8 || '';
 	var $Promise = _global[PROMISE];
-	var isNode$1 = _classof(process$2) == 'process';
+	var isNode$1 = _classof(process$3) == 'process';
 	var empty = function () { /* empty */ };
 	var Internal, newGenericPromiseCapability, OwnPromiseCapability, Wrapper;
 	var newPromiseCapability = newGenericPromiseCapability = _newPromiseCapability.f;
@@ -1139,7 +1146,7 @@
 	    if (unhandled) {
 	      result = _perform(function () {
 	        if (isNode$1) {
-	          process$2.emit('unhandledRejection', value, promise);
+	          process$3.emit('unhandledRejection', value, promise);
 	        } else if (handler = _global.onunhandledrejection) {
 	          handler({ promise: promise, reason: value });
 	        } else if ((console = _global.console) && console.error) {
@@ -1159,7 +1166,7 @@
 	  task.call(_global, function () {
 	    var handler;
 	    if (isNode$1) {
-	      process$2.emit('rejectionHandled', promise);
+	      process$3.emit('rejectionHandled', promise);
 	    } else if (handler = _global.onrejectionhandled) {
 	      handler({ promise: promise, reason: promise._v });
 	    }
@@ -1231,7 +1238,7 @@
 	      var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
 	      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
 	      reaction.fail = typeof onRejected == 'function' && onRejected;
-	      reaction.domain = isNode$1 ? process$2.domain : undefined;
+	      reaction.domain = isNode$1 ? process$3.domain : undefined;
 	      this._c.push(reaction);
 	      if (this._a) this._a.push(reaction);
 	      if (this._s) notify(this, false);
@@ -2138,98 +2145,2490 @@
 	  };
 	}
 
-	var lib = createCommonjsModule(function (module, exports) {
-	!function(e,t){module.exports=t();}(commonjsGlobal,function(){return function(e){var t={};function n(r){if(t[r])return t[r].exports;var o=t[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r});},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0});},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)n.d(r,o,function(t){return e[t]}.bind(null,o));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=10)}([function(e,t,n){var r=n(5),o=n(14),i=Object.prototype.toString;function s(e){return "[object Array]"===i.call(e)}function u(e){return null!==e&&"object"==typeof e}function a(e){return "[object Function]"===i.call(e)}function c(e,t){if(null!=e)if("object"!=typeof e&&(e=[e]),s(e))for(var n=0,r=e.length;n<r;n++)t.call(null,e[n],n,e);else for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&t.call(null,e[o],o,e);}e.exports={isArray:s,isArrayBuffer:function(e){return "[object ArrayBuffer]"===i.call(e)},isBuffer:o,isFormData:function(e){return "undefined"!=typeof FormData&&e instanceof FormData},isArrayBufferView:function(e){return "undefined"!=typeof ArrayBuffer&&ArrayBuffer.isView?ArrayBuffer.isView(e):e&&e.buffer&&e.buffer instanceof ArrayBuffer},isString:function(e){return "string"==typeof e},isNumber:function(e){return "number"==typeof e},isObject:u,isUndefined:function(e){return void 0===e},isDate:function(e){return "[object Date]"===i.call(e)},isFile:function(e){return "[object File]"===i.call(e)},isBlob:function(e){return "[object Blob]"===i.call(e)},isFunction:a,isStream:function(e){return u(e)&&a(e.pipe)},isURLSearchParams:function(e){return "undefined"!=typeof URLSearchParams&&e instanceof URLSearchParams},isStandardBrowserEnv:function(){return ("undefined"==typeof navigator||"ReactNative"!==navigator.product)&&"undefined"!=typeof window&&"undefined"!=typeof document},forEach:c,merge:function e(){var t={};function n(n,r){"object"==typeof t[r]&&"object"==typeof n?t[r]=e(t[r],n):t[r]=n;}for(var r=0,o=arguments.length;r<o;r++)c(arguments[r],n);return t},extend:function(e,t,n){return c(t,function(t,o){e[o]=n&&"function"==typeof t?r(t,n):t;}),e},trim:function(e){return e.replace(/^\s*/,"").replace(/\s*$/,"")}};},function(e,t,n){(function(t,n){var r;r=function(){function e(e){return "function"==typeof e}var r=Array.isArray?Array.isArray:function(e){return "[object Array]"===Object.prototype.toString.call(e)},o=0,i=void 0,s=void 0,u=function(e,t){h[o]=e,h[o+1]=t,2===(o+=2)&&(s?s(m):b());},a="undefined"!=typeof window?window:void 0,c=a||{},f=c.MutationObserver||c.WebKitMutationObserver,l="undefined"==typeof self&&void 0!==t&&"[object process]"==={}.toString.call(t),d="undefined"!=typeof Uint8ClampedArray&&"undefined"!=typeof importScripts&&"undefined"!=typeof MessageChannel;function p(){var e=setTimeout;return function(){return e(m,1)}}var h=new Array(1e3);function m(){for(var e=0;e<o;e+=2)(0, h[e])(h[e+1]),h[e]=void 0,h[e+1]=void 0;o=0;}var v,y,g,w,b=void 0;function _(e,t){var n=this,r=new this.constructor(j);void 0===r[E]&&U(r);var o=n._state;if(o){var i=arguments[o-1];u(function(){return k(o,r,i,n._result)});}else L(n,r,e,t);return r}function x(e){if(e&&"object"==typeof e&&e.constructor===this)return e;var t=new this(j);return C(t,e),t}l?b=function(){return t.nextTick(m)}:f?(y=0,g=new f(m),w=document.createTextNode(""),g.observe(w,{characterData:!0}),b=function(){w.data=y=++y%2;}):d?((v=new MessageChannel).port1.onmessage=m,b=function(){return v.port2.postMessage(0)}):b=void 0===a?function(){try{var e=Function("return this")().require("vertx");return void 0!==(i=e.runOnLoop||e.runOnContext)?function(){i(m);}:p()}catch(e){return p()}}():p();var E=Math.random().toString(36).substring(2);function j(){}var T=void 0,A=1,S=2;function O(t,n,r){n.constructor===t.constructor&&r===_&&n.constructor.resolve===x?function(e,t){t._state===A?R(e,t._result):t._state===S?M(e,t._result):L(t,void 0,function(t){return C(e,t)},function(t){return M(e,t)});}(t,n):void 0===r?R(t,n):e(r)?function(e,t,n){u(function(e){var r=!1,o=function(e,t,n,r){try{e.call(t,n,r);}catch(e){return e}}(n,t,function(n){r||(r=!0,t!==n?C(e,n):R(e,n));},function(t){r||(r=!0,M(e,t));},e._label);!r&&o&&(r=!0,M(e,o));},e);}(t,n,r):R(t,n);}function C(e,t){if(e===t)M(e,new TypeError("You cannot resolve a promise with itself"));else if(o=typeof(r=t),null===r||"object"!==o&&"function"!==o)R(e,t);else {var n=void 0;try{n=t.then;}catch(t){return void M(e,t)}O(e,t,n);}var r,o;}function P(e){e._onerror&&e._onerror(e._result),N(e);}function R(e,t){e._state===T&&(e._result=t,e._state=A,0!==e._subscribers.length&&u(N,e));}function M(e,t){e._state===T&&(e._state=S,e._result=t,u(P,e));}function L(e,t,n,r){var o=e._subscribers,i=o.length;e._onerror=null,o[i]=t,o[i+A]=n,o[i+S]=r,0===i&&e._state&&u(N,e);}function N(e){var t=e._subscribers,n=e._state;if(0!==t.length){for(var r=void 0,o=void 0,i=e._result,s=0;s<t.length;s+=3)r=t[s],o=t[s+n],r?k(n,r,o,i):o(i);e._subscribers.length=0;}}function k(t,n,r,o){var i=e(r),s=void 0,u=void 0,a=!0;if(i){try{s=r(o);}catch(e){a=!1,u=e;}if(n===s)return void M(n,new TypeError("A promises callback cannot return that same promise."))}else s=o;n._state!==T||(i&&a?C(n,s):!1===a?M(n,u):t===A?R(n,s):t===S&&M(n,s));}var B=0;function U(e){e[E]=B++,e._state=void 0,e._result=void 0,e._subscribers=[];}var D=function(){function e(e,t){this._instanceConstructor=e,this.promise=new e(j),this.promise[E]||U(this.promise),r(t)?(this.length=t.length,this._remaining=t.length,this._result=new Array(this.length),0===this.length?R(this.promise,this._result):(this.length=this.length||0,this._enumerate(t),0===this._remaining&&R(this.promise,this._result))):M(this.promise,new Error("Array Methods must be provided an Array"));}return e.prototype._enumerate=function(e){for(var t=0;this._state===T&&t<e.length;t++)this._eachEntry(e[t],t);},e.prototype._eachEntry=function(e,t){var n=this._instanceConstructor,r=n.resolve;if(r===x){var o=void 0,i=void 0,s=!1;try{o=e.then;}catch(e){s=!0,i=e;}if(o===_&&e._state!==T)this._settledAt(e._state,t,e._result);else if("function"!=typeof o)this._remaining--,this._result[t]=e;else if(n===q){var u=new n(j);s?M(u,i):O(u,e,o),this._willSettleAt(u,t);}else this._willSettleAt(new n(function(t){return t(e)}),t);}else this._willSettleAt(r(e),t);},e.prototype._settledAt=function(e,t,n){var r=this.promise;r._state===T&&(this._remaining--,e===S?M(r,n):this._result[t]=n),0===this._remaining&&R(r,this._result);},e.prototype._willSettleAt=function(e,t){var n=this;L(e,void 0,function(e){return n._settledAt(A,t,e)},function(e){return n._settledAt(S,t,e)});},e}(),q=function(){function t(e){this[E]=B++,this._result=this._state=void 0,this._subscribers=[],j!==e&&("function"!=typeof e&&function(){throw new TypeError("You must pass a resolver function as the first argument to the promise constructor")}(),this instanceof t?function(e,t){try{t(function(t){C(e,t);},function(t){M(e,t);});}catch(t){M(e,t);}}(this,e):function(){throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.")}());}return t.prototype.catch=function(e){return this.then(null,e)},t.prototype.finally=function(t){var n=this.constructor;return e(t)?this.then(function(e){return n.resolve(t()).then(function(){return e})},function(e){return n.resolve(t()).then(function(){throw e})}):this.then(t,t)},t}();return q.prototype.then=_,q.all=function(e){return new D(this,e).promise},q.race=function(e){var t=this;return r(e)?new t(function(n,r){for(var o=e.length,i=0;i<o;i++)t.resolve(e[i]).then(n,r);}):new t(function(e,t){return t(new TypeError("You must pass an array to race."))})},q.resolve=x,q.reject=function(e){var t=new this(j);return M(t,e),t},q._setScheduler=function(e){s=e;},q._setAsap=function(e){u=e;},q._asap=u,q.polyfill=function(){var e=void 0;if(void 0!==n)e=n;else if("undefined"!=typeof self)e=self;else try{e=Function("return this")();}catch(e){throw new Error("polyfill failed because global object is unavailable in this environment")}var t=e.Promise;if(t){var r=null;try{r=Object.prototype.toString.call(t.resolve());}catch(e){}if("[object Promise]"===r&&!t.cast)return}e.Promise=q;},q.Promise=q,q},e.exports=r();}).call(this,n(3),n(12));},function(e,t,n){e.exports=n(13);},function(e,t){var n,r,o=e.exports={};function i(){throw new Error("setTimeout has not been defined")}function s(){throw new Error("clearTimeout has not been defined")}function u(e){if(n===setTimeout)return setTimeout(e,0);if((n===i||!n)&&setTimeout)return n=setTimeout,setTimeout(e,0);try{return n(e,0)}catch(t){try{return n.call(null,e,0)}catch(t){return n.call(this,e,0)}}}!function(){try{n="function"==typeof setTimeout?setTimeout:i;}catch(e){n=i;}try{r="function"==typeof clearTimeout?clearTimeout:s;}catch(e){r=s;}}();var a,c=[],f=!1,l=-1;function d(){f&&a&&(f=!1,a.length?c=a.concat(c):l=-1,c.length&&p());}function p(){if(!f){var e=u(d);f=!0;for(var t=c.length;t;){for(a=c,c=[];++l<t;)a&&a[l].run();l=-1,t=c.length;}a=null,f=!1,function(e){if(r===clearTimeout)return clearTimeout(e);if((r===s||!r)&&clearTimeout)return r=clearTimeout,clearTimeout(e);try{r(e);}catch(t){try{return r.call(null,e)}catch(t){return r.call(this,e)}}}(e);}}function h(e,t){this.fun=e,this.array=t;}function m(){}o.nextTick=function(e){var t=new Array(arguments.length-1);if(arguments.length>1)for(var n=1;n<arguments.length;n++)t[n-1]=arguments[n];c.push(new h(e,t)),1!==c.length||f||u(p);},h.prototype.run=function(){this.fun.apply(null,this.array);},o.title="browser",o.browser=!0,o.env={},o.argv=[],o.version="",o.versions={},o.on=m,o.addListener=m,o.once=m,o.off=m,o.removeListener=m,o.removeAllListeners=m,o.emit=m,o.prependListener=m,o.prependOnceListener=m,o.listeners=function(e){return []},o.binding=function(e){throw new Error("process.binding is not supported")},o.cwd=function(){return "/"},o.chdir=function(e){throw new Error("process.chdir is not supported")},o.umask=function(){return 0};},function(e,t,n){(function(t){var r=n(0),o=n(16),i={"Content-Type":"application/x-www-form-urlencoded"};function s(e,t){!r.isUndefined(e)&&r.isUndefined(e["Content-Type"])&&(e["Content-Type"]=t);}var u,a={adapter:("undefined"!=typeof XMLHttpRequest?u=n(6):void 0!==t&&(u=n(6)),u),transformRequest:[function(e,t){return o(t,"Content-Type"),r.isFormData(e)||r.isArrayBuffer(e)||r.isBuffer(e)||r.isStream(e)||r.isFile(e)||r.isBlob(e)?e:r.isArrayBufferView(e)?e.buffer:r.isURLSearchParams(e)?(s(t,"application/x-www-form-urlencoded;charset=utf-8"),e.toString()):r.isObject(e)?(s(t,"application/json;charset=utf-8"),JSON.stringify(e)):e}],transformResponse:[function(e){if("string"==typeof e)try{e=JSON.parse(e);}catch(e){}return e}],timeout:0,xsrfCookieName:"XSRF-TOKEN",xsrfHeaderName:"X-XSRF-TOKEN",maxContentLength:-1,validateStatus:function(e){return e>=200&&e<300},headers:{common:{Accept:"application/json, text/plain, */*"}}};r.forEach(["delete","get","head"],function(e){a.headers[e]={};}),r.forEach(["post","put","patch"],function(e){a.headers[e]=r.merge(i);}),e.exports=a;}).call(this,n(3));},function(e,t,n){e.exports=function(e,t){return function(){for(var n=new Array(arguments.length),r=0;r<n.length;r++)n[r]=arguments[r];return e.apply(t,n)}};},function(e,t,n){var r=n(0),o=n(17),i=n(19),s=n(20),u=n(21),a=n(7);e.exports=function(e){return new Promise(function(t,c){var f=e.data,l=e.headers;r.isFormData(f)&&delete l["Content-Type"];var d=new XMLHttpRequest;if(e.auth){var p=e.auth.username||"",h=e.auth.password||"";l.Authorization="Basic "+btoa(p+":"+h);}if(d.open(e.method.toUpperCase(),i(e.url,e.params,e.paramsSerializer),!0),d.timeout=e.timeout,d.onreadystatechange=function(){if(d&&4===d.readyState&&(0!==d.status||d.responseURL&&0===d.responseURL.indexOf("file:"))){var n="getAllResponseHeaders"in d?s(d.getAllResponseHeaders()):null,r={data:e.responseType&&"text"!==e.responseType?d.response:d.responseText,status:d.status,statusText:d.statusText,headers:n,config:e,request:d};o(t,c,r),d=null;}},d.onerror=function(){c(a("Network Error",e,null,d)),d=null;},d.ontimeout=function(){c(a("timeout of "+e.timeout+"ms exceeded",e,"ECONNABORTED",d)),d=null;},r.isStandardBrowserEnv()){var m=n(22),v=(e.withCredentials||u(e.url))&&e.xsrfCookieName?m.read(e.xsrfCookieName):void 0;v&&(l[e.xsrfHeaderName]=v);}if("setRequestHeader"in d&&r.forEach(l,function(e,t){void 0===f&&"content-type"===t.toLowerCase()?delete l[t]:d.setRequestHeader(t,e);}),e.withCredentials&&(d.withCredentials=!0),e.responseType)try{d.responseType=e.responseType;}catch(t){if("json"!==e.responseType)throw t}"function"==typeof e.onDownloadProgress&&d.addEventListener("progress",e.onDownloadProgress),"function"==typeof e.onUploadProgress&&d.upload&&d.upload.addEventListener("progress",e.onUploadProgress),e.cancelToken&&e.cancelToken.promise.then(function(e){d&&(d.abort(),c(e),d=null);}),void 0===f&&(f=null),d.send(f);})};},function(e,t,n){var r=n(18);e.exports=function(e,t,n,o,i){var s=new Error(e);return r(s,t,n,o,i)};},function(e,t,n){e.exports=function(e){return !(!e||!e.__CANCEL__)};},function(e,t,n){function r(e){this.message=e;}r.prototype.toString=function(){return "Cancel"+(this.message?": "+this.message:"")},r.prototype.__CANCEL__=!0,e.exports=r;},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0});var r=a(n(11)),o=a(n(30)),i=a(n(35)),s=a(n(36)),u=a(n(37));function a(e){return e&&e.__esModule?e:{default:e}}t.default={Get:r.default,GetJsonp:o.default,Post:i.default,Delete:s.default,Put:u.default};},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e){var t=Object.assign(e,{method:"GET"});return new r.default(function(e,n){(0, o.default)(t).then(function(t){e(t&&200===t.status&&t.data||{});}).catch(function(e){n(e);}).finally(function(){});})};var r=i(n(1)),o=i(n(2));function i(e){return e&&e.__esModule?e:{default:e}}},function(e,t){var n;n=function(){return this}();try{n=n||new Function("return this")();}catch(e){"object"==typeof window&&(n=window);}e.exports=n;},function(e,t,n){var r=n(0),o=n(5),i=n(15),s=n(4);function u(e){var t=new i(e),n=o(i.prototype.request,t);return r.extend(n,i.prototype,t),r.extend(n,t),n}var a=u(s);a.Axios=i,a.create=function(e){return u(r.merge(s,e))},a.Cancel=n(9),a.CancelToken=n(28),a.isCancel=n(8),a.all=function(e){return Promise.all(e)},a.spread=n(29),e.exports=a,e.exports.default=a;},function(e,t){e.exports=function(e){return null!=e&&null!=e.constructor&&"function"==typeof e.constructor.isBuffer&&e.constructor.isBuffer(e)};},function(e,t,n){var r=n(4),o=n(0),i=n(23),s=n(24);function u(e){this.defaults=e,this.interceptors={request:new i,response:new i};}u.prototype.request=function(e){"string"==typeof e&&(e=o.merge({url:arguments[0]},arguments[1])),(e=o.merge(r,{method:"get"},this.defaults,e)).method=e.method.toLowerCase();var t=[s,void 0],n=Promise.resolve(e);for(this.interceptors.request.forEach(function(e){t.unshift(e.fulfilled,e.rejected);}),this.interceptors.response.forEach(function(e){t.push(e.fulfilled,e.rejected);});t.length;)n=n.then(t.shift(),t.shift());return n},o.forEach(["delete","get","head","options"],function(e){u.prototype[e]=function(t,n){return this.request(o.merge(n||{},{method:e,url:t}))};}),o.forEach(["post","put","patch"],function(e){u.prototype[e]=function(t,n,r){return this.request(o.merge(r||{},{method:e,url:t,data:n}))};}),e.exports=u;},function(e,t,n){var r=n(0);e.exports=function(e,t){r.forEach(e,function(n,r){r!==t&&r.toUpperCase()===t.toUpperCase()&&(e[t]=n,delete e[r]);});};},function(e,t,n){var r=n(7);e.exports=function(e,t,n){var o=n.config.validateStatus;n.status&&o&&!o(n.status)?t(r("Request failed with status code "+n.status,n.config,null,n.request,n)):e(n);};},function(e,t,n){e.exports=function(e,t,n,r,o){return e.config=t,n&&(e.code=n),e.request=r,e.response=o,e};},function(e,t,n){var r=n(0);function o(e){return encodeURIComponent(e).replace(/%40/gi,"@").replace(/%3A/gi,":").replace(/%24/g,"$").replace(/%2C/gi,",").replace(/%20/g,"+").replace(/%5B/gi,"[").replace(/%5D/gi,"]")}e.exports=function(e,t,n){if(!t)return e;var i;if(n)i=n(t);else if(r.isURLSearchParams(t))i=t.toString();else {var s=[];r.forEach(t,function(e,t){null!=e&&(r.isArray(e)?t+="[]":e=[e],r.forEach(e,function(e){r.isDate(e)?e=e.toISOString():r.isObject(e)&&(e=JSON.stringify(e)),s.push(o(t)+"="+o(e));}));}),i=s.join("&");}return i&&(e+=(-1===e.indexOf("?")?"?":"&")+i),e};},function(e,t,n){var r=n(0),o=["age","authorization","content-length","content-type","etag","expires","from","host","if-modified-since","if-unmodified-since","last-modified","location","max-forwards","proxy-authorization","referer","retry-after","user-agent"];e.exports=function(e){var t,n,i,s={};return e?(r.forEach(e.split("\n"),function(e){if(i=e.indexOf(":"),t=r.trim(e.substr(0,i)).toLowerCase(),n=r.trim(e.substr(i+1)),t){if(s[t]&&o.indexOf(t)>=0)return;s[t]="set-cookie"===t?(s[t]?s[t]:[]).concat([n]):s[t]?s[t]+", "+n:n;}}),s):s};},function(e,t,n){var r=n(0);e.exports=r.isStandardBrowserEnv()?function(){var e,t=/(msie|trident)/i.test(navigator.userAgent),n=document.createElement("a");function o(e){var r=e;return t&&(n.setAttribute("href",r),r=n.href),n.setAttribute("href",r),{href:n.href,protocol:n.protocol?n.protocol.replace(/:$/,""):"",host:n.host,search:n.search?n.search.replace(/^\?/,""):"",hash:n.hash?n.hash.replace(/^#/,""):"",hostname:n.hostname,port:n.port,pathname:"/"===n.pathname.charAt(0)?n.pathname:"/"+n.pathname}}return e=o(window.location.href),function(t){var n=r.isString(t)?o(t):t;return n.protocol===e.protocol&&n.host===e.host}}():function(){return !0};},function(e,t,n){var r=n(0);e.exports=r.isStandardBrowserEnv()?{write:function(e,t,n,o,i,s){var u=[];u.push(e+"="+encodeURIComponent(t)),r.isNumber(n)&&u.push("expires="+new Date(n).toGMTString()),r.isString(o)&&u.push("path="+o),r.isString(i)&&u.push("domain="+i),!0===s&&u.push("secure"),document.cookie=u.join("; ");},read:function(e){var t=document.cookie.match(new RegExp("(^|;\\s*)("+e+")=([^;]*)"));return t?decodeURIComponent(t[3]):null},remove:function(e){this.write(e,"",Date.now()-864e5);}}:{write:function(){},read:function(){return null},remove:function(){}};},function(e,t,n){var r=n(0);function o(){this.handlers=[];}o.prototype.use=function(e,t){return this.handlers.push({fulfilled:e,rejected:t}),this.handlers.length-1},o.prototype.eject=function(e){this.handlers[e]&&(this.handlers[e]=null);},o.prototype.forEach=function(e){r.forEach(this.handlers,function(t){null!==t&&e(t);});},e.exports=o;},function(e,t,n){var r=n(0),o=n(25),i=n(8),s=n(4),u=n(26),a=n(27);function c(e){e.cancelToken&&e.cancelToken.throwIfRequested();}e.exports=function(e){return c(e),e.baseURL&&!u(e.url)&&(e.url=a(e.baseURL,e.url)),e.headers=e.headers||{},e.data=o(e.data,e.headers,e.transformRequest),e.headers=r.merge(e.headers.common||{},e.headers[e.method]||{},e.headers||{}),r.forEach(["delete","get","head","post","put","patch","common"],function(t){delete e.headers[t];}),(e.adapter||s.adapter)(e).then(function(t){return c(e),t.data=o(t.data,t.headers,e.transformResponse),t},function(t){return i(t)||(c(e),t&&t.response&&(t.response.data=o(t.response.data,t.response.headers,e.transformResponse))),Promise.reject(t)})};},function(e,t,n){var r=n(0);e.exports=function(e,t,n){return r.forEach(n,function(n){e=n(e,t);}),e};},function(e,t,n){e.exports=function(e){return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(e)};},function(e,t,n){e.exports=function(e,t){return t?e.replace(/\/+$/,"")+"/"+t.replace(/^\/+/,""):e};},function(e,t,n){var r=n(9);function o(e){if("function"!=typeof e)throw new TypeError("executor must be a function.");var t;this.promise=new Promise(function(e){t=e;});var n=this;e(function(e){n.reason||(n.reason=new r(e),t(n.reason));});}o.prototype.throwIfRequested=function(){if(this.reason)throw this.reason},o.source=function(){var e;return {token:new o(function(t){e=t;}),cancel:e}},e.exports=o;},function(e,t,n){e.exports=function(e){return function(t){return e.apply(null,t)}};},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e){return new r.default(function(t,n){(0, o.default)(e.url,e.params,function(e,r){e?n(e):t(r);});})};var r=i(n(1)),o=i(n(31));function i(e){return e&&e.__esModule?e:{default:e}}},function(e,t,n){var r=n(32)("jsonp");e.exports=function(e,t,n){"function"==typeof t&&(n=t,t={}),t||(t={});var s,u,a=t.prefix||"__jp",c=t.name||a+o++,f=t.param||"callback",l=null!=t.timeout?t.timeout:6e4,d=encodeURIComponent,p=document.getElementsByTagName("script")[0]||document.head;function h(){s.parentNode&&s.parentNode.removeChild(s),window[c]=i,u&&clearTimeout(u);}return l&&(u=setTimeout(function(){h(),n&&n(new Error("Timeout"));},l)),window[c]=function(e){r("jsonp got",e),h(),n&&n(null,e);},e=(e+=(~e.indexOf("?")?"&":"?")+f+"="+d(c)).replace("?&","?"),r('jsonp req "%s"',e),(s=document.createElement("script")).src=e,p.parentNode.insertBefore(s,p),function(){window[c]&&h();}};var o=0;function i(){}},function(e,t,n){(function(r){function o(){var e;try{e=t.storage.debug;}catch(e){}return !e&&void 0!==r&&"env"in r&&(e=r.env.DEBUG),e}(t=e.exports=n(33)).log=function(){return "object"==typeof console&&console.log&&Function.prototype.apply.call(console.log,console,arguments)},t.formatArgs=function(e){var n=this.useColors;if(e[0]=(n?"%c":"")+this.namespace+(n?" %c":" ")+e[0]+(n?"%c ":" ")+"+"+t.humanize(this.diff),n){var r="color: "+this.color;e.splice(1,0,r,"color: inherit");var o=0,i=0;e[0].replace(/%[a-zA-Z%]/g,function(e){"%%"!==e&&"%c"===e&&(i=++o);}),e.splice(i,0,r);}},t.save=function(e){try{null==e?t.storage.removeItem("debug"):t.storage.debug=e;}catch(e){}},t.load=o,t.useColors=function(){return !("undefined"==typeof window||!window.process||"renderer"!==window.process.type)||("undefined"!=typeof document&&document.documentElement&&document.documentElement.style&&document.documentElement.style.WebkitAppearance||"undefined"!=typeof window&&window.console&&(window.console.firebug||window.console.exception&&window.console.table)||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/)&&parseInt(RegExp.$1,10)>=31||"undefined"!=typeof navigator&&navigator.userAgent&&navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/))},t.storage="undefined"!=typeof chrome&&void 0!==chrome.storage?chrome.storage.local:function(){try{return window.localStorage}catch(e){}}(),t.colors=["lightseagreen","forestgreen","goldenrod","dodgerblue","darkorchid","crimson"],t.formatters.j=function(e){try{return JSON.stringify(e)}catch(e){return "[UnexpectedJSONParseError]: "+e.message}},t.enable(o());}).call(this,n(3));},function(e,t,n){var r;function o(e){function n(){if(n.enabled){var e=n,o=+new Date,i=o-(r||o);e.diff=i,e.prev=r,e.curr=o,r=o;for(var s=new Array(arguments.length),u=0;u<s.length;u++)s[u]=arguments[u];s[0]=t.coerce(s[0]),"string"!=typeof s[0]&&s.unshift("%O");var a=0;s[0]=s[0].replace(/%([a-zA-Z%])/g,function(n,r){if("%%"===n)return n;a++;var o=t.formatters[r];if("function"==typeof o){var i=s[a];n=o.call(e,i),s.splice(a,1),a--;}return n}),t.formatArgs.call(e,s),(n.log||t.log||void 0).apply(e,s);}}return n.namespace=e,n.enabled=t.enabled(e),n.useColors=t.useColors(),n.color=function(e){var n,r=0;for(n in e)r=(r<<5)-r+e.charCodeAt(n),r|=0;return t.colors[Math.abs(r)%t.colors.length]}(e),"function"==typeof t.init&&t.init(n),n}(t=e.exports=o.debug=o.default=o).coerce=function(e){return e instanceof Error?e.stack||e.message:e},t.disable=function(){t.enable("");},t.enable=function(e){t.save(e),t.names=[],t.skips=[];for(var n=("string"==typeof e?e:"").split(/[\s,]+/),r=n.length,o=0;o<r;o++)n[o]&&("-"===(e=n[o].replace(/\*/g,".*?"))[0]?t.skips.push(new RegExp("^"+e.substr(1)+"$")):t.names.push(new RegExp("^"+e+"$")));},t.enabled=function(e){var n,r;for(n=0,r=t.skips.length;n<r;n++)if(t.skips[n].test(e))return !1;for(n=0,r=t.names.length;n<r;n++)if(t.names[n].test(e))return !0;return !1},t.humanize=n(34),t.names=[],t.skips=[],t.formatters={};},function(e,t){var n=1e3,r=6e4,o=36e5,i=24*o;function s(e,t,n){if(!(e<t))return e<1.5*t?Math.floor(e/t)+" "+n:Math.ceil(e/t)+" "+n+"s"}e.exports=function(e,t){t=t||{};var u,a=typeof e;if("string"===a&&e.length>0)return function(e){if(!((e=String(e)).length>100)){var t=/^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(e);if(t){var s=parseFloat(t[1]);switch((t[2]||"ms").toLowerCase()){case"years":case"year":case"yrs":case"yr":case"y":return 315576e5*s;case"days":case"day":case"d":return s*i;case"hours":case"hour":case"hrs":case"hr":case"h":return s*o;case"minutes":case"minute":case"mins":case"min":case"m":return s*r;case"seconds":case"second":case"secs":case"sec":case"s":return s*n;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return s;default:return}}}}(e);if("number"===a&&!1===isNaN(e))return t.long?s(u=e,i,"day")||s(u,o,"hour")||s(u,r,"minute")||s(u,n,"second")||u+" ms":function(e){return e>=i?Math.round(e/i)+"d":e>=o?Math.round(e/o)+"h":e>=r?Math.round(e/r)+"m":e>=n?Math.round(e/n)+"s":e+"ms"}(e);throw new Error("val is not a non-empty string or a valid number. val="+JSON.stringify(e))};},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e){var t=Object.assign(e,{method:"POST"});return new r.default(function(e,n){(0, o.default)(t).then(function(t){e(t&&200===t.status&&t.data||{});}).catch(function(e){n(e);}).finally(function(){});})};var r=i(n(1)),o=i(n(2));function i(e){return e&&e.__esModule?e:{default:e}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e){var t=Object.assign(e,{method:"DELETE"});return new r.default(function(e,n){(0, o.default)(t).then(function(t){e(t&&200===t.status&&t.data||{});}).catch(function(e){n(e);}).finally(function(){});})};var r=i(n(1)),o=i(n(2));function i(e){return e&&e.__esModule?e:{default:e}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e){var t=Object.assign(e,{method:"PUT"});return new r.default(function(e,n){(0, o.default)(t).then(function(t){e(t&&200===t.status&&t.data||{});}).catch(function(e){n(e);}).finally(function(){});})};var r=i(n(1)),o=i(n(2));function i(e){return e&&e.__esModule?e:{default:e}}}]).default});
-
-	});
-
-	var tdHttp = unwrapExports(lib);
-	var lib_1 = lib.TDHttp;
-
-	/**
-	 * A specialized version of `_.forEach` for arrays without support for
-	 * iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns `array`.
-	 */
-	function arrayEach(array, iteratee) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-
-	  while (++index < length) {
-	    if (iteratee(array[index], index, array) === false) {
-	      break;
+	var bind = function bind(fn, thisArg) {
+	  return function wrap() {
+	    var args = new Array(arguments.length);
+	    for (var i = 0; i < args.length; i++) {
+	      args[i] = arguments[i];
 	    }
-	  }
-	  return array;
-	}
-
-	var _arrayEach = arrayEach;
-
-	/**
-	 * Creates a base function for methods like `_.forIn` and `_.forOwn`.
-	 *
-	 * @private
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {Function} Returns the new base function.
-	 */
-	function createBaseFor(fromRight) {
-	  return function(object, iteratee, keysFunc) {
-	    var index = -1,
-	        iterable = Object(object),
-	        props = keysFunc(object),
-	        length = props.length;
-
-	    while (length--) {
-	      var key = props[fromRight ? length : ++index];
-	      if (iteratee(iterable[key], key, iterable) === false) {
-	        break;
-	      }
-	    }
-	    return object;
+	    return fn.apply(thisArg, args);
 	  };
+	};
+
+	/*global toString:true*/
+
+	// utils is a library of generic helper functions non-specific to axios
+
+	var toString$1 = Object.prototype.toString;
+
+	/**
+	 * Determine if a value is an Array
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Array, otherwise false
+	 */
+	function isArray(val) {
+	  return toString$1.call(val) === '[object Array]';
 	}
 
-	var _createBaseFor = createBaseFor;
+	/**
+	 * Determine if a value is undefined
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if the value is undefined, otherwise false
+	 */
+	function isUndefined(val) {
+	  return typeof val === 'undefined';
+	}
 
 	/**
-	 * The base implementation of `baseForOwn` which iterates over `object`
-	 * properties returned by `keysFunc` and invokes `iteratee` for each property.
-	 * Iteratee functions may exit iteration early by explicitly returning `false`.
+	 * Determine if a value is a Buffer
 	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @param {Function} keysFunc The function to get the keys of `object`.
-	 * @returns {Object} Returns `object`.
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Buffer, otherwise false
 	 */
-	var baseFor = _createBaseFor();
-
-	var _baseFor = baseFor;
+	function isBuffer(val) {
+	  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
+	    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
+	}
 
 	/**
-	 * The base implementation of `_.times` without support for iteratee shorthands
-	 * or max array length checks.
+	 * Determine if a value is an ArrayBuffer
 	 *
-	 * @private
-	 * @param {number} n The number of times to invoke `iteratee`.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the array of results.
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an ArrayBuffer, otherwise false
 	 */
-	function baseTimes(n, iteratee) {
-	  var index = -1,
-	      result = Array(n);
+	function isArrayBuffer(val) {
+	  return toString$1.call(val) === '[object ArrayBuffer]';
+	}
 
-	  while (++index < n) {
-	    result[index] = iteratee(index);
+	/**
+	 * Determine if a value is a FormData
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an FormData, otherwise false
+	 */
+	function isFormData(val) {
+	  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+	}
+
+	/**
+	 * Determine if a value is a view on an ArrayBuffer
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+	 */
+	function isArrayBufferView(val) {
+	  var result;
+	  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+	    result = ArrayBuffer.isView(val);
+	  } else {
+	    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
 	  }
 	  return result;
 	}
 
-	var _baseTimes = baseTimes;
+	/**
+	 * Determine if a value is a String
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a String, otherwise false
+	 */
+	function isString(val) {
+	  return typeof val === 'string';
+	}
+
+	/**
+	 * Determine if a value is a Number
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Number, otherwise false
+	 */
+	function isNumber(val) {
+	  return typeof val === 'number';
+	}
+
+	/**
+	 * Determine if a value is an Object
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Object, otherwise false
+	 */
+	function isObject(val) {
+	  return val !== null && typeof val === 'object';
+	}
+
+	/**
+	 * Determine if a value is a plain Object
+	 *
+	 * @param {Object} val The value to test
+	 * @return {boolean} True if value is a plain Object, otherwise false
+	 */
+	function isPlainObject(val) {
+	  if (toString$1.call(val) !== '[object Object]') {
+	    return false;
+	  }
+
+	  var prototype = Object.getPrototypeOf(val);
+	  return prototype === null || prototype === Object.prototype;
+	}
+
+	/**
+	 * Determine if a value is a Date
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Date, otherwise false
+	 */
+	function isDate(val) {
+	  return toString$1.call(val) === '[object Date]';
+	}
+
+	/**
+	 * Determine if a value is a File
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a File, otherwise false
+	 */
+	function isFile(val) {
+	  return toString$1.call(val) === '[object File]';
+	}
+
+	/**
+	 * Determine if a value is a Blob
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Blob, otherwise false
+	 */
+	function isBlob(val) {
+	  return toString$1.call(val) === '[object Blob]';
+	}
+
+	/**
+	 * Determine if a value is a Function
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Function, otherwise false
+	 */
+	function isFunction(val) {
+	  return toString$1.call(val) === '[object Function]';
+	}
+
+	/**
+	 * Determine if a value is a Stream
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Stream, otherwise false
+	 */
+	function isStream(val) {
+	  return isObject(val) && isFunction(val.pipe);
+	}
+
+	/**
+	 * Determine if a value is a URLSearchParams object
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+	 */
+	function isURLSearchParams(val) {
+	  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+	}
+
+	/**
+	 * Trim excess whitespace off the beginning and end of a string
+	 *
+	 * @param {String} str The String to trim
+	 * @returns {String} The String freed of excess whitespace
+	 */
+	function trim(str) {
+	  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+	}
+
+	/**
+	 * Determine if we're running in a standard browser environment
+	 *
+	 * This allows axios to run in a web worker, and react-native.
+	 * Both environments support XMLHttpRequest, but not fully standard globals.
+	 *
+	 * web workers:
+	 *  typeof window -> undefined
+	 *  typeof document -> undefined
+	 *
+	 * react-native:
+	 *  navigator.product -> 'ReactNative'
+	 * nativescript
+	 *  navigator.product -> 'NativeScript' or 'NS'
+	 */
+	function isStandardBrowserEnv() {
+	  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
+	                                           navigator.product === 'NativeScript' ||
+	                                           navigator.product === 'NS')) {
+	    return false;
+	  }
+	  return (
+	    typeof window !== 'undefined' &&
+	    typeof document !== 'undefined'
+	  );
+	}
+
+	/**
+	 * Iterate over an Array or an Object invoking a function for each item.
+	 *
+	 * If `obj` is an Array callback will be called passing
+	 * the value, index, and complete array for each item.
+	 *
+	 * If 'obj' is an Object callback will be called passing
+	 * the value, key, and complete object for each property.
+	 *
+	 * @param {Object|Array} obj The object to iterate
+	 * @param {Function} fn The callback to invoke for each item
+	 */
+	function forEach(obj, fn) {
+	  // Don't bother if no value provided
+	  if (obj === null || typeof obj === 'undefined') {
+	    return;
+	  }
+
+	  // Force an array if not already something iterable
+	  if (typeof obj !== 'object') {
+	    /*eslint no-param-reassign:0*/
+	    obj = [obj];
+	  }
+
+	  if (isArray(obj)) {
+	    // Iterate over array values
+	    for (var i = 0, l = obj.length; i < l; i++) {
+	      fn.call(null, obj[i], i, obj);
+	    }
+	  } else {
+	    // Iterate over object keys
+	    for (var key in obj) {
+	      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+	        fn.call(null, obj[key], key, obj);
+	      }
+	    }
+	  }
+	}
+
+	/**
+	 * Accepts varargs expecting each argument to be an object, then
+	 * immutably merges the properties of each object and returns result.
+	 *
+	 * When multiple objects contain the same key the later object in
+	 * the arguments list will take precedence.
+	 *
+	 * Example:
+	 *
+	 * ```js
+	 * var result = merge({foo: 123}, {foo: 456});
+	 * console.log(result.foo); // outputs 456
+	 * ```
+	 *
+	 * @param {Object} obj1 Object to merge
+	 * @returns {Object} Result of all merge properties
+	 */
+	function merge(/* obj1, obj2, obj3, ... */) {
+	  var result = {};
+	  function assignValue(val, key) {
+	    if (isPlainObject(result[key]) && isPlainObject(val)) {
+	      result[key] = merge(result[key], val);
+	    } else if (isPlainObject(val)) {
+	      result[key] = merge({}, val);
+	    } else if (isArray(val)) {
+	      result[key] = val.slice();
+	    } else {
+	      result[key] = val;
+	    }
+	  }
+
+	  for (var i = 0, l = arguments.length; i < l; i++) {
+	    forEach(arguments[i], assignValue);
+	  }
+	  return result;
+	}
+
+	/**
+	 * Extends object a by mutably adding to it the properties of object b.
+	 *
+	 * @param {Object} a The object to be extended
+	 * @param {Object} b The object to copy properties from
+	 * @param {Object} thisArg The object to bind function to
+	 * @return {Object} The resulting value of object a
+	 */
+	function extend(a, b, thisArg) {
+	  forEach(b, function assignValue(val, key) {
+	    if (thisArg && typeof val === 'function') {
+	      a[key] = bind(val, thisArg);
+	    } else {
+	      a[key] = val;
+	    }
+	  });
+	  return a;
+	}
+
+	/**
+	 * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
+	 *
+	 * @param {string} content with BOM
+	 * @return {string} content value without BOM
+	 */
+	function stripBOM(content) {
+	  if (content.charCodeAt(0) === 0xFEFF) {
+	    content = content.slice(1);
+	  }
+	  return content;
+	}
+
+	var utils = {
+	  isArray: isArray,
+	  isArrayBuffer: isArrayBuffer,
+	  isBuffer: isBuffer,
+	  isFormData: isFormData,
+	  isArrayBufferView: isArrayBufferView,
+	  isString: isString,
+	  isNumber: isNumber,
+	  isObject: isObject,
+	  isPlainObject: isPlainObject,
+	  isUndefined: isUndefined,
+	  isDate: isDate,
+	  isFile: isFile,
+	  isBlob: isBlob,
+	  isFunction: isFunction,
+	  isStream: isStream,
+	  isURLSearchParams: isURLSearchParams,
+	  isStandardBrowserEnv: isStandardBrowserEnv,
+	  forEach: forEach,
+	  merge: merge,
+	  extend: extend,
+	  trim: trim,
+	  stripBOM: stripBOM
+	};
+
+	function encode(val) {
+	  return encodeURIComponent(val).
+	    replace(/%3A/gi, ':').
+	    replace(/%24/g, '$').
+	    replace(/%2C/gi, ',').
+	    replace(/%20/g, '+').
+	    replace(/%5B/gi, '[').
+	    replace(/%5D/gi, ']');
+	}
+
+	/**
+	 * Build a URL by appending params to the end
+	 *
+	 * @param {string} url The base of the url (e.g., http://www.google.com)
+	 * @param {object} [params] The params to be appended
+	 * @returns {string} The formatted url
+	 */
+	var buildURL = function buildURL(url, params, paramsSerializer) {
+	  /*eslint no-param-reassign:0*/
+	  if (!params) {
+	    return url;
+	  }
+
+	  var serializedParams;
+	  if (paramsSerializer) {
+	    serializedParams = paramsSerializer(params);
+	  } else if (utils.isURLSearchParams(params)) {
+	    serializedParams = params.toString();
+	  } else {
+	    var parts = [];
+
+	    utils.forEach(params, function serialize(val, key) {
+	      if (val === null || typeof val === 'undefined') {
+	        return;
+	      }
+
+	      if (utils.isArray(val)) {
+	        key = key + '[]';
+	      } else {
+	        val = [val];
+	      }
+
+	      utils.forEach(val, function parseValue(v) {
+	        if (utils.isDate(v)) {
+	          v = v.toISOString();
+	        } else if (utils.isObject(v)) {
+	          v = JSON.stringify(v);
+	        }
+	        parts.push(encode(key) + '=' + encode(v));
+	      });
+	    });
+
+	    serializedParams = parts.join('&');
+	  }
+
+	  if (serializedParams) {
+	    var hashmarkIndex = url.indexOf('#');
+	    if (hashmarkIndex !== -1) {
+	      url = url.slice(0, hashmarkIndex);
+	    }
+
+	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+	  }
+
+	  return url;
+	};
+
+	function InterceptorManager() {
+	  this.handlers = [];
+	}
+
+	/**
+	 * Add a new interceptor to the stack
+	 *
+	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
+	 * @param {Function} rejected The function to handle `reject` for a `Promise`
+	 *
+	 * @return {Number} An ID used to remove interceptor later
+	 */
+	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+	  this.handlers.push({
+	    fulfilled: fulfilled,
+	    rejected: rejected
+	  });
+	  return this.handlers.length - 1;
+	};
+
+	/**
+	 * Remove an interceptor from the stack
+	 *
+	 * @param {Number} id The ID that was returned by `use`
+	 */
+	InterceptorManager.prototype.eject = function eject(id) {
+	  if (this.handlers[id]) {
+	    this.handlers[id] = null;
+	  }
+	};
+
+	/**
+	 * Iterate over all the registered interceptors
+	 *
+	 * This method is particularly useful for skipping over any
+	 * interceptors that may have become `null` calling `eject`.
+	 *
+	 * @param {Function} fn The function to call for each interceptor
+	 */
+	InterceptorManager.prototype.forEach = function forEach(fn) {
+	  utils.forEach(this.handlers, function forEachHandler(h) {
+	    if (h !== null) {
+	      fn(h);
+	    }
+	  });
+	};
+
+	var InterceptorManager_1 = InterceptorManager;
+
+	/**
+	 * Transform the data for a request or a response
+	 *
+	 * @param {Object|String} data The data to be transformed
+	 * @param {Array} headers The headers for the request or response
+	 * @param {Array|Function} fns A single function or Array of functions
+	 * @returns {*} The resulting transformed data
+	 */
+	var transformData = function transformData(data, headers, fns) {
+	  /*eslint no-param-reassign:0*/
+	  utils.forEach(fns, function transform(fn) {
+	    data = fn(data, headers);
+	  });
+
+	  return data;
+	};
+
+	var isCancel = function isCancel(value) {
+	  return !!(value && value.__CANCEL__);
+	};
+
+	var normalizeHeaderName = function normalizeHeaderName(headers, normalizedName) {
+	  utils.forEach(headers, function processHeader(value, name) {
+	    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+	      headers[normalizedName] = value;
+	      delete headers[name];
+	    }
+	  });
+	};
+
+	/**
+	 * Update an Error with the specified config, error code, and response.
+	 *
+	 * @param {Error} error The error to update.
+	 * @param {Object} config The config.
+	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
+	 * @param {Object} [request] The request.
+	 * @param {Object} [response] The response.
+	 * @returns {Error} The error.
+	 */
+	var enhanceError = function enhanceError(error, config, code, request, response) {
+	  error.config = config;
+	  if (code) {
+	    error.code = code;
+	  }
+
+	  error.request = request;
+	  error.response = response;
+	  error.isAxiosError = true;
+
+	  error.toJSON = function toJSON() {
+	    return {
+	      // Standard
+	      message: this.message,
+	      name: this.name,
+	      // Microsoft
+	      description: this.description,
+	      number: this.number,
+	      // Mozilla
+	      fileName: this.fileName,
+	      lineNumber: this.lineNumber,
+	      columnNumber: this.columnNumber,
+	      stack: this.stack,
+	      // Axios
+	      config: this.config,
+	      code: this.code
+	    };
+	  };
+	  return error;
+	};
+
+	/**
+	 * Create an Error with the specified message, config, error code, request and response.
+	 *
+	 * @param {string} message The error message.
+	 * @param {Object} config The config.
+	 * @param {string} [code] The error code (for example, 'ECONNABORTED').
+	 * @param {Object} [request] The request.
+	 * @param {Object} [response] The response.
+	 * @returns {Error} The created error.
+	 */
+	var createError = function createError(message, config, code, request, response) {
+	  var error = new Error(message);
+	  return enhanceError(error, config, code, request, response);
+	};
+
+	/**
+	 * Resolve or reject a Promise based on response status.
+	 *
+	 * @param {Function} resolve A function that resolves the promise.
+	 * @param {Function} reject A function that rejects the promise.
+	 * @param {object} response The response.
+	 */
+	var settle = function settle(resolve, reject, response) {
+	  var validateStatus = response.config.validateStatus;
+	  if (!response.status || !validateStatus || validateStatus(response.status)) {
+	    resolve(response);
+	  } else {
+	    reject(createError(
+	      'Request failed with status code ' + response.status,
+	      response.config,
+	      null,
+	      response.request,
+	      response
+	    ));
+	  }
+	};
+
+	var cookies = (
+	  utils.isStandardBrowserEnv() ?
+
+	  // Standard browser envs support document.cookie
+	    (function standardBrowserEnv() {
+	      return {
+	        write: function write(name, value, expires, path, domain, secure) {
+	          var cookie = [];
+	          cookie.push(name + '=' + encodeURIComponent(value));
+
+	          if (utils.isNumber(expires)) {
+	            cookie.push('expires=' + new Date(expires).toGMTString());
+	          }
+
+	          if (utils.isString(path)) {
+	            cookie.push('path=' + path);
+	          }
+
+	          if (utils.isString(domain)) {
+	            cookie.push('domain=' + domain);
+	          }
+
+	          if (secure === true) {
+	            cookie.push('secure');
+	          }
+
+	          document.cookie = cookie.join('; ');
+	        },
+
+	        read: function read(name) {
+	          var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+	          return (match ? decodeURIComponent(match[3]) : null);
+	        },
+
+	        remove: function remove(name) {
+	          this.write(name, '', Date.now() - 86400000);
+	        }
+	      };
+	    })() :
+
+	  // Non standard browser env (web workers, react-native) lack needed support.
+	    (function nonStandardBrowserEnv() {
+	      return {
+	        write: function write() {},
+	        read: function read() { return null; },
+	        remove: function remove() {}
+	      };
+	    })()
+	);
+
+	/**
+	 * Determines whether the specified URL is absolute
+	 *
+	 * @param {string} url The URL to test
+	 * @returns {boolean} True if the specified URL is absolute, otherwise false
+	 */
+	var isAbsoluteURL = function isAbsoluteURL(url) {
+	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+	  // by any combination of letters, digits, plus, period, or hyphen.
+	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+	};
+
+	/**
+	 * Creates a new URL by combining the specified URLs
+	 *
+	 * @param {string} baseURL The base URL
+	 * @param {string} relativeURL The relative URL
+	 * @returns {string} The combined URL
+	 */
+	var combineURLs = function combineURLs(baseURL, relativeURL) {
+	  return relativeURL
+	    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+	    : baseURL;
+	};
+
+	/**
+	 * Creates a new URL by combining the baseURL with the requestedURL,
+	 * only when the requestedURL is not already an absolute URL.
+	 * If the requestURL is absolute, this function returns the requestedURL untouched.
+	 *
+	 * @param {string} baseURL The base URL
+	 * @param {string} requestedURL Absolute or relative URL to combine
+	 * @returns {string} The combined full path
+	 */
+	var buildFullPath = function buildFullPath(baseURL, requestedURL) {
+	  if (baseURL && !isAbsoluteURL(requestedURL)) {
+	    return combineURLs(baseURL, requestedURL);
+	  }
+	  return requestedURL;
+	};
+
+	// Headers whose duplicates are ignored by node
+	// c.f. https://nodejs.org/api/http.html#http_message_headers
+	var ignoreDuplicateOf = [
+	  'age', 'authorization', 'content-length', 'content-type', 'etag',
+	  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
+	  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
+	  'referer', 'retry-after', 'user-agent'
+	];
+
+	/**
+	 * Parse headers into an object
+	 *
+	 * ```
+	 * Date: Wed, 27 Aug 2014 08:58:49 GMT
+	 * Content-Type: application/json
+	 * Connection: keep-alive
+	 * Transfer-Encoding: chunked
+	 * ```
+	 *
+	 * @param {String} headers Headers needing to be parsed
+	 * @returns {Object} Headers parsed into an object
+	 */
+	var parseHeaders = function parseHeaders(headers) {
+	  var parsed = {};
+	  var key;
+	  var val;
+	  var i;
+
+	  if (!headers) { return parsed; }
+
+	  utils.forEach(headers.split('\n'), function parser(line) {
+	    i = line.indexOf(':');
+	    key = utils.trim(line.substr(0, i)).toLowerCase();
+	    val = utils.trim(line.substr(i + 1));
+
+	    if (key) {
+	      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+	        return;
+	      }
+	      if (key === 'set-cookie') {
+	        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+	      } else {
+	        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+	      }
+	    }
+	  });
+
+	  return parsed;
+	};
+
+	var isURLSameOrigin = (
+	  utils.isStandardBrowserEnv() ?
+
+	  // Standard browser envs have full support of the APIs needed to test
+	  // whether the request URL is of the same origin as current location.
+	    (function standardBrowserEnv() {
+	      var msie = /(msie|trident)/i.test(navigator.userAgent);
+	      var urlParsingNode = document.createElement('a');
+	      var originURL;
+
+	      /**
+	    * Parse a URL to discover it's components
+	    *
+	    * @param {String} url The URL to be parsed
+	    * @returns {Object}
+	    */
+	      function resolveURL(url) {
+	        var href = url;
+
+	        if (msie) {
+	        // IE needs attribute set twice to normalize properties
+	          urlParsingNode.setAttribute('href', href);
+	          href = urlParsingNode.href;
+	        }
+
+	        urlParsingNode.setAttribute('href', href);
+
+	        // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+	        return {
+	          href: urlParsingNode.href,
+	          protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+	          host: urlParsingNode.host,
+	          search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+	          hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+	          hostname: urlParsingNode.hostname,
+	          port: urlParsingNode.port,
+	          pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+	            urlParsingNode.pathname :
+	            '/' + urlParsingNode.pathname
+	        };
+	      }
+
+	      originURL = resolveURL(window.location.href);
+
+	      /**
+	    * Determine if a URL shares the same origin as the current location
+	    *
+	    * @param {String} requestURL The URL to test
+	    * @returns {boolean} True if URL shares the same origin, otherwise false
+	    */
+	      return function isURLSameOrigin(requestURL) {
+	        var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+	        return (parsed.protocol === originURL.protocol &&
+	            parsed.host === originURL.host);
+	      };
+	    })() :
+
+	  // Non standard browser envs (web workers, react-native) lack needed support.
+	    (function nonStandardBrowserEnv() {
+	      return function isURLSameOrigin() {
+	        return true;
+	      };
+	    })()
+	);
+
+	var xhr = function xhrAdapter(config) {
+	  return new Promise(function dispatchXhrRequest(resolve, reject) {
+	    var requestData = config.data;
+	    var requestHeaders = config.headers;
+
+	    if (utils.isFormData(requestData)) {
+	      delete requestHeaders['Content-Type']; // Let the browser set it
+	    }
+
+	    var request = new XMLHttpRequest();
+
+	    // HTTP basic authentication
+	    if (config.auth) {
+	      var username = config.auth.username || '';
+	      var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
+	      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+	    }
+
+	    var fullPath = buildFullPath(config.baseURL, config.url);
+	    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
+
+	    // Set the request timeout in MS
+	    request.timeout = config.timeout;
+
+	    // Listen for ready state
+	    request.onreadystatechange = function handleLoad() {
+	      if (!request || request.readyState !== 4) {
+	        return;
+	      }
+
+	      // The request errored out and we didn't get a response, this will be
+	      // handled by onerror instead
+	      // With one exception: request that using file: protocol, most browsers
+	      // will return status as 0 even though it's a successful request
+	      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+	        return;
+	      }
+
+	      // Prepare the response
+	      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+	      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+	      var response = {
+	        data: responseData,
+	        status: request.status,
+	        statusText: request.statusText,
+	        headers: responseHeaders,
+	        config: config,
+	        request: request
+	      };
+
+	      settle(resolve, reject, response);
+
+	      // Clean up request
+	      request = null;
+	    };
+
+	    // Handle browser request cancellation (as opposed to a manual cancellation)
+	    request.onabort = function handleAbort() {
+	      if (!request) {
+	        return;
+	      }
+
+	      reject(createError('Request aborted', config, 'ECONNABORTED', request));
+
+	      // Clean up request
+	      request = null;
+	    };
+
+	    // Handle low level network errors
+	    request.onerror = function handleError() {
+	      // Real errors are hidden from us by the browser
+	      // onerror should only fire if it's a network error
+	      reject(createError('Network Error', config, null, request));
+
+	      // Clean up request
+	      request = null;
+	    };
+
+	    // Handle timeout
+	    request.ontimeout = function handleTimeout() {
+	      var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
+	      if (config.timeoutErrorMessage) {
+	        timeoutErrorMessage = config.timeoutErrorMessage;
+	      }
+	      reject(createError(timeoutErrorMessage, config, 'ECONNABORTED',
+	        request));
+
+	      // Clean up request
+	      request = null;
+	    };
+
+	    // Add xsrf header
+	    // This is only done if running in a standard browser environment.
+	    // Specifically not if we're in a web worker, or react-native.
+	    if (utils.isStandardBrowserEnv()) {
+	      // Add xsrf header
+	      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
+	        cookies.read(config.xsrfCookieName) :
+	        undefined;
+
+	      if (xsrfValue) {
+	        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+	      }
+	    }
+
+	    // Add headers to the request
+	    if ('setRequestHeader' in request) {
+	      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+	        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+	          // Remove Content-Type if data is undefined
+	          delete requestHeaders[key];
+	        } else {
+	          // Otherwise add header to the request
+	          request.setRequestHeader(key, val);
+	        }
+	      });
+	    }
+
+	    // Add withCredentials to request if needed
+	    if (!utils.isUndefined(config.withCredentials)) {
+	      request.withCredentials = !!config.withCredentials;
+	    }
+
+	    // Add responseType to request if needed
+	    if (config.responseType) {
+	      try {
+	        request.responseType = config.responseType;
+	      } catch (e) {
+	        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+	        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
+	        if (config.responseType !== 'json') {
+	          throw e;
+	        }
+	      }
+	    }
+
+	    // Handle progress if needed
+	    if (typeof config.onDownloadProgress === 'function') {
+	      request.addEventListener('progress', config.onDownloadProgress);
+	    }
+
+	    // Not all browsers support upload events
+	    if (typeof config.onUploadProgress === 'function' && request.upload) {
+	      request.upload.addEventListener('progress', config.onUploadProgress);
+	    }
+
+	    if (config.cancelToken) {
+	      // Handle cancellation
+	      config.cancelToken.promise.then(function onCanceled(cancel) {
+	        if (!request) {
+	          return;
+	        }
+
+	        request.abort();
+	        reject(cancel);
+	        // Clean up request
+	        request = null;
+	      });
+	    }
+
+	    if (!requestData) {
+	      requestData = null;
+	    }
+
+	    // Send the request
+	    request.send(requestData);
+	  });
+	};
+
+	var debug;
+
+	var debug_1 = function () {
+	  if (!debug) {
+	    try {
+	      /* eslint global-require: off */
+	      debug = debug$1("follow-redirects");
+	    }
+	    catch (error) {
+	      debug = function () { /* */ };
+	    }
+	  }
+	  debug.apply(null, arguments);
+	};
+
+	var URL = url.URL;
+
+
+	var Writable = stream.Writable;
+
+
+
+	// Create handlers that pass events from native requests
+	var events = ["abort", "aborted", "connect", "error", "socket", "timeout"];
+	var eventHandlers = Object.create(null);
+	events.forEach(function (event) {
+	  eventHandlers[event] = function (arg1, arg2, arg3) {
+	    this._redirectable.emit(event, arg1, arg2, arg3);
+	  };
+	});
+
+	// Error types with codes
+	var RedirectionError = createErrorType(
+	  "ERR_FR_REDIRECTION_FAILURE",
+	  ""
+	);
+	var TooManyRedirectsError = createErrorType(
+	  "ERR_FR_TOO_MANY_REDIRECTS",
+	  "Maximum number of redirects exceeded"
+	);
+	var MaxBodyLengthExceededError = createErrorType(
+	  "ERR_FR_MAX_BODY_LENGTH_EXCEEDED",
+	  "Request body larger than maxBodyLength limit"
+	);
+	var WriteAfterEndError = createErrorType(
+	  "ERR_STREAM_WRITE_AFTER_END",
+	  "write after end"
+	);
+
+	// An HTTP(S) request that can be redirected
+	function RedirectableRequest(options, responseCallback) {
+	  // Initialize the request
+	  Writable.call(this);
+	  this._sanitizeOptions(options);
+	  this._options = options;
+	  this._ended = false;
+	  this._ending = false;
+	  this._redirectCount = 0;
+	  this._redirects = [];
+	  this._requestBodyLength = 0;
+	  this._requestBodyBuffers = [];
+
+	  // Attach a callback if passed
+	  if (responseCallback) {
+	    this.on("response", responseCallback);
+	  }
+
+	  // React to responses of native requests
+	  var self = this;
+	  this._onNativeResponse = function (response) {
+	    self._processResponse(response);
+	  };
+
+	  // Perform the first request
+	  this._performRequest();
+	}
+	RedirectableRequest.prototype = Object.create(Writable.prototype);
+
+	RedirectableRequest.prototype.abort = function () {
+	  abortRequest(this._currentRequest);
+	  this.emit("abort");
+	};
+
+	// Writes buffered data to the current native request
+	RedirectableRequest.prototype.write = function (data, encoding, callback) {
+	  // Writing is not allowed if end has been called
+	  if (this._ending) {
+	    throw new WriteAfterEndError();
+	  }
+
+	  // Validate input and shift parameters if necessary
+	  if (!(typeof data === "string" || typeof data === "object" && ("length" in data))) {
+	    throw new TypeError("data should be a string, Buffer or Uint8Array");
+	  }
+	  if (typeof encoding === "function") {
+	    callback = encoding;
+	    encoding = null;
+	  }
+
+	  // Ignore empty buffers, since writing them doesn't invoke the callback
+	  // https://github.com/nodejs/node/issues/22066
+	  if (data.length === 0) {
+	    if (callback) {
+	      callback();
+	    }
+	    return;
+	  }
+	  // Only write when we don't exceed the maximum body length
+	  if (this._requestBodyLength + data.length <= this._options.maxBodyLength) {
+	    this._requestBodyLength += data.length;
+	    this._requestBodyBuffers.push({ data: data, encoding: encoding });
+	    this._currentRequest.write(data, encoding, callback);
+	  }
+	  // Error when we exceed the maximum body length
+	  else {
+	    this.emit("error", new MaxBodyLengthExceededError());
+	    this.abort();
+	  }
+	};
+
+	// Ends the current native request
+	RedirectableRequest.prototype.end = function (data, encoding, callback) {
+	  // Shift parameters if necessary
+	  if (typeof data === "function") {
+	    callback = data;
+	    data = encoding = null;
+	  }
+	  else if (typeof encoding === "function") {
+	    callback = encoding;
+	    encoding = null;
+	  }
+
+	  // Write data if needed and end
+	  if (!data) {
+	    this._ended = this._ending = true;
+	    this._currentRequest.end(null, null, callback);
+	  }
+	  else {
+	    var self = this;
+	    var currentRequest = this._currentRequest;
+	    this.write(data, encoding, function () {
+	      self._ended = true;
+	      currentRequest.end(null, null, callback);
+	    });
+	    this._ending = true;
+	  }
+	};
+
+	// Sets a header value on the current native request
+	RedirectableRequest.prototype.setHeader = function (name, value) {
+	  this._options.headers[name] = value;
+	  this._currentRequest.setHeader(name, value);
+	};
+
+	// Clears a header value on the current native request
+	RedirectableRequest.prototype.removeHeader = function (name) {
+	  delete this._options.headers[name];
+	  this._currentRequest.removeHeader(name);
+	};
+
+	// Global timeout for all underlying requests
+	RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
+	  var self = this;
+	  if (callback) {
+	    this.on("timeout", callback);
+	  }
+
+	  function destroyOnTimeout(socket) {
+	    socket.setTimeout(msecs);
+	    socket.removeListener("timeout", socket.destroy);
+	    socket.addListener("timeout", socket.destroy);
+	  }
+
+	  // Sets up a timer to trigger a timeout event
+	  function startTimer(socket) {
+	    if (self._timeout) {
+	      clearTimeout(self._timeout);
+	    }
+	    self._timeout = setTimeout(function () {
+	      self.emit("timeout");
+	      clearTimer();
+	    }, msecs);
+	    destroyOnTimeout(socket);
+	  }
+
+	  // Prevent a timeout from triggering
+	  function clearTimer() {
+	    clearTimeout(this._timeout);
+	    if (callback) {
+	      self.removeListener("timeout", callback);
+	    }
+	    if (!this.socket) {
+	      self._currentRequest.removeListener("socket", startTimer);
+	    }
+	  }
+
+	  // Start the timer when the socket is opened
+	  if (this.socket) {
+	    startTimer(this.socket);
+	  }
+	  else {
+	    this._currentRequest.once("socket", startTimer);
+	  }
+
+	  this.on("socket", destroyOnTimeout);
+	  this.once("response", clearTimer);
+	  this.once("error", clearTimer);
+
+	  return this;
+	};
+
+	// Proxy all other public ClientRequest methods
+	[
+	  "flushHeaders", "getHeader",
+	  "setNoDelay", "setSocketKeepAlive",
+	].forEach(function (method) {
+	  RedirectableRequest.prototype[method] = function (a, b) {
+	    return this._currentRequest[method](a, b);
+	  };
+	});
+
+	// Proxy all public ClientRequest properties
+	["aborted", "connection", "socket"].forEach(function (property) {
+	  Object.defineProperty(RedirectableRequest.prototype, property, {
+	    get: function () { return this._currentRequest[property]; },
+	  });
+	});
+
+	RedirectableRequest.prototype._sanitizeOptions = function (options) {
+	  // Ensure headers are always present
+	  if (!options.headers) {
+	    options.headers = {};
+	  }
+
+	  // Since http.request treats host as an alias of hostname,
+	  // but the url module interprets host as hostname plus port,
+	  // eliminate the host property to avoid confusion.
+	  if (options.host) {
+	    // Use hostname if set, because it has precedence
+	    if (!options.hostname) {
+	      options.hostname = options.host;
+	    }
+	    delete options.host;
+	  }
+
+	  // Complete the URL object when necessary
+	  if (!options.pathname && options.path) {
+	    var searchPos = options.path.indexOf("?");
+	    if (searchPos < 0) {
+	      options.pathname = options.path;
+	    }
+	    else {
+	      options.pathname = options.path.substring(0, searchPos);
+	      options.search = options.path.substring(searchPos);
+	    }
+	  }
+	};
+
+
+	// Executes the next native request (initial or redirect)
+	RedirectableRequest.prototype._performRequest = function () {
+	  // Load the native protocol
+	  var protocol = this._options.protocol;
+	  var nativeProtocol = this._options.nativeProtocols[protocol];
+	  if (!nativeProtocol) {
+	    this.emit("error", new TypeError("Unsupported protocol " + protocol));
+	    return;
+	  }
+
+	  // If specified, use the agent corresponding to the protocol
+	  // (HTTP and HTTPS use different types of agents)
+	  if (this._options.agents) {
+	    var scheme = protocol.substr(0, protocol.length - 1);
+	    this._options.agent = this._options.agents[scheme];
+	  }
+
+	  // Create the native request
+	  var request = this._currentRequest =
+	        nativeProtocol.request(this._options, this._onNativeResponse);
+	  this._currentUrl = url.format(this._options);
+
+	  // Set up event handlers
+	  request._redirectable = this;
+	  for (var e = 0; e < events.length; e++) {
+	    request.on(events[e], eventHandlers[events[e]]);
+	  }
+
+	  // End a redirected request
+	  // (The first request must be ended explicitly with RedirectableRequest#end)
+	  if (this._isRedirect) {
+	    // Write the request entity and end.
+	    var i = 0;
+	    var self = this;
+	    var buffers = this._requestBodyBuffers;
+	    (function writeNext(error) {
+	      // Only write if this request has not been redirected yet
+	      /* istanbul ignore else */
+	      if (request === self._currentRequest) {
+	        // Report any write errors
+	        /* istanbul ignore if */
+	        if (error) {
+	          self.emit("error", error);
+	        }
+	        // Write the next buffer if there are still left
+	        else if (i < buffers.length) {
+	          var buffer = buffers[i++];
+	          /* istanbul ignore else */
+	          if (!request.finished) {
+	            request.write(buffer.data, buffer.encoding, writeNext);
+	          }
+	        }
+	        // End the request if `end` has been called on us
+	        else if (self._ended) {
+	          request.end();
+	        }
+	      }
+	    }());
+	  }
+	};
+
+	// Processes a response from the current native request
+	RedirectableRequest.prototype._processResponse = function (response) {
+	  // Store the redirected response
+	  var statusCode = response.statusCode;
+	  if (this._options.trackRedirects) {
+	    this._redirects.push({
+	      url: this._currentUrl,
+	      headers: response.headers,
+	      statusCode: statusCode,
+	    });
+	  }
+
+	  // RFC7231§6.4: The 3xx (Redirection) class of status code indicates
+	  // that further action needs to be taken by the user agent in order to
+	  // fulfill the request. If a Location header field is provided,
+	  // the user agent MAY automatically redirect its request to the URI
+	  // referenced by the Location field value,
+	  // even if the specific status code is not understood.
+	  var location = response.headers.location;
+	  if (location && this._options.followRedirects !== false &&
+	      statusCode >= 300 && statusCode < 400) {
+	    // Abort the current request
+	    abortRequest(this._currentRequest);
+	    // Discard the remainder of the response to avoid waiting for data
+	    response.destroy();
+
+	    // RFC7231§6.4: A client SHOULD detect and intervene
+	    // in cyclical redirections (i.e., "infinite" redirection loops).
+	    if (++this._redirectCount > this._options.maxRedirects) {
+	      this.emit("error", new TooManyRedirectsError());
+	      return;
+	    }
+
+	    // RFC7231§6.4: Automatic redirection needs to done with
+	    // care for methods not known to be safe, […]
+	    // RFC7231§6.4.2–3: For historical reasons, a user agent MAY change
+	    // the request method from POST to GET for the subsequent request.
+	    if ((statusCode === 301 || statusCode === 302) && this._options.method === "POST" ||
+	        // RFC7231§6.4.4: The 303 (See Other) status code indicates that
+	        // the server is redirecting the user agent to a different resource […]
+	        // A user agent can perform a retrieval request targeting that URI
+	        // (a GET or HEAD request if using HTTP) […]
+	        (statusCode === 303) && !/^(?:GET|HEAD)$/.test(this._options.method)) {
+	      this._options.method = "GET";
+	      // Drop a possible entity and headers related to it
+	      this._requestBodyBuffers = [];
+	      removeMatchingHeaders(/^content-/i, this._options.headers);
+	    }
+
+	    // Drop the Host header, as the redirect might lead to a different host
+	    var previousHostName = removeMatchingHeaders(/^host$/i, this._options.headers) ||
+	      url.parse(this._currentUrl).hostname;
+
+	    // Create the redirected request
+	    var redirectUrl = url.resolve(this._currentUrl, location);
+	    debug_1("redirecting to", redirectUrl);
+	    this._isRedirect = true;
+	    var redirectUrlParts = url.parse(redirectUrl);
+	    Object.assign(this._options, redirectUrlParts);
+
+	    // Drop the Authorization header if redirecting to another host
+	    if (redirectUrlParts.hostname !== previousHostName) {
+	      removeMatchingHeaders(/^authorization$/i, this._options.headers);
+	    }
+
+	    // Evaluate the beforeRedirect callback
+	    if (typeof this._options.beforeRedirect === "function") {
+	      var responseDetails = { headers: response.headers };
+	      try {
+	        this._options.beforeRedirect.call(null, this._options, responseDetails);
+	      }
+	      catch (err) {
+	        this.emit("error", err);
+	        return;
+	      }
+	      this._sanitizeOptions(this._options);
+	    }
+
+	    // Perform the redirected request
+	    try {
+	      this._performRequest();
+	    }
+	    catch (cause) {
+	      var error = new RedirectionError("Redirected request failed: " + cause.message);
+	      error.cause = cause;
+	      this.emit("error", error);
+	    }
+	  }
+	  else {
+	    // The response is not a redirect; return it as-is
+	    response.responseUrl = this._currentUrl;
+	    response.redirects = this._redirects;
+	    this.emit("response", response);
+
+	    // Clean up
+	    this._requestBodyBuffers = [];
+	  }
+	};
+
+	// Wraps the key/value object of protocols with redirect functionality
+	function wrap(protocols) {
+	  // Default settings
+	  var exports = {
+	    maxRedirects: 21,
+	    maxBodyLength: 10 * 1024 * 1024,
+	  };
+
+	  // Wrap each protocol
+	  var nativeProtocols = {};
+	  Object.keys(protocols).forEach(function (scheme) {
+	    var protocol = scheme + ":";
+	    var nativeProtocol = nativeProtocols[protocol] = protocols[scheme];
+	    var wrappedProtocol = exports[scheme] = Object.create(nativeProtocol);
+
+	    // Executes a request, following redirects
+	    function request(input, options, callback) {
+	      // Parse parameters
+	      if (typeof input === "string") {
+	        var urlStr = input;
+	        try {
+	          input = urlToOptions(new URL(urlStr));
+	        }
+	        catch (err) {
+	          /* istanbul ignore next */
+	          input = url.parse(urlStr);
+	        }
+	      }
+	      else if (URL && (input instanceof URL)) {
+	        input = urlToOptions(input);
+	      }
+	      else {
+	        callback = options;
+	        options = input;
+	        input = { protocol: protocol };
+	      }
+	      if (typeof options === "function") {
+	        callback = options;
+	        options = null;
+	      }
+
+	      // Set defaults
+	      options = Object.assign({
+	        maxRedirects: exports.maxRedirects,
+	        maxBodyLength: exports.maxBodyLength,
+	      }, input, options);
+	      options.nativeProtocols = nativeProtocols;
+
+	      assert.equal(options.protocol, protocol, "protocol mismatch");
+	      debug_1("options", options);
+	      return new RedirectableRequest(options, callback);
+	    }
+
+	    // Executes a GET request, following redirects
+	    function get(input, options, callback) {
+	      var wrappedRequest = wrappedProtocol.request(input, options, callback);
+	      wrappedRequest.end();
+	      return wrappedRequest;
+	    }
+
+	    // Expose the properties on the wrapped protocol
+	    Object.defineProperties(wrappedProtocol, {
+	      request: { value: request, configurable: true, enumerable: true, writable: true },
+	      get: { value: get, configurable: true, enumerable: true, writable: true },
+	    });
+	  });
+	  return exports;
+	}
+
+	/* istanbul ignore next */
+	function noop() { /* empty */ }
+
+	// from https://github.com/nodejs/node/blob/master/lib/internal/url.js
+	function urlToOptions(urlObject) {
+	  var options = {
+	    protocol: urlObject.protocol,
+	    hostname: urlObject.hostname.startsWith("[") ?
+	      /* istanbul ignore next */
+	      urlObject.hostname.slice(1, -1) :
+	      urlObject.hostname,
+	    hash: urlObject.hash,
+	    search: urlObject.search,
+	    pathname: urlObject.pathname,
+	    path: urlObject.pathname + urlObject.search,
+	    href: urlObject.href,
+	  };
+	  if (urlObject.port !== "") {
+	    options.port = Number(urlObject.port);
+	  }
+	  return options;
+	}
+
+	function removeMatchingHeaders(regex, headers) {
+	  var lastValue;
+	  for (var header in headers) {
+	    if (regex.test(header)) {
+	      lastValue = headers[header];
+	      delete headers[header];
+	    }
+	  }
+	  return lastValue;
+	}
+
+	function createErrorType(code, defaultMessage) {
+	  function CustomError(message) {
+	    Error.captureStackTrace(this, this.constructor);
+	    this.message = message || defaultMessage;
+	  }
+	  CustomError.prototype = new Error();
+	  CustomError.prototype.constructor = CustomError;
+	  CustomError.prototype.name = "Error [" + code + "]";
+	  CustomError.prototype.code = code;
+	  return CustomError;
+	}
+
+	function abortRequest(request) {
+	  for (var e = 0; e < events.length; e++) {
+	    request.removeListener(events[e], eventHandlers[events[e]]);
+	  }
+	  request.on("error", noop);
+	  request.abort();
+	}
+
+	// Exports
+	var followRedirects = wrap({ http: http$1, https: https });
+	var wrap_1 = wrap;
+	followRedirects.wrap = wrap_1;
+
+	var _from = "axios";
+	var _id = "axios@0.21.1";
+	var _inBundle = false;
+	var _integrity = "sha1-IlY0gZYvTWvemnbVFu8OXTwJsrg=";
+	var _location = "/axios";
+	var _phantomChildren = {
+	};
+	var _requested = {
+		type: "tag",
+		registry: true,
+		raw: "axios",
+		name: "axios",
+		escapedName: "axios",
+		rawSpec: "",
+		saveSpec: null,
+		fetchSpec: "latest"
+	};
+	var _requiredBy = [
+		"#USER",
+		"/"
+	];
+	var _resolved = "https://r.cnpmjs.org/axios/download/axios-0.21.1.tgz";
+	var _shasum = "22563481962f4d6bde9a76d516ef0e5d3c09b2b8";
+	var _spec = "axios";
+	var _where = "/Users/youzuqiang/Desktop/tool/react-axios-http";
+	var author = {
+		name: "Matt Zabriskie"
+	};
+	var browser = {
+		"./lib/adapters/http.js": "./lib/adapters/xhr.js"
+	};
+	var bugs = {
+		url: "https://github.com/axios/axios/issues"
+	};
+	var bundleDependencies = false;
+	var bundlesize = [
+		{
+			path: "./dist/axios.min.js",
+			threshold: "5kB"
+		}
+	];
+	var dependencies = {
+		"follow-redirects": "^1.10.0"
+	};
+	var deprecated = false;
+	var description = "Promise based HTTP client for the browser and node.js";
+	var devDependencies = {
+		bundlesize: "^0.17.0",
+		coveralls: "^3.0.0",
+		"es6-promise": "^4.2.4",
+		grunt: "^1.0.2",
+		"grunt-banner": "^0.6.0",
+		"grunt-cli": "^1.2.0",
+		"grunt-contrib-clean": "^1.1.0",
+		"grunt-contrib-watch": "^1.0.0",
+		"grunt-eslint": "^20.1.0",
+		"grunt-karma": "^2.0.0",
+		"grunt-mocha-test": "^0.13.3",
+		"grunt-ts": "^6.0.0-beta.19",
+		"grunt-webpack": "^1.0.18",
+		"istanbul-instrumenter-loader": "^1.0.0",
+		"jasmine-core": "^2.4.1",
+		karma: "^1.3.0",
+		"karma-chrome-launcher": "^2.2.0",
+		"karma-coverage": "^1.1.1",
+		"karma-firefox-launcher": "^1.1.0",
+		"karma-jasmine": "^1.1.1",
+		"karma-jasmine-ajax": "^0.1.13",
+		"karma-opera-launcher": "^1.0.0",
+		"karma-safari-launcher": "^1.0.0",
+		"karma-sauce-launcher": "^1.2.0",
+		"karma-sinon": "^1.0.5",
+		"karma-sourcemap-loader": "^0.3.7",
+		"karma-webpack": "^1.7.0",
+		"load-grunt-tasks": "^3.5.2",
+		minimist: "^1.2.0",
+		mocha: "^5.2.0",
+		sinon: "^4.5.0",
+		typescript: "^2.8.1",
+		"url-search-params": "^0.10.0",
+		webpack: "^1.13.1",
+		"webpack-dev-server": "^1.14.1"
+	};
+	var homepage = "https://github.com/axios/axios";
+	var jsdelivr = "dist/axios.min.js";
+	var keywords = [
+		"xhr",
+		"http",
+		"ajax",
+		"promise",
+		"node"
+	];
+	var license = "MIT";
+	var main = "index.js";
+	var name = "axios";
+	var repository = {
+		type: "git",
+		url: "git+https://github.com/axios/axios.git"
+	};
+	var scripts = {
+		build: "NODE_ENV=production grunt build",
+		coveralls: "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+		examples: "node ./examples/server.js",
+		fix: "eslint --fix lib/**/*.js",
+		postversion: "git push && git push --tags",
+		preversion: "npm test",
+		start: "node ./sandbox/server.js",
+		test: "grunt test && bundlesize",
+		version: "npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json"
+	};
+	var typings = "./index.d.ts";
+	var unpkg = "dist/axios.min.js";
+	var version = "0.21.1";
+	var _package = {
+		_from: _from,
+		_id: _id,
+		_inBundle: _inBundle,
+		_integrity: _integrity,
+		_location: _location,
+		_phantomChildren: _phantomChildren,
+		_requested: _requested,
+		_requiredBy: _requiredBy,
+		_resolved: _resolved,
+		_shasum: _shasum,
+		_spec: _spec,
+		_where: _where,
+		author: author,
+		browser: browser,
+		bugs: bugs,
+		bundleDependencies: bundleDependencies,
+		bundlesize: bundlesize,
+		dependencies: dependencies,
+		deprecated: deprecated,
+		description: description,
+		devDependencies: devDependencies,
+		homepage: homepage,
+		jsdelivr: jsdelivr,
+		keywords: keywords,
+		license: license,
+		main: main,
+		name: name,
+		repository: repository,
+		scripts: scripts,
+		typings: typings,
+		unpkg: unpkg,
+		version: version
+	};
+
+	var _package$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		_from: _from,
+		_id: _id,
+		_inBundle: _inBundle,
+		_integrity: _integrity,
+		_location: _location,
+		_phantomChildren: _phantomChildren,
+		_requested: _requested,
+		_requiredBy: _requiredBy,
+		_resolved: _resolved,
+		_shasum: _shasum,
+		_spec: _spec,
+		_where: _where,
+		author: author,
+		browser: browser,
+		bugs: bugs,
+		bundleDependencies: bundleDependencies,
+		bundlesize: bundlesize,
+		dependencies: dependencies,
+		deprecated: deprecated,
+		description: description,
+		devDependencies: devDependencies,
+		homepage: homepage,
+		jsdelivr: jsdelivr,
+		keywords: keywords,
+		license: license,
+		main: main,
+		name: name,
+		repository: repository,
+		scripts: scripts,
+		typings: typings,
+		unpkg: unpkg,
+		version: version,
+		'default': _package
+	});
+
+	var pkg = getCjsExportFromNamespace(_package$1);
+
+	var httpFollow = followRedirects.http;
+	var httpsFollow = followRedirects.https;
+
+
+
+
+
+
+	var isHttps = /https:?/;
+
+	/**
+	 *
+	 * @param {http.ClientRequestArgs} options
+	 * @param {AxiosProxyConfig} proxy
+	 * @param {string} location
+	 */
+	function setProxy(options, proxy, location) {
+	  options.hostname = proxy.host;
+	  options.host = proxy.host;
+	  options.port = proxy.port;
+	  options.path = location;
+
+	  // Basic proxy authorization
+	  if (proxy.auth) {
+	    var base64 = Buffer.from(proxy.auth.username + ':' + proxy.auth.password, 'utf8').toString('base64');
+	    options.headers['Proxy-Authorization'] = 'Basic ' + base64;
+	  }
+
+	  // If a proxy is used, any redirects must also pass through the proxy
+	  options.beforeRedirect = function beforeRedirect(redirection) {
+	    redirection.headers.host = redirection.host;
+	    setProxy(redirection, proxy, redirection.href);
+	  };
+	}
+
+	/*eslint consistent-return:0*/
+	var http_1 = function httpAdapter(config) {
+	  return new Promise(function dispatchHttpRequest(resolvePromise, rejectPromise) {
+	    var resolve = function resolve(value) {
+	      resolvePromise(value);
+	    };
+	    var reject = function reject(value) {
+	      rejectPromise(value);
+	    };
+	    var data = config.data;
+	    var headers = config.headers;
+
+	    // Set User-Agent (required by some servers)
+	    // Only set header if it hasn't been set in config
+	    // See https://github.com/axios/axios/issues/69
+	    if (!headers['User-Agent'] && !headers['user-agent']) {
+	      headers['User-Agent'] = 'axios/' + pkg.version;
+	    }
+
+	    if (data && !utils.isStream(data)) {
+	      if (Buffer.isBuffer(data)) ; else if (utils.isArrayBuffer(data)) {
+	        data = Buffer.from(new Uint8Array(data));
+	      } else if (utils.isString(data)) {
+	        data = Buffer.from(data, 'utf-8');
+	      } else {
+	        return reject(createError(
+	          'Data after transformation must be a string, an ArrayBuffer, a Buffer, or a Stream',
+	          config
+	        ));
+	      }
+
+	      // Add Content-Length header if data exists
+	      headers['Content-Length'] = data.length;
+	    }
+
+	    // HTTP basic authentication
+	    var auth = undefined;
+	    if (config.auth) {
+	      var username = config.auth.username || '';
+	      var password = config.auth.password || '';
+	      auth = username + ':' + password;
+	    }
+
+	    // Parse url
+	    var fullPath = buildFullPath(config.baseURL, config.url);
+	    var parsed = url.parse(fullPath);
+	    var protocol = parsed.protocol || 'http:';
+
+	    if (!auth && parsed.auth) {
+	      var urlAuth = parsed.auth.split(':');
+	      var urlUsername = urlAuth[0] || '';
+	      var urlPassword = urlAuth[1] || '';
+	      auth = urlUsername + ':' + urlPassword;
+	    }
+
+	    if (auth) {
+	      delete headers.Authorization;
+	    }
+
+	    var isHttpsRequest = isHttps.test(protocol);
+	    var agent = isHttpsRequest ? config.httpsAgent : config.httpAgent;
+
+	    var options = {
+	      path: buildURL(parsed.path, config.params, config.paramsSerializer).replace(/^\?/, ''),
+	      method: config.method.toUpperCase(),
+	      headers: headers,
+	      agent: agent,
+	      agents: { http: config.httpAgent, https: config.httpsAgent },
+	      auth: auth
+	    };
+
+	    if (config.socketPath) {
+	      options.socketPath = config.socketPath;
+	    } else {
+	      options.hostname = parsed.hostname;
+	      options.port = parsed.port;
+	    }
+
+	    var proxy = config.proxy;
+	    if (!proxy && proxy !== false) {
+	      var proxyEnv = protocol.slice(0, -1) + '_proxy';
+	      var proxyUrl = process.env[proxyEnv] || process.env[proxyEnv.toUpperCase()];
+	      if (proxyUrl) {
+	        var parsedProxyUrl = url.parse(proxyUrl);
+	        var noProxyEnv = process.env.no_proxy || process.env.NO_PROXY;
+	        var shouldProxy = true;
+
+	        if (noProxyEnv) {
+	          var noProxy = noProxyEnv.split(',').map(function trim(s) {
+	            return s.trim();
+	          });
+
+	          shouldProxy = !noProxy.some(function proxyMatch(proxyElement) {
+	            if (!proxyElement) {
+	              return false;
+	            }
+	            if (proxyElement === '*') {
+	              return true;
+	            }
+	            if (proxyElement[0] === '.' &&
+	                parsed.hostname.substr(parsed.hostname.length - proxyElement.length) === proxyElement) {
+	              return true;
+	            }
+
+	            return parsed.hostname === proxyElement;
+	          });
+	        }
+
+	        if (shouldProxy) {
+	          proxy = {
+	            host: parsedProxyUrl.hostname,
+	            port: parsedProxyUrl.port,
+	            protocol: parsedProxyUrl.protocol
+	          };
+
+	          if (parsedProxyUrl.auth) {
+	            var proxyUrlAuth = parsedProxyUrl.auth.split(':');
+	            proxy.auth = {
+	              username: proxyUrlAuth[0],
+	              password: proxyUrlAuth[1]
+	            };
+	          }
+	        }
+	      }
+	    }
+
+	    if (proxy) {
+	      options.headers.host = parsed.hostname + (parsed.port ? ':' + parsed.port : '');
+	      setProxy(options, proxy, protocol + '//' + parsed.hostname + (parsed.port ? ':' + parsed.port : '') + options.path);
+	    }
+
+	    var transport;
+	    var isHttpsProxy = isHttpsRequest && (proxy ? isHttps.test(proxy.protocol) : true);
+	    if (config.transport) {
+	      transport = config.transport;
+	    } else if (config.maxRedirects === 0) {
+	      transport = isHttpsProxy ? https : http$1;
+	    } else {
+	      if (config.maxRedirects) {
+	        options.maxRedirects = config.maxRedirects;
+	      }
+	      transport = isHttpsProxy ? httpsFollow : httpFollow;
+	    }
+
+	    if (config.maxBodyLength > -1) {
+	      options.maxBodyLength = config.maxBodyLength;
+	    }
+
+	    // Create the request
+	    var req = transport.request(options, function handleResponse(res) {
+	      if (req.aborted) return;
+
+	      // uncompress the response body transparently if required
+	      var stream = res;
+
+	      // return the last request in case of redirects
+	      var lastRequest = res.req || req;
+
+
+	      // if no content, is HEAD request or decompress disabled we should not decompress
+	      if (res.statusCode !== 204 && lastRequest.method !== 'HEAD' && config.decompress !== false) {
+	        switch (res.headers['content-encoding']) {
+	        /*eslint default-case:0*/
+	        case 'gzip':
+	        case 'compress':
+	        case 'deflate':
+	        // add the unzipper to the body stream processing pipeline
+	          stream = stream.pipe(zlib.createUnzip());
+
+	          // remove the content-encoding in order to not confuse downstream operations
+	          delete res.headers['content-encoding'];
+	          break;
+	        }
+	      }
+
+	      var response = {
+	        status: res.statusCode,
+	        statusText: res.statusMessage,
+	        headers: res.headers,
+	        config: config,
+	        request: lastRequest
+	      };
+
+	      if (config.responseType === 'stream') {
+	        response.data = stream;
+	        settle(resolve, reject, response);
+	      } else {
+	        var responseBuffer = [];
+	        stream.on('data', function handleStreamData(chunk) {
+	          responseBuffer.push(chunk);
+
+	          // make sure the content length is not over the maxContentLength if specified
+	          if (config.maxContentLength > -1 && Buffer.concat(responseBuffer).length > config.maxContentLength) {
+	            stream.destroy();
+	            reject(createError('maxContentLength size of ' + config.maxContentLength + ' exceeded',
+	              config, null, lastRequest));
+	          }
+	        });
+
+	        stream.on('error', function handleStreamError(err) {
+	          if (req.aborted) return;
+	          reject(enhanceError(err, config, null, lastRequest));
+	        });
+
+	        stream.on('end', function handleStreamEnd() {
+	          var responseData = Buffer.concat(responseBuffer);
+	          if (config.responseType !== 'arraybuffer') {
+	            responseData = responseData.toString(config.responseEncoding);
+	            if (!config.responseEncoding || config.responseEncoding === 'utf8') {
+	              responseData = utils.stripBOM(responseData);
+	            }
+	          }
+
+	          response.data = responseData;
+	          settle(resolve, reject, response);
+	        });
+	      }
+	    });
+
+	    // Handle errors
+	    req.on('error', function handleRequestError(err) {
+	      if (req.aborted && err.code !== 'ERR_FR_TOO_MANY_REDIRECTS') return;
+	      reject(enhanceError(err, config, null, req));
+	    });
+
+	    // Handle request timeout
+	    if (config.timeout) {
+	      // Sometime, the response will be very slow, and does not respond, the connect event will be block by event loop system.
+	      // And timer callback will be fired, and abort() will be invoked before connection, then get "socket hang up" and code ECONNRESET.
+	      // At this time, if we have a large number of request, nodejs will hang up some socket on background. and the number will up and up.
+	      // And then these socket which be hang up will devoring CPU little by little.
+	      // ClientRequest.setTimeout will be fired on the specify milliseconds, and can make sure that abort() will be fired after connect.
+	      req.setTimeout(config.timeout, function handleRequestTimeout() {
+	        req.abort();
+	        reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED', req));
+	      });
+	    }
+
+	    if (config.cancelToken) {
+	      // Handle cancellation
+	      config.cancelToken.promise.then(function onCanceled(cancel) {
+	        if (req.aborted) return;
+
+	        req.abort();
+	        reject(cancel);
+	      });
+	    }
+
+	    // Send the request
+	    if (utils.isStream(data)) {
+	      data.on('error', function handleStreamError(err) {
+	        reject(enhanceError(err, config, null, req));
+	      }).pipe(req);
+	    } else {
+	      req.end(data);
+	    }
+	  });
+	};
+
+	var DEFAULT_CONTENT_TYPE = {
+	  'Content-Type': 'application/x-www-form-urlencoded'
+	};
+
+	function setContentTypeIfUnset(headers, value) {
+	  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+	    headers['Content-Type'] = value;
+	  }
+	}
+
+	function getDefaultAdapter() {
+	  var adapter;
+	  if (typeof XMLHttpRequest !== 'undefined') {
+	    // For browsers use XHR adapter
+	    adapter = xhr;
+	  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+	    // For node use HTTP adapter
+	    adapter = http_1;
+	  }
+	  return adapter;
+	}
+
+	var defaults = {
+	  adapter: getDefaultAdapter(),
+
+	  transformRequest: [function transformRequest(data, headers) {
+	    normalizeHeaderName(headers, 'Accept');
+	    normalizeHeaderName(headers, 'Content-Type');
+	    if (utils.isFormData(data) ||
+	      utils.isArrayBuffer(data) ||
+	      utils.isBuffer(data) ||
+	      utils.isStream(data) ||
+	      utils.isFile(data) ||
+	      utils.isBlob(data)
+	    ) {
+	      return data;
+	    }
+	    if (utils.isArrayBufferView(data)) {
+	      return data.buffer;
+	    }
+	    if (utils.isURLSearchParams(data)) {
+	      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+	      return data.toString();
+	    }
+	    if (utils.isObject(data)) {
+	      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+	      return JSON.stringify(data);
+	    }
+	    return data;
+	  }],
+
+	  transformResponse: [function transformResponse(data) {
+	    /*eslint no-param-reassign:0*/
+	    if (typeof data === 'string') {
+	      try {
+	        data = JSON.parse(data);
+	      } catch (e) { /* Ignore */ }
+	    }
+	    return data;
+	  }],
+
+	  /**
+	   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+	   * timeout is not created.
+	   */
+	  timeout: 0,
+
+	  xsrfCookieName: 'XSRF-TOKEN',
+	  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+	  maxContentLength: -1,
+	  maxBodyLength: -1,
+
+	  validateStatus: function validateStatus(status) {
+	    return status >= 200 && status < 300;
+	  }
+	};
+
+	defaults.headers = {
+	  common: {
+	    'Accept': 'application/json, text/plain, */*'
+	  }
+	};
+
+	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+	  defaults.headers[method] = {};
+	});
+
+	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+	  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+	});
+
+	var defaults_1 = defaults;
+
+	/**
+	 * Throws a `Cancel` if cancellation has been requested.
+	 */
+	function throwIfCancellationRequested(config) {
+	  if (config.cancelToken) {
+	    config.cancelToken.throwIfRequested();
+	  }
+	}
+
+	/**
+	 * Dispatch a request to the server using the configured adapter.
+	 *
+	 * @param {object} config The config that is to be used for the request
+	 * @returns {Promise} The Promise to be fulfilled
+	 */
+	var dispatchRequest = function dispatchRequest(config) {
+	  throwIfCancellationRequested(config);
+
+	  // Ensure headers exist
+	  config.headers = config.headers || {};
+
+	  // Transform request data
+	  config.data = transformData(
+	    config.data,
+	    config.headers,
+	    config.transformRequest
+	  );
+
+	  // Flatten headers
+	  config.headers = utils.merge(
+	    config.headers.common || {},
+	    config.headers[config.method] || {},
+	    config.headers
+	  );
+
+	  utils.forEach(
+	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+	    function cleanHeaderConfig(method) {
+	      delete config.headers[method];
+	    }
+	  );
+
+	  var adapter = config.adapter || defaults_1.adapter;
+
+	  return adapter(config).then(function onAdapterResolution(response) {
+	    throwIfCancellationRequested(config);
+
+	    // Transform response data
+	    response.data = transformData(
+	      response.data,
+	      response.headers,
+	      config.transformResponse
+	    );
+
+	    return response;
+	  }, function onAdapterRejection(reason) {
+	    if (!isCancel(reason)) {
+	      throwIfCancellationRequested(config);
+
+	      // Transform response data
+	      if (reason && reason.response) {
+	        reason.response.data = transformData(
+	          reason.response.data,
+	          reason.response.headers,
+	          config.transformResponse
+	        );
+	      }
+	    }
+
+	    return Promise.reject(reason);
+	  });
+	};
+
+	/**
+	 * Config-specific merge-function which creates a new config-object
+	 * by merging two configuration objects together.
+	 *
+	 * @param {Object} config1
+	 * @param {Object} config2
+	 * @returns {Object} New object resulting from merging config2 to config1
+	 */
+	var mergeConfig = function mergeConfig(config1, config2) {
+	  // eslint-disable-next-line no-param-reassign
+	  config2 = config2 || {};
+	  var config = {};
+
+	  var valueFromConfig2Keys = ['url', 'method', 'data'];
+	  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy', 'params'];
+	  var defaultToConfig2Keys = [
+	    'baseURL', 'transformRequest', 'transformResponse', 'paramsSerializer',
+	    'timeout', 'timeoutMessage', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
+	    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress', 'decompress',
+	    'maxContentLength', 'maxBodyLength', 'maxRedirects', 'transport', 'httpAgent',
+	    'httpsAgent', 'cancelToken', 'socketPath', 'responseEncoding'
+	  ];
+	  var directMergeKeys = ['validateStatus'];
+
+	  function getMergedValue(target, source) {
+	    if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
+	      return utils.merge(target, source);
+	    } else if (utils.isPlainObject(source)) {
+	      return utils.merge({}, source);
+	    } else if (utils.isArray(source)) {
+	      return source.slice();
+	    }
+	    return source;
+	  }
+
+	  function mergeDeepProperties(prop) {
+	    if (!utils.isUndefined(config2[prop])) {
+	      config[prop] = getMergedValue(config1[prop], config2[prop]);
+	    } else if (!utils.isUndefined(config1[prop])) {
+	      config[prop] = getMergedValue(undefined, config1[prop]);
+	    }
+	  }
+
+	  utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
+	    if (!utils.isUndefined(config2[prop])) {
+	      config[prop] = getMergedValue(undefined, config2[prop]);
+	    }
+	  });
+
+	  utils.forEach(mergeDeepPropertiesKeys, mergeDeepProperties);
+
+	  utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
+	    if (!utils.isUndefined(config2[prop])) {
+	      config[prop] = getMergedValue(undefined, config2[prop]);
+	    } else if (!utils.isUndefined(config1[prop])) {
+	      config[prop] = getMergedValue(undefined, config1[prop]);
+	    }
+	  });
+
+	  utils.forEach(directMergeKeys, function merge(prop) {
+	    if (prop in config2) {
+	      config[prop] = getMergedValue(config1[prop], config2[prop]);
+	    } else if (prop in config1) {
+	      config[prop] = getMergedValue(undefined, config1[prop]);
+	    }
+	  });
+
+	  var axiosKeys = valueFromConfig2Keys
+	    .concat(mergeDeepPropertiesKeys)
+	    .concat(defaultToConfig2Keys)
+	    .concat(directMergeKeys);
+
+	  var otherKeys = Object
+	    .keys(config1)
+	    .concat(Object.keys(config2))
+	    .filter(function filterAxiosKeys(key) {
+	      return axiosKeys.indexOf(key) === -1;
+	    });
+
+	  utils.forEach(otherKeys, mergeDeepProperties);
+
+	  return config;
+	};
+
+	/**
+	 * Create a new instance of Axios
+	 *
+	 * @param {Object} instanceConfig The default config for the instance
+	 */
+	function Axios(instanceConfig) {
+	  this.defaults = instanceConfig;
+	  this.interceptors = {
+	    request: new InterceptorManager_1(),
+	    response: new InterceptorManager_1()
+	  };
+	}
+
+	/**
+	 * Dispatch a request
+	 *
+	 * @param {Object} config The config specific for this request (merged with this.defaults)
+	 */
+	Axios.prototype.request = function request(config) {
+	  /*eslint no-param-reassign:0*/
+	  // Allow for axios('example/url'[, config]) a la fetch API
+	  if (typeof config === 'string') {
+	    config = arguments[1] || {};
+	    config.url = arguments[0];
+	  } else {
+	    config = config || {};
+	  }
+
+	  config = mergeConfig(this.defaults, config);
+
+	  // Set config.method
+	  if (config.method) {
+	    config.method = config.method.toLowerCase();
+	  } else if (this.defaults.method) {
+	    config.method = this.defaults.method.toLowerCase();
+	  } else {
+	    config.method = 'get';
+	  }
+
+	  // Hook up interceptors middleware
+	  var chain = [dispatchRequest, undefined];
+	  var promise = Promise.resolve(config);
+
+	  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+	  });
+
+	  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+	    chain.push(interceptor.fulfilled, interceptor.rejected);
+	  });
+
+	  while (chain.length) {
+	    promise = promise.then(chain.shift(), chain.shift());
+	  }
+
+	  return promise;
+	};
+
+	Axios.prototype.getUri = function getUri(config) {
+	  config = mergeConfig(this.defaults, config);
+	  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
+	};
+
+	// Provide aliases for supported request methods
+	utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, config) {
+	    return this.request(mergeConfig(config || {}, {
+	      method: method,
+	      url: url,
+	      data: (config || {}).data
+	    }));
+	  };
+	});
+
+	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, data, config) {
+	    return this.request(mergeConfig(config || {}, {
+	      method: method,
+	      url: url,
+	      data: data
+	    }));
+	  };
+	});
+
+	var Axios_1 = Axios;
+
+	/**
+	 * A `Cancel` is an object that is thrown when an operation is canceled.
+	 *
+	 * @class
+	 * @param {string=} message The message.
+	 */
+	function Cancel(message) {
+	  this.message = message;
+	}
+
+	Cancel.prototype.toString = function toString() {
+	  return 'Cancel' + (this.message ? ': ' + this.message : '');
+	};
+
+	Cancel.prototype.__CANCEL__ = true;
+
+	var Cancel_1 = Cancel;
+
+	/**
+	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
+	 *
+	 * @class
+	 * @param {Function} executor The executor function.
+	 */
+	function CancelToken(executor) {
+	  if (typeof executor !== 'function') {
+	    throw new TypeError('executor must be a function.');
+	  }
+
+	  var resolvePromise;
+	  this.promise = new Promise(function promiseExecutor(resolve) {
+	    resolvePromise = resolve;
+	  });
+
+	  var token = this;
+	  executor(function cancel(message) {
+	    if (token.reason) {
+	      // Cancellation has already been requested
+	      return;
+	    }
+
+	    token.reason = new Cancel_1(message);
+	    resolvePromise(token.reason);
+	  });
+	}
+
+	/**
+	 * Throws a `Cancel` if cancellation has been requested.
+	 */
+	CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+	  if (this.reason) {
+	    throw this.reason;
+	  }
+	};
+
+	/**
+	 * Returns an object that contains a new `CancelToken` and a function that, when called,
+	 * cancels the `CancelToken`.
+	 */
+	CancelToken.source = function source() {
+	  var cancel;
+	  var token = new CancelToken(function executor(c) {
+	    cancel = c;
+	  });
+	  return {
+	    token: token,
+	    cancel: cancel
+	  };
+	};
+
+	var CancelToken_1 = CancelToken;
+
+	/**
+	 * Syntactic sugar for invoking a function and expanding an array for arguments.
+	 *
+	 * Common use case would be to use `Function.prototype.apply`.
+	 *
+	 *  ```js
+	 *  function f(x, y, z) {}
+	 *  var args = [1, 2, 3];
+	 *  f.apply(null, args);
+	 *  ```
+	 *
+	 * With `spread` this example can be re-written.
+	 *
+	 *  ```js
+	 *  spread(function(x, y, z) {})([1, 2, 3]);
+	 *  ```
+	 *
+	 * @param {Function} callback
+	 * @returns {Function}
+	 */
+	var spread = function spread(callback) {
+	  return function wrap(arr) {
+	    return callback.apply(null, arr);
+	  };
+	};
+
+	/**
+	 * Determines whether the payload is an error thrown by Axios
+	 *
+	 * @param {*} payload The value to test
+	 * @returns {boolean} True if the payload is an error thrown by Axios, otherwise false
+	 */
+	var isAxiosError = function isAxiosError(payload) {
+	  return (typeof payload === 'object') && (payload.isAxiosError === true);
+	};
+
+	/**
+	 * Create an instance of Axios
+	 *
+	 * @param {Object} defaultConfig The default config for the instance
+	 * @return {Axios} A new instance of Axios
+	 */
+	function createInstance(defaultConfig) {
+	  var context = new Axios_1(defaultConfig);
+	  var instance = bind(Axios_1.prototype.request, context);
+
+	  // Copy axios.prototype to instance
+	  utils.extend(instance, Axios_1.prototype, context);
+
+	  // Copy context to instance
+	  utils.extend(instance, context);
+
+	  return instance;
+	}
+
+	// Create the default instance to be exported
+	var axios = createInstance(defaults_1);
+
+	// Expose Axios class to allow class inheritance
+	axios.Axios = Axios_1;
+
+	// Factory for creating new instances
+	axios.create = function create(instanceConfig) {
+	  return createInstance(mergeConfig(axios.defaults, instanceConfig));
+	};
+
+	// Expose Cancel & CancelToken
+	axios.Cancel = Cancel_1;
+	axios.CancelToken = CancelToken_1;
+	axios.isCancel = isCancel;
+
+	// Expose all/spread
+	axios.all = function all(promises) {
+	  return Promise.all(promises);
+	};
+	axios.spread = spread;
+
+	// Expose isAxiosError
+	axios.isAxiosError = isAxiosError;
+
+	var axios_1 = axios;
+
+	// Allow use of default import syntax in TypeScript
+	var default_1 = axios;
+	axios_1.default = default_1;
+
+	var axios$1 = axios_1;
 
 	/** Detect free variable `global` from Node.js. */
 	var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
@@ -2343,470 +4742,6 @@
 	var _baseGetTag = baseGetTag;
 
 	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return value != null && typeof value == 'object';
-	}
-
-	var isObjectLike_1 = isObjectLike;
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]';
-
-	/**
-	 * The base implementation of `_.isArguments`.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-	 */
-	function baseIsArguments(value) {
-	  return isObjectLike_1(value) && _baseGetTag(value) == argsTag;
-	}
-
-	var _baseIsArguments = baseIsArguments;
-
-	/** Used for built-in method references. */
-	var objectProto$2 = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
-
-	/** Built-in value references. */
-	var propertyIsEnumerable = objectProto$2.propertyIsEnumerable;
-
-	/**
-	 * Checks if `value` is likely an `arguments` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-	 *  else `false`.
-	 * @example
-	 *
-	 * _.isArguments(function() { return arguments; }());
-	 * // => true
-	 *
-	 * _.isArguments([1, 2, 3]);
-	 * // => false
-	 */
-	var isArguments = _baseIsArguments(function() { return arguments; }()) ? _baseIsArguments : function(value) {
-	  return isObjectLike_1(value) && hasOwnProperty$2.call(value, 'callee') &&
-	    !propertyIsEnumerable.call(value, 'callee');
-	};
-
-	var isArguments_1 = isArguments;
-
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(document.body.children);
-	 * // => false
-	 *
-	 * _.isArray('abc');
-	 * // => false
-	 *
-	 * _.isArray(_.noop);
-	 * // => false
-	 */
-	var isArray = Array.isArray;
-
-	var isArray_1 = isArray;
-
-	/**
-	 * This method returns `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {boolean} Returns `false`.
-	 * @example
-	 *
-	 * _.times(2, _.stubFalse);
-	 * // => [false, false]
-	 */
-	function stubFalse() {
-	  return false;
-	}
-
-	var stubFalse_1 = stubFalse;
-
-	var isBuffer_1 = createCommonjsModule(function (module, exports) {
-	/** Detect free variable `exports`. */
-	var freeExports =  exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Built-in value references. */
-	var Buffer = moduleExports ? _root.Buffer : undefined;
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
-
-	/**
-	 * Checks if `value` is a buffer.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.3.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
-	 * @example
-	 *
-	 * _.isBuffer(new Buffer(2));
-	 * // => true
-	 *
-	 * _.isBuffer(new Uint8Array(2));
-	 * // => false
-	 */
-	var isBuffer = nativeIsBuffer || stubFalse_1;
-
-	module.exports = isBuffer;
-	});
-
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^(?:0|[1-9]\d*)$/;
-
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  var type = typeof value;
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-
-	  return !!length &&
-	    (type == 'number' ||
-	      (type != 'symbol' && reIsUint.test(value))) &&
-	        (value > -1 && value % 1 == 0 && value < length);
-	}
-
-	var _isIndex = isIndex;
-
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER$1 = 9007199254740991;
-
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This method is loosely based on
-	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 * @example
-	 *
-	 * _.isLength(3);
-	 * // => true
-	 *
-	 * _.isLength(Number.MIN_VALUE);
-	 * // => false
-	 *
-	 * _.isLength(Infinity);
-	 * // => false
-	 *
-	 * _.isLength('3');
-	 * // => false
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' &&
-	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER$1;
-	}
-
-	var isLength_1 = isLength;
-
-	/** `Object#toString` result references. */
-	var argsTag$1 = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    funcTag = '[object Function]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    objectTag = '[object Object]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    weakMapTag = '[object WeakMap]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to identify `toStringTag` values of typed arrays. */
-	var typedArrayTags = {};
-	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-	typedArrayTags[uint32Tag] = true;
-	typedArrayTags[argsTag$1] = typedArrayTags[arrayTag] =
-	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
-	typedArrayTags[errorTag] = typedArrayTags[funcTag] =
-	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
-	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
-	typedArrayTags[setTag] = typedArrayTags[stringTag] =
-	typedArrayTags[weakMapTag] = false;
-
-	/**
-	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 */
-	function baseIsTypedArray(value) {
-	  return isObjectLike_1(value) &&
-	    isLength_1(value.length) && !!typedArrayTags[_baseGetTag(value)];
-	}
-
-	var _baseIsTypedArray = baseIsTypedArray;
-
-	/**
-	 * The base implementation of `_.unary` without support for storing metadata.
-	 *
-	 * @private
-	 * @param {Function} func The function to cap arguments for.
-	 * @returns {Function} Returns the new capped function.
-	 */
-	function baseUnary(func) {
-	  return function(value) {
-	    return func(value);
-	  };
-	}
-
-	var _baseUnary = baseUnary;
-
-	var _nodeUtil = createCommonjsModule(function (module, exports) {
-	/** Detect free variable `exports`. */
-	var freeExports =  exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Detect free variable `process` from Node.js. */
-	var freeProcess = moduleExports && _freeGlobal.process;
-
-	/** Used to access faster Node.js helpers. */
-	var nodeUtil = (function() {
-	  try {
-	    // Use `util.types` for Node.js 10+.
-	    var types = freeModule && freeModule.require && freeModule.require('util').types;
-
-	    if (types) {
-	      return types;
-	    }
-
-	    // Legacy `process.binding('util')` for Node.js < 10.
-	    return freeProcess && freeProcess.binding && freeProcess.binding('util');
-	  } catch (e) {}
-	}());
-
-	module.exports = nodeUtil;
-	});
-
-	/* Node.js helper references. */
-	var nodeIsTypedArray = _nodeUtil && _nodeUtil.isTypedArray;
-
-	/**
-	 * Checks if `value` is classified as a typed array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 * @example
-	 *
-	 * _.isTypedArray(new Uint8Array);
-	 * // => true
-	 *
-	 * _.isTypedArray([]);
-	 * // => false
-	 */
-	var isTypedArray = nodeIsTypedArray ? _baseUnary(nodeIsTypedArray) : _baseIsTypedArray;
-
-	var isTypedArray_1 = isTypedArray;
-
-	/** Used for built-in method references. */
-	var objectProto$3 = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty$3 = objectProto$3.hasOwnProperty;
-
-	/**
-	 * Creates an array of the enumerable property names of the array-like `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @param {boolean} inherited Specify returning inherited property names.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function arrayLikeKeys(value, inherited) {
-	  var isArr = isArray_1(value),
-	      isArg = !isArr && isArguments_1(value),
-	      isBuff = !isArr && !isArg && isBuffer_1(value),
-	      isType = !isArr && !isArg && !isBuff && isTypedArray_1(value),
-	      skipIndexes = isArr || isArg || isBuff || isType,
-	      result = skipIndexes ? _baseTimes(value.length, String) : [],
-	      length = result.length;
-
-	  for (var key in value) {
-	    if ((inherited || hasOwnProperty$3.call(value, key)) &&
-	        !(skipIndexes && (
-	           // Safari 9 has enumerable `arguments.length` in strict mode.
-	           key == 'length' ||
-	           // Node.js 0.10 has enumerable non-index properties on buffers.
-	           (isBuff && (key == 'offset' || key == 'parent')) ||
-	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
-	           // Skip index properties.
-	           _isIndex(key, length)
-	        ))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	var _arrayLikeKeys = arrayLikeKeys;
-
-	/** Used for built-in method references. */
-	var objectProto$4 = Object.prototype;
-
-	/**
-	 * Checks if `value` is likely a prototype object.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
-	 */
-	function isPrototype(value) {
-	  var Ctor = value && value.constructor,
-	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto$4;
-
-	  return value === proto;
-	}
-
-	var _isPrototype = isPrototype;
-
-	/**
-	 * Creates a unary function that invokes `func` with its argument transformed.
-	 *
-	 * @private
-	 * @param {Function} func The function to wrap.
-	 * @param {Function} transform The argument transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overArg(func, transform) {
-	  return function(arg) {
-	    return func(transform(arg));
-	  };
-	}
-
-	var _overArg = overArg;
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = _overArg(Object.keys, Object);
-
-	var _nativeKeys = nativeKeys;
-
-	/** Used for built-in method references. */
-	var objectProto$5 = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
-
-	/**
-	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function baseKeys(object) {
-	  if (!_isPrototype(object)) {
-	    return _nativeKeys(object);
-	  }
-	  var result = [];
-	  for (var key in Object(object)) {
-	    if (hasOwnProperty$4.call(object, key) && key != 'constructor') {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	var _baseKeys = baseKeys;
-
-	/**
 	 * Checks if `value` is the
 	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
 	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -2831,16 +4766,16 @@
 	 * _.isObject(null);
 	 * // => false
 	 */
-	function isObject(value) {
+	function isObject$1(value) {
 	  var type = typeof value;
 	  return value != null && (type == 'object' || type == 'function');
 	}
 
-	var isObject_1 = isObject;
+	var isObject_1 = isObject$1;
 
 	/** `Object#toString` result references. */
 	var asyncTag = '[object AsyncFunction]',
-	    funcTag$1 = '[object Function]',
+	    funcTag = '[object Function]',
 	    genTag = '[object GeneratorFunction]',
 	    proxyTag = '[object Proxy]';
 
@@ -2861,533 +4796,17 @@
 	 * _.isFunction(/abc/);
 	 * // => false
 	 */
-	function isFunction(value) {
+	function isFunction$1(value) {
 	  if (!isObject_1(value)) {
 	    return false;
 	  }
 	  // The use of `Object#toString` avoids issues with the `typeof` operator
 	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
 	  var tag = _baseGetTag(value);
-	  return tag == funcTag$1 || tag == genTag || tag == asyncTag || tag == proxyTag;
+	  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
 	}
 
-	var isFunction_1 = isFunction;
-
-	/**
-	 * Checks if `value` is array-like. A value is considered array-like if it's
-	 * not a function and has a `value.length` that's an integer greater than or
-	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 * @example
-	 *
-	 * _.isArrayLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLike(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLike('abc');
-	 * // => true
-	 *
-	 * _.isArrayLike(_.noop);
-	 * // => false
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength_1(value.length) && !isFunction_1(value);
-	}
-
-	var isArrayLike_1 = isArrayLike;
-
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	function keys$2(object) {
-	  return isArrayLike_1(object) ? _arrayLikeKeys(object) : _baseKeys(object);
-	}
-
-	var keys_1 = keys$2;
-
-	/**
-	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseForOwn(object, iteratee) {
-	  return object && _baseFor(object, iteratee, keys_1);
-	}
-
-	var _baseForOwn = baseForOwn;
-
-	/**
-	 * Creates a `baseEach` or `baseEachRight` function.
-	 *
-	 * @private
-	 * @param {Function} eachFunc The function to iterate over a collection.
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {Function} Returns the new base function.
-	 */
-	function createBaseEach(eachFunc, fromRight) {
-	  return function(collection, iteratee) {
-	    if (collection == null) {
-	      return collection;
-	    }
-	    if (!isArrayLike_1(collection)) {
-	      return eachFunc(collection, iteratee);
-	    }
-	    var length = collection.length,
-	        index = fromRight ? length : -1,
-	        iterable = Object(collection);
-
-	    while ((fromRight ? index-- : ++index < length)) {
-	      if (iteratee(iterable[index], index, iterable) === false) {
-	        break;
-	      }
-	    }
-	    return collection;
-	  };
-	}
-
-	var _createBaseEach = createBaseEach;
-
-	/**
-	 * The base implementation of `_.forEach` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array|Object} collection The collection to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array|Object} Returns `collection`.
-	 */
-	var baseEach = _createBaseEach(_baseForOwn);
-
-	var _baseEach = baseEach;
-
-	/**
-	 * This method returns the first argument it receives.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 *
-	 * console.log(_.identity(object) === object);
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-
-	var identity_1 = identity;
-
-	/**
-	 * Casts `value` to `identity` if it's not a function.
-	 *
-	 * @private
-	 * @param {*} value The value to inspect.
-	 * @returns {Function} Returns cast function.
-	 */
-	function castFunction(value) {
-	  return typeof value == 'function' ? value : identity_1;
-	}
-
-	var _castFunction = castFunction;
-
-	/**
-	 * Iterates over elements of `collection` and invokes `iteratee` for each element.
-	 * The iteratee is invoked with three arguments: (value, index|key, collection).
-	 * Iteratee functions may exit iteration early by explicitly returning `false`.
-	 *
-	 * **Note:** As with other "Collections" methods, objects with a "length"
-	 * property are iterated like arrays. To avoid this behavior use `_.forIn`
-	 * or `_.forOwn` for object iteration.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @alias each
-	 * @category Collection
-	 * @param {Array|Object} collection The collection to iterate over.
-	 * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-	 * @returns {Array|Object} Returns `collection`.
-	 * @see _.forEachRight
-	 * @example
-	 *
-	 * _.forEach([1, 2], function(value) {
-	 *   console.log(value);
-	 * });
-	 * // => Logs `1` then `2`.
-	 *
-	 * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
-	 *   console.log(key);
-	 * });
-	 * // => Logs 'a' then 'b' (iteration order is not guaranteed).
-	 */
-	function forEach(collection, iteratee) {
-	  var func = isArray_1(collection) ? _arrayEach : _baseEach;
-	  return func(collection, _castFunction(iteratee));
-	}
-
-	var forEach_1 = forEach;
-
-	function Interceptor() {
-	  this.handlers = [];
-	}
-
-	Interceptor.prototype.use = function (fulfilled, rejected) {
-	  this.handlers.push({
-	    fulfilled: fulfilled,
-	    rejected: rejected
-	  });
-	  return this.handlers.length - 1;
-	};
-
-	Interceptor.prototype.forEach = function (fn) {
-	  forEach_1(this.handlers, function (h) {
-	    if (h !== null) {
-	      fn(h);
-	    }
-	  });
-	};
-
-	// 7.2.2 IsArray(argument)
-
-	var _isArray = Array.isArray || function isArray(arg) {
-	  return _cof(arg) == 'Array';
-	};
-
-	// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
-
-
-	_export(_export.S, 'Array', { isArray: _isArray });
-
-	var isArray$1 = _core.Array.isArray;
-
-	var isArray$2 = isArray$1;
-
-	function isWhichMethod(target, method) {
-	  return !!target && new RegExp(method).test(target.toLowerCase());
-	}
-
-	function getDOP(method, opt, isQuery, others) {
-	  if (others === void 0) {
-	    others = {};
-	  }
-
-	  if (isWhichMethod(method, "post")) {
-	    return _extends({
-	      data: opt
-	    }, others);
-	  } else {
-	    if (isWhichMethod(method, "get") || isWhichMethod(method, "jsonp")) {
-	      return _extends({
-	        params: opt
-	      }, others);
-	    } else {
-	      var _extends2;
-
-	      return _extends((_extends2 = {}, _extends2[isQuery ? "params" : "data"] = opt, _extends2), others);
-	    }
-	  }
-	}
-
-	function isFormDataFunc(val) {
-	  return typeof FormData !== "undefined" && val instanceof FormData;
-	}
-
-	function setOpt(_ref) {
-	  var _ref$method = _ref.method,
-	      method = _ref$method === void 0 ? "get" : _ref$method,
-	      _ref$opt = _ref.opt,
-	      opt = _ref$opt === void 0 ? {} : _ref$opt,
-	      _ref$isFormData = _ref.isFormData,
-	      isFormData = _ref$isFormData === void 0 ? false : _ref$isFormData,
-	      _ref$isQuery = _ref.isQuery,
-	      isQuery = _ref$isQuery === void 0 ? false : _ref$isQuery,
-	      others = _objectWithoutPropertiesLoose(_ref, ["method", "opt", "isFormData", "isQuery"]);
-
-	  if (isFormData && !isFormDataFunc(opt)) {
-	    var formData = new FormData();
-
-	    for (var key in opt) {
-	      if (opt.hasOwnProperty(key)) {
-	        var value = opt[key];
-	        formData.append(key, value);
-	      }
-	    }
-
-	    opt = formData;
-	  }
-
-	  return getDOP(method, opt, isQuery, others);
-	}
-
-	function handleMethod(params) {
-	  var method = params.method;
-	  var methodMap = {
-	    post: "Post",
-	    get: "Get",
-	    put: "Put",
-	    jsonp: "GetJsonp",
-	    "delete": "Delete"
-	  };
-	  return method ? methodMap[method.toLowerCase()] : "Get";
-	}
-
-	function extend(a, b, thisArg) {
-	  for (var key in b) {
-	    if (b.hasOwnProperty(key)) {
-	      if (thisArg && typeof b[key] === "function") {
-	        a[key] = b[key].bind(thisArg);
-	      } else {
-	        a[key] = b[key];
-	      }
-	    }
-	  }
-
-	  return a;
-	}
-
-	function awaitWrap(promise) {
-	  return promise.then(function (res) {
-	    return [null, res];
-	  })["catch"](function (err) {
-	    return [err, null];
-	  });
-	}
-
-	function getType(data) {
-	  return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
-	}
-
-	function isType(data, type) {
-	  return type === getType(data);
-	}
-
-	var encodeReserveRE = /[!'()*]/g;
-
-	var encodeReserveReplacer = function encodeReserveReplacer(c) {
-	  return "%" + c.charCodeAt(0).toString(16);
-	};
-
-	var commaRE = /%2C/g;
-
-	var encode = function encode(str) {
-	  return encodeURIComponent(str).replace(encodeReserveRE, encodeReserveReplacer).replace(commaRE, ",");
-	};
-
-	function stringifyQuery(obj) {
-	  var res = obj ? keys$1(obj).map(function (key) {
-	    var val = obj[key];
-
-	    if (val === undefined) {
-	      return "";
-	    }
-
-	    if (val === null) {
-	      return encode(key);
-	    }
-
-	    if (isArray$2(val)) {
-	      var result = [];
-	      val.forEach(function (val2) {
-	        if (val2 === undefined) {
-	          return;
-	        }
-
-	        if (val2 === null) {
-	          result.push(encode(key));
-	        } else {
-	          result.push(encode(key) + "=" + encode(val2));
-	        }
-	      });
-	      return result.join("&");
-	    }
-
-	    return encode(key) + "=" + encode(val);
-	  }).filter(function (x) {
-	    return x.length > 0;
-	  }).join("&") : null;
-	  return res ? "?" + res : "";
-	}
-
-	var Global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-
-	function getAdapter(params) {
-	  var adapter = params.adapter,
-	      others = _objectWithoutPropertiesLoose(params, ["adapter"]);
-
-	  var method = handleMethod(params);
-
-	  var config = _extends({}, others, {
-	    method: method
-	  });
-
-	  var hasAdapter = isType(adapter, 'function');
-	  adapter = hasAdapter ? adapter : tdHttp[method];
-	  return {
-	    config: config,
-	    adapter: adapter,
-	    hasAdapter: hasAdapter
-	  };
-	}
-
-	var getResult = /*#__PURE__*/function () {
-	  var _ref = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(params) {
-	    var _getAdapter, config, adapter, hasAdapter, data;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
-	            _context.next = 3;
-	            return adapter(config);
-
-	          case 3:
-	            data = _context.sent;
-	            return _context.abrupt("return", hasAdapter ? data : {
-	              config: config,
-	              data: data
-	            });
-
-	          case 5:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function getResult(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-
-	function xhr(handler) {
-	  return /*#__PURE__*/function () {
-	    var _http = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(params) {
-	      var result, res;
-	      return regenerator.wrap(function _callee2$(_context2) {
-	        while (1) {
-	          switch (_context2.prev = _context2.next) {
-	            case 0:
-	              _context2.next = 2;
-	              return getResult(params);
-
-	            case 2:
-	              result = _context2.sent;
-
-	              if (!isType(handler, 'function')) {
-	                _context2.next = 10;
-	                break;
-	              }
-
-	              res = handler(result);
-
-	              if (!isType(res, 'undefined')) {
-	                _context2.next = 9;
-	                break;
-	              }
-
-	              console.warn('请在加工函数中返回结果');
-	              _context2.next = 10;
-	              break;
-
-	            case 9:
-	              return _context2.abrupt("return", res);
-
-	            case 10:
-	              return _context2.abrupt("return", result);
-
-	            case 11:
-	            case "end":
-	              return _context2.stop();
-	          }
-	        }
-	      }, _callee2);
-	    }));
-
-	    function http(_x2) {
-	      return _http.apply(this, arguments);
-	    }
-
-	    return http;
-	  }();
-	}
-
-	function Http() {
-	  this.interceptors = {
-	    request: new Interceptor(),
-	    response: new Interceptor()
-	  };
-	}
-
-	Http.prototype._request = function (params, handler) {
-	  var chain = [xhr(handler), undefined];
-
-	  var promise = promise$1.resolve(params);
-
-	  this.interceptors.request.forEach(function (interceptor) {
-	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
-	  });
-	  this.interceptors.response.forEach(function (interceptor) {
-	    chain.push(interceptor.fulfilled, interceptor.rejected);
-	  });
-
-	  while (chain.length) {
-	    promise = promise.then(chain.shift(), chain.shift());
-	  }
-
-	  return promise;
-	};
-
-	function createInstance() {
-	  var context = new Http();
-
-	  var instance = Http.prototype._request.bind(context);
-
-	  extend(instance, Http.prototype, context);
-	  extend(instance, context);
-	  return instance;
-	}
+	var isFunction_1 = isFunction$1;
 
 	/** Used to detect overreaching core-js shims. */
 	var coreJsData = _root['__core-js_shared__'];
@@ -3451,17 +4870,17 @@
 
 	/** Used for built-in method references. */
 	var funcProto$1 = Function.prototype,
-	    objectProto$6 = Object.prototype;
+	    objectProto$2 = Object.prototype;
 
 	/** Used to resolve the decompiled source of functions. */
 	var funcToString$1 = funcProto$1.toString;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
+	var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
 
 	/** Used to detect if a method is native. */
 	var reIsNative = RegExp('^' +
-	  funcToString$1.call(hasOwnProperty$5).replace(reRegExpChar, '\\$&')
+	  funcToString$1.call(hasOwnProperty$2).replace(reRegExpChar, '\\$&')
 	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 	);
 
@@ -3585,10 +5004,10 @@
 	var eq_1 = eq;
 
 	/** Used for built-in method references. */
-	var objectProto$7 = Object.prototype;
+	var objectProto$3 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$6 = objectProto$7.hasOwnProperty;
+	var hasOwnProperty$3 = objectProto$3.hasOwnProperty;
 
 	/**
 	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
@@ -3602,7 +5021,7 @@
 	 */
 	function assignValue(object, key, value) {
 	  var objValue = object[key];
-	  if (!(hasOwnProperty$6.call(object, key) && eq_1(objValue, value)) ||
+	  if (!(hasOwnProperty$3.call(object, key) && eq_1(objValue, value)) ||
 	      (value === undefined && !(key in object))) {
 	    _baseAssignValue(object, key, value);
 	  }
@@ -3647,6 +5066,28 @@
 	}
 
 	var _copyObject = copyObject;
+
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+
+	var identity_1 = identity;
 
 	/**
 	 * A faster alternative to `Function#apply`, this function invokes `func`
@@ -3815,6 +5256,99 @@
 
 	var _baseRest = baseRest;
 
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This method is loosely based on
+	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+
+	var isLength_1 = isLength;
+
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength_1(value.length) && !isFunction_1(value);
+	}
+
+	var isArrayLike_1 = isArrayLike;
+
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER$1 = 9007199254740991;
+
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  var type = typeof value;
+	  length = length == null ? MAX_SAFE_INTEGER$1 : length;
+
+	  return !!length &&
+	    (type == 'number' ||
+	      (type != 'symbol' && reIsUint.test(value))) &&
+	        (value > -1 && value % 1 == 0 && value < length);
+	}
+
+	var _isIndex = isIndex;
+
 	/**
 	 * Checks if the given arguments are from an iteratee call.
 	 *
@@ -3877,6 +5411,463 @@
 	var _createAssigner = createAssigner;
 
 	/** Used for built-in method references. */
+	var objectProto$4 = Object.prototype;
+
+	/**
+	 * Checks if `value` is likely a prototype object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+	 */
+	function isPrototype(value) {
+	  var Ctor = value && value.constructor,
+	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto$4;
+
+	  return value === proto;
+	}
+
+	var _isPrototype = isPrototype;
+
+	/**
+	 * The base implementation of `_.times` without support for iteratee shorthands
+	 * or max array length checks.
+	 *
+	 * @private
+	 * @param {number} n The number of times to invoke `iteratee`.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns the array of results.
+	 */
+	function baseTimes(n, iteratee) {
+	  var index = -1,
+	      result = Array(n);
+
+	  while (++index < n) {
+	    result[index] = iteratee(index);
+	  }
+	  return result;
+	}
+
+	var _baseTimes = baseTimes;
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return value != null && typeof value == 'object';
+	}
+
+	var isObjectLike_1 = isObjectLike;
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]';
+
+	/**
+	 * The base implementation of `_.isArguments`.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+	 */
+	function baseIsArguments(value) {
+	  return isObjectLike_1(value) && _baseGetTag(value) == argsTag;
+	}
+
+	var _baseIsArguments = baseIsArguments;
+
+	/** Used for built-in method references. */
+	var objectProto$5 = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
+
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto$5.propertyIsEnumerable;
+
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	var isArguments = _baseIsArguments(function() { return arguments; }()) ? _baseIsArguments : function(value) {
+	  return isObjectLike_1(value) && hasOwnProperty$4.call(value, 'callee') &&
+	    !propertyIsEnumerable.call(value, 'callee');
+	};
+
+	var isArguments_1 = isArguments;
+
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(document.body.children);
+	 * // => false
+	 *
+	 * _.isArray('abc');
+	 * // => false
+	 *
+	 * _.isArray(_.noop);
+	 * // => false
+	 */
+	var isArray$1 = Array.isArray;
+
+	var isArray_1 = isArray$1;
+
+	/**
+	 * This method returns `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.13.0
+	 * @category Util
+	 * @returns {boolean} Returns `false`.
+	 * @example
+	 *
+	 * _.times(2, _.stubFalse);
+	 * // => [false, false]
+	 */
+	function stubFalse() {
+	  return false;
+	}
+
+	var stubFalse_1 = stubFalse;
+
+	var isBuffer_1 = createCommonjsModule(function (module, exports) {
+	/** Detect free variable `exports`. */
+	var freeExports =  exports && !exports.nodeType && exports;
+
+	/** Detect free variable `module`. */
+	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+
+	/** Detect the popular CommonJS extension `module.exports`. */
+	var moduleExports = freeModule && freeModule.exports === freeExports;
+
+	/** Built-in value references. */
+	var Buffer = moduleExports ? _root.Buffer : undefined;
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
+
+	/**
+	 * Checks if `value` is a buffer.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.3.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+	 * @example
+	 *
+	 * _.isBuffer(new Buffer(2));
+	 * // => true
+	 *
+	 * _.isBuffer(new Uint8Array(2));
+	 * // => false
+	 */
+	var isBuffer = nativeIsBuffer || stubFalse_1;
+
+	module.exports = isBuffer;
+	});
+
+	/** `Object#toString` result references. */
+	var argsTag$1 = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    funcTag$1 = '[object Function]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    objectTag = '[object Object]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    weakMapTag = '[object WeakMap]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    dataViewTag = '[object DataView]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/** Used to identify `toStringTag` values of typed arrays. */
+	var typedArrayTags = {};
+	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+	typedArrayTags[uint32Tag] = true;
+	typedArrayTags[argsTag$1] = typedArrayTags[arrayTag] =
+	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+	typedArrayTags[errorTag] = typedArrayTags[funcTag$1] =
+	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+	typedArrayTags[setTag] = typedArrayTags[stringTag] =
+	typedArrayTags[weakMapTag] = false;
+
+	/**
+	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+	 */
+	function baseIsTypedArray(value) {
+	  return isObjectLike_1(value) &&
+	    isLength_1(value.length) && !!typedArrayTags[_baseGetTag(value)];
+	}
+
+	var _baseIsTypedArray = baseIsTypedArray;
+
+	/**
+	 * The base implementation of `_.unary` without support for storing metadata.
+	 *
+	 * @private
+	 * @param {Function} func The function to cap arguments for.
+	 * @returns {Function} Returns the new capped function.
+	 */
+	function baseUnary(func) {
+	  return function(value) {
+	    return func(value);
+	  };
+	}
+
+	var _baseUnary = baseUnary;
+
+	var _nodeUtil = createCommonjsModule(function (module, exports) {
+	/** Detect free variable `exports`. */
+	var freeExports =  exports && !exports.nodeType && exports;
+
+	/** Detect free variable `module`. */
+	var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+
+	/** Detect the popular CommonJS extension `module.exports`. */
+	var moduleExports = freeModule && freeModule.exports === freeExports;
+
+	/** Detect free variable `process` from Node.js. */
+	var freeProcess = moduleExports && _freeGlobal.process;
+
+	/** Used to access faster Node.js helpers. */
+	var nodeUtil = (function() {
+	  try {
+	    // Use `util.types` for Node.js 10+.
+	    var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+	    if (types) {
+	      return types;
+	    }
+
+	    // Legacy `process.binding('util')` for Node.js < 10.
+	    return freeProcess && freeProcess.binding && freeProcess.binding('util');
+	  } catch (e) {}
+	}());
+
+	module.exports = nodeUtil;
+	});
+
+	/* Node.js helper references. */
+	var nodeIsTypedArray = _nodeUtil && _nodeUtil.isTypedArray;
+
+	/**
+	 * Checks if `value` is classified as a typed array.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+	 * @example
+	 *
+	 * _.isTypedArray(new Uint8Array);
+	 * // => true
+	 *
+	 * _.isTypedArray([]);
+	 * // => false
+	 */
+	var isTypedArray = nodeIsTypedArray ? _baseUnary(nodeIsTypedArray) : _baseIsTypedArray;
+
+	var isTypedArray_1 = isTypedArray;
+
+	/** Used for built-in method references. */
+	var objectProto$6 = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
+
+	/**
+	 * Creates an array of the enumerable property names of the array-like `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @param {boolean} inherited Specify returning inherited property names.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function arrayLikeKeys(value, inherited) {
+	  var isArr = isArray_1(value),
+	      isArg = !isArr && isArguments_1(value),
+	      isBuff = !isArr && !isArg && isBuffer_1(value),
+	      isType = !isArr && !isArg && !isBuff && isTypedArray_1(value),
+	      skipIndexes = isArr || isArg || isBuff || isType,
+	      result = skipIndexes ? _baseTimes(value.length, String) : [],
+	      length = result.length;
+
+	  for (var key in value) {
+	    if ((inherited || hasOwnProperty$5.call(value, key)) &&
+	        !(skipIndexes && (
+	           // Safari 9 has enumerable `arguments.length` in strict mode.
+	           key == 'length' ||
+	           // Node.js 0.10 has enumerable non-index properties on buffers.
+	           (isBuff && (key == 'offset' || key == 'parent')) ||
+	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
+	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
+	           // Skip index properties.
+	           _isIndex(key, length)
+	        ))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	var _arrayLikeKeys = arrayLikeKeys;
+
+	/**
+	 * Creates a unary function that invokes `func` with its argument transformed.
+	 *
+	 * @private
+	 * @param {Function} func The function to wrap.
+	 * @param {Function} transform The argument transform.
+	 * @returns {Function} Returns the new function.
+	 */
+	function overArg(func, transform) {
+	  return function(arg) {
+	    return func(transform(arg));
+	  };
+	}
+
+	var _overArg = overArg;
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = _overArg(Object.keys, Object);
+
+	var _nativeKeys = nativeKeys;
+
+	/** Used for built-in method references. */
+	var objectProto$7 = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty$6 = objectProto$7.hasOwnProperty;
+
+	/**
+	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function baseKeys(object) {
+	  if (!_isPrototype(object)) {
+	    return _nativeKeys(object);
+	  }
+	  var result = [];
+	  for (var key in Object(object)) {
+	    if (hasOwnProperty$6.call(object, key) && key != 'constructor') {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	var _baseKeys = baseKeys;
+
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	function keys$2(object) {
+	  return isArrayLike_1(object) ? _arrayLikeKeys(object) : _baseKeys(object);
+	}
+
+	var keys_1 = keys$2;
+
+	/** Used for built-in method references. */
 	var objectProto$8 = Object.prototype;
 
 	/** Used to check objects for own properties. */
@@ -3928,6 +5919,486 @@
 
 	var assign_1 = assign$2;
 
+	var GetJsonp = function GetJsonp(config) {
+	  return new promise$1(function (resolve, reject) {
+	    _jsonp(config.url, config.params, function (err, data) {
+	      if (!err) {
+	        resolve(data);
+	      } else {
+	        reject(err);
+	      }
+	    });
+	  });
+	};
+
+	var getXhr = function getXhr(method) {
+	  return function xhr(config) {
+	    var assignConfig = assign_1(config, {
+	      method: method.toLowerCase()
+	    });
+	    return new promise$1(function (resolve, reject) {
+	      axios$1(assignConfig).then(function (res) {
+	        resolve(res && res.status === 200 && res.data || {});
+	      })["catch"](function (error) {
+	        reject(error);
+	      });
+	    });
+	  };
+	};
+
+	var methods = ['Get', 'Post', 'Delete', 'Put'];
+	var xhrs = methods.reduce(function (prev, cur) {
+	  prev[cur] = getXhr(cur);
+	  return prev;
+	}, {});
+	var tdHttp = _extends({}, xhrs, {
+	  GetJsonp: GetJsonp
+	});
+
+	/**
+	 * A specialized version of `_.forEach` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayEach(array, iteratee) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length;
+
+	  while (++index < length) {
+	    if (iteratee(array[index], index, array) === false) {
+	      break;
+	    }
+	  }
+	  return array;
+	}
+
+	var _arrayEach = arrayEach;
+
+	/**
+	 * Creates a base function for methods like `_.forIn` and `_.forOwn`.
+	 *
+	 * @private
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Function} Returns the new base function.
+	 */
+	function createBaseFor(fromRight) {
+	  return function(object, iteratee, keysFunc) {
+	    var index = -1,
+	        iterable = Object(object),
+	        props = keysFunc(object),
+	        length = props.length;
+
+	    while (length--) {
+	      var key = props[fromRight ? length : ++index];
+	      if (iteratee(iterable[key], key, iterable) === false) {
+	        break;
+	      }
+	    }
+	    return object;
+	  };
+	}
+
+	var _createBaseFor = createBaseFor;
+
+	/**
+	 * The base implementation of `baseForOwn` which iterates over `object`
+	 * properties returned by `keysFunc` and invokes `iteratee` for each property.
+	 * Iteratee functions may exit iteration early by explicitly returning `false`.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {Function} keysFunc The function to get the keys of `object`.
+	 * @returns {Object} Returns `object`.
+	 */
+	var baseFor = _createBaseFor();
+
+	var _baseFor = baseFor;
+
+	/**
+	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseForOwn(object, iteratee) {
+	  return object && _baseFor(object, iteratee, keys_1);
+	}
+
+	var _baseForOwn = baseForOwn;
+
+	/**
+	 * Creates a `baseEach` or `baseEachRight` function.
+	 *
+	 * @private
+	 * @param {Function} eachFunc The function to iterate over a collection.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Function} Returns the new base function.
+	 */
+	function createBaseEach(eachFunc, fromRight) {
+	  return function(collection, iteratee) {
+	    if (collection == null) {
+	      return collection;
+	    }
+	    if (!isArrayLike_1(collection)) {
+	      return eachFunc(collection, iteratee);
+	    }
+	    var length = collection.length,
+	        index = fromRight ? length : -1,
+	        iterable = Object(collection);
+
+	    while ((fromRight ? index-- : ++index < length)) {
+	      if (iteratee(iterable[index], index, iterable) === false) {
+	        break;
+	      }
+	    }
+	    return collection;
+	  };
+	}
+
+	var _createBaseEach = createBaseEach;
+
+	/**
+	 * The base implementation of `_.forEach` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array|Object} collection The collection to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array|Object} Returns `collection`.
+	 */
+	var baseEach = _createBaseEach(_baseForOwn);
+
+	var _baseEach = baseEach;
+
+	/**
+	 * Casts `value` to `identity` if it's not a function.
+	 *
+	 * @private
+	 * @param {*} value The value to inspect.
+	 * @returns {Function} Returns cast function.
+	 */
+	function castFunction(value) {
+	  return typeof value == 'function' ? value : identity_1;
+	}
+
+	var _castFunction = castFunction;
+
+	/**
+	 * Iterates over elements of `collection` and invokes `iteratee` for each element.
+	 * The iteratee is invoked with three arguments: (value, index|key, collection).
+	 * Iteratee functions may exit iteration early by explicitly returning `false`.
+	 *
+	 * **Note:** As with other "Collections" methods, objects with a "length"
+	 * property are iterated like arrays. To avoid this behavior use `_.forIn`
+	 * or `_.forOwn` for object iteration.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @alias each
+	 * @category Collection
+	 * @param {Array|Object} collection The collection to iterate over.
+	 * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+	 * @returns {Array|Object} Returns `collection`.
+	 * @see _.forEachRight
+	 * @example
+	 *
+	 * _.forEach([1, 2], function(value) {
+	 *   console.log(value);
+	 * });
+	 * // => Logs `1` then `2`.
+	 *
+	 * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
+	 *   console.log(key);
+	 * });
+	 * // => Logs 'a' then 'b' (iteration order is not guaranteed).
+	 */
+	function forEach$1(collection, iteratee) {
+	  var func = isArray_1(collection) ? _arrayEach : _baseEach;
+	  return func(collection, _castFunction(iteratee));
+	}
+
+	var forEach_1 = forEach$1;
+
+	function Interceptor() {
+	  this.handlers = [];
+	}
+
+	Interceptor.prototype.use = function (fulfilled, rejected) {
+	  this.handlers.push({
+	    fulfilled: fulfilled,
+	    rejected: rejected
+	  });
+	  return this.handlers.length - 1;
+	};
+
+	Interceptor.prototype.forEach = function (fn) {
+	  forEach_1(this.handlers, function (h) {
+	    if (h !== null) {
+	      fn(h);
+	    }
+	  });
+	};
+
+	// 7.2.2 IsArray(argument)
+
+	var _isArray = Array.isArray || function isArray(arg) {
+	  return _cof(arg) == 'Array';
+	};
+
+	// 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
+
+
+	_export(_export.S, 'Array', { isArray: _isArray });
+
+	var isArray$2 = _core.Array.isArray;
+
+	function isWhichMethod(target, method) {
+	  return !!target && new RegExp(method).test(target.toLowerCase());
+	}
+
+	function getDOP(method, opt, isQuery, others) {
+	  if (others === void 0) {
+	    others = {};
+	  }
+
+	  if (isWhichMethod(method, "post")) {
+	    return _extends({
+	      data: opt
+	    }, others);
+	  } else {
+	    if (isWhichMethod(method, "get") || isWhichMethod(method, "jsonp")) {
+	      return _extends({
+	        params: opt
+	      }, others);
+	    } else {
+	      var _extends2;
+
+	      return _extends((_extends2 = {}, _extends2[isQuery ? "params" : "data"] = opt, _extends2), others);
+	    }
+	  }
+	}
+
+	function isFormDataFunc(val) {
+	  return typeof FormData !== "undefined" && val instanceof FormData;
+	}
+
+	function setOpt(_ref) {
+	  var _ref$method = _ref.method,
+	      method = _ref$method === void 0 ? "get" : _ref$method,
+	      _ref$opt = _ref.opt,
+	      opt = _ref$opt === void 0 ? {} : _ref$opt,
+	      _ref$isFormData = _ref.isFormData,
+	      isFormData = _ref$isFormData === void 0 ? false : _ref$isFormData,
+	      _ref$isQuery = _ref.isQuery,
+	      isQuery = _ref$isQuery === void 0 ? false : _ref$isQuery,
+	      others = _objectWithoutPropertiesLoose(_ref, ["method", "opt", "isFormData", "isQuery"]);
+
+	  if (isFormData && !isFormDataFunc(opt)) {
+	    var formData = new FormData();
+
+	    for (var key in opt) {
+	      if (opt.hasOwnProperty(key)) {
+	        var value = opt[key];
+	        formData.append(key, value);
+	      }
+	    }
+
+	    opt = formData;
+	  }
+
+	  return getDOP(method, opt, isQuery, others);
+	}
+
+	function handleMethod(params) {
+	  var method = params.method;
+	  var methodMap = {
+	    post: "Post",
+	    get: "Get",
+	    put: "Put",
+	    jsonp: "GetJsonp",
+	    "delete": "Delete"
+	  };
+	  return method ? methodMap[method.toLowerCase()] : "Get";
+	}
+
+	function extend$1(a, b, thisArg) {
+	  for (var key in b) {
+	    if (b.hasOwnProperty(key)) {
+	      if (thisArg && typeof b[key] === "function") {
+	        a[key] = b[key].bind(thisArg);
+	      } else {
+	        a[key] = b[key];
+	      }
+	    }
+	  }
+
+	  return a;
+	}
+
+	function awaitWrap(promise) {
+	  return promise.then(function (res) {
+	    return [null, res];
+	  })["catch"](function (err) {
+	    return [err, null];
+	  });
+	}
+
+	function getType(data) {
+	  return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
+	}
+
+	function isType(data, type) {
+	  return type === getType(data);
+	}
+
+	var Global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+
+	function getAdapter(params) {
+	  var adapter = params.adapter,
+	      others = _objectWithoutPropertiesLoose(params, ["adapter"]);
+
+	  var method = handleMethod(params);
+
+	  var config = _extends({}, others, {
+	    method: method
+	  });
+
+	  var hasAdapter = isType(adapter, 'function');
+	  adapter = hasAdapter ? adapter : tdHttp[method];
+	  return {
+	    config: config,
+	    adapter: adapter,
+	    hasAdapter: hasAdapter
+	  };
+	}
+
+	var getResult = /*#__PURE__*/function () {
+	  var _ref = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(params) {
+	    var _getAdapter, config, adapter, hasAdapter, data;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            _getAdapter = getAdapter(params), config = _getAdapter.config, adapter = _getAdapter.adapter, hasAdapter = _getAdapter.hasAdapter;
+	            _context.next = 3;
+	            return adapter(config);
+
+	          case 3:
+	            data = _context.sent;
+	            return _context.abrupt("return", hasAdapter ? data : {
+	              config: config,
+	              data: data
+	            });
+
+	          case 5:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function getResult(_x) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+
+	function xhr$1(handler) {
+	  return /*#__PURE__*/function () {
+	    var _http = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(params) {
+	      var result, res;
+	      return regenerator.wrap(function _callee2$(_context2) {
+	        while (1) {
+	          switch (_context2.prev = _context2.next) {
+	            case 0:
+	              _context2.next = 2;
+	              return getResult(params);
+
+	            case 2:
+	              result = _context2.sent;
+
+	              if (!isType(handler, 'function')) {
+	                _context2.next = 10;
+	                break;
+	              }
+
+	              res = handler(result);
+
+	              if (!isType(res, 'undefined')) {
+	                _context2.next = 9;
+	                break;
+	              }
+
+	              console.warn('请在加工函数中返回结果');
+	              _context2.next = 10;
+	              break;
+
+	            case 9:
+	              return _context2.abrupt("return", res);
+
+	            case 10:
+	              return _context2.abrupt("return", result);
+
+	            case 11:
+	            case "end":
+	              return _context2.stop();
+	          }
+	        }
+	      }, _callee2);
+	    }));
+
+	    function http(_x2) {
+	      return _http.apply(this, arguments);
+	    }
+
+	    return http;
+	  }();
+	}
+
+	function Http() {
+	  this.interceptors = {
+	    request: new Interceptor(),
+	    response: new Interceptor()
+	  };
+	}
+
+	Http.prototype._request = function (params, handler) {
+	  var chain = [xhr$1(handler), undefined];
+
+	  var promise = promise$1.resolve(params);
+
+	  this.interceptors.request.forEach(function (interceptor) {
+	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+	  });
+	  this.interceptors.response.forEach(function (interceptor) {
+	    chain.push(interceptor.fulfilled, interceptor.rejected);
+	  });
+
+	  while (chain.length) {
+	    promise = promise.then(chain.shift(), chain.shift());
+	  }
+
+	  return promise;
+	};
+
+	function createInstance$1() {
+	  var context = new Http();
+
+	  var instance = Http.prototype._request.bind(context);
+
+	  extend$1(instance, Http.prototype, context);
+	  extend$1(instance, context);
+	  return instance;
+	}
+
 	Global._TDHTTP_RESULT_MODE = "native";
 
 	var http = function http(apis, opt) {
@@ -3939,11 +6410,10 @@
 	    opt = {};
 	  }
 
-	  var tdHttp = createInstance();
+	  var tdHttp = createInstance$1();
 	  var defaultOpt = {
 	    resultMode: "native",
-	    prefix: "",
-	    query: {}
+	    prefix: ""
 	  };
 	  var IO = {};
 
@@ -3952,7 +6422,7 @@
 	      others = _objectWithoutPropertiesLoose(_assign, ["resultMode"]);
 
 	  Global._TDHTTP_RESULT_MODE = resultMode;
-	  extend(IO, tdHttp);
+	  extend$1(IO, tdHttp);
 	  forEach_1(apis, function (api, key) {
 	    IO[key] = apiFactory(api, others, tdHttp);
 	  });
@@ -3962,18 +6432,7 @@
 
 	var setApi = function setApi(api, props, tdHttp) {
 	  var prefix = props.prefix,
-	      query = props.query,
-	      others = _objectWithoutPropertiesLoose(props, ["prefix", "query"]);
-
-	  var url = isType(api.url, "function") ? api.url(_extends({}, api, props)) : prefix + api.url + stringifyQuery(query);
-
-	  if (!isType(url, "string")) {
-	    throw new Error("url如果是函数传入请执行后return string类型");
-	  }
-
-	  var config = _extends({}, others, api, {
-	    url: url
-	  });
+	      others = _objectWithoutPropertiesLoose(props, ["prefix"]);
 
 	  function getData(opt, handler) {
 	    if (isType(opt, "function")) {
@@ -3984,12 +6443,21 @@
 	    opt = setOpt(_extends({}, api, {
 	      opt: opt
 	    }));
+	    var url = isType(api.url, "function") ? api.url(_extends({}, opt, props)) : prefix + api.url;
+
+	    if (!isType(url, "string")) {
+	      throw new Error("url如果是函数传入请执行后return string类型");
+	    }
+
+	    var config = _extends({}, others, api, {
+	      url: url
+	    });
+
 	    return tdHttp(_extends({}, config, opt, {
 	      url: url
 	    }), handler);
 	  }
 
-	  getData.config = config;
 	  return getData;
 	};
 
@@ -4992,9 +7460,9 @@
 	var _equalArrays = equalArrays;
 
 	/** Built-in value references. */
-	var Uint8Array = _root.Uint8Array;
+	var Uint8Array$1 = _root.Uint8Array;
 
-	var _Uint8Array = Uint8Array;
+	var _Uint8Array = Uint8Array$1;
 
 	/**
 	 * Converts `map` to its key-value pairs.
@@ -5827,11 +8295,11 @@
 	 * _.toString([1, 2, 3]);
 	 * // => '1,2,3'
 	 */
-	function toString$1(value) {
+	function toString$2(value) {
 	  return value == null ? '' : _baseToString(value);
 	}
 
-	var toString_1 = toString$1;
+	var toString_1 = toString$2;
 
 	/**
 	 * Casts `value` to a path array if it's not one.
@@ -6350,12 +8818,12 @@
 	 * _.isString(1);
 	 * // => false
 	 */
-	function isString(value) {
+	function isString$1(value) {
 	  return typeof value == 'string' ||
 	    (!isArray_1(value) && isObjectLike_1(value) && _baseGetTag(value) == stringTag$2);
 	}
 
-	var isString_1 = isString;
+	var isString_1 = isString$1;
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -7427,7 +9895,7 @@
 	              };
 	            }();
 
-	            extend(funcObj[key], value);
+	            extend$1(funcObj[key], value);
 	          });
 	          return (pre[key] = funcObj) && pre;
 	        } else {
@@ -7456,7 +9924,7 @@
 	            };
 	          }();
 
-	          extend(pre[key], func);
+	          extend$1(pre[key], func);
 	          return pre;
 	        }
 	      }, {});
