@@ -1,5 +1,6 @@
 import axios from 'axios';
 import assign from "lodash/assign";
+import _jsonp from 'jsonp'
 
 const GetJsonp = config => {
   return new Promise((resolve, reject) => {

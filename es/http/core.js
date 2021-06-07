@@ -1,6 +1,7 @@
 import _extends from "@babel/runtime/helpers/esm/extends";
 import axios from 'axios';
 import assign from "lodash/assign";
+import _jsonp from 'jsonp';
 
 var GetJsonp = function GetJsonp(config) {
   return new Promise(function (resolve, reject) {
