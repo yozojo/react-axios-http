@@ -11912,6 +11912,98 @@
 	  };
 	}
 
+	/**
+	 * The base implementation of `_.toPairs` and `_.toPairsIn` which creates an array
+	 * of key-value pairs for `object` corresponding to the property names of `props`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Array} props The property names to get values for.
+	 * @returns {Object} Returns the key-value pairs.
+	 */
+	function baseToPairs(object, props) {
+	  return _arrayMap(props, function(key) {
+	    return [key, object[key]];
+	  });
+	}
+
+	var _baseToPairs = baseToPairs;
+
+	/**
+	 * Converts `set` to its value-value pairs.
+	 *
+	 * @private
+	 * @param {Object} set The set to convert.
+	 * @returns {Array} Returns the value-value pairs.
+	 */
+	function setToPairs(set) {
+	  var index = -1,
+	      result = Array(set.size);
+
+	  set.forEach(function(value) {
+	    result[++index] = [value, value];
+	  });
+	  return result;
+	}
+
+	var _setToPairs = setToPairs;
+
+	/** `Object#toString` result references. */
+	var mapTag$7 = '[object Map]',
+	    setTag$7 = '[object Set]';
+
+	/**
+	 * Creates a `_.toPairs` or `_.toPairsIn` function.
+	 *
+	 * @private
+	 * @param {Function} keysFunc The function to get the keys of a given object.
+	 * @returns {Function} Returns the new pairs function.
+	 */
+	function createToPairs(keysFunc) {
+	  return function(object) {
+	    var tag = _getTag(object);
+	    if (tag == mapTag$7) {
+	      return _mapToArray(object);
+	    }
+	    if (tag == setTag$7) {
+	      return _setToPairs(object);
+	    }
+	    return _baseToPairs(object, keysFunc(object));
+	  };
+	}
+
+	var _createToPairs = createToPairs;
+
+	/**
+	 * Creates an array of own enumerable string keyed-value pairs for `object`
+	 * which can be consumed by `_.fromPairs`. If `object` is a map or set, its
+	 * entries are returned.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @alias entries
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the key-value pairs.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.toPairs(new Foo);
+	 * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
+	 */
+	var toPairs = _createToPairs(keys_1);
+
+	var toPairs_1 = toPairs;
+
+	var entries = toPairs_1;
+
 	function combineApi(apis, isScope) {
 	  if (apis === void 0) {
 	    apis = {};
@@ -11921,8 +12013,7 @@
 	    isScope = true;
 	  }
 
-	  var apiArr = Global._TDHTTP_APIS = _.entries(apis);
-
+	  var apiArr = Global._TDHTTP_APIS = entries(apis);
 	  return reduce_1(apiArr, function (pre, _ref) {
 	    var key = _ref[0],
 	        value = _ref[1];
