@@ -12013,7 +12013,7 @@
 	    isScope = true;
 	  }
 
-	  var apiArr = Global._TDHTTP_APIS = entries(apis);
+	  var apiArr = Global._TDHTTP_APIS = entries(cloneDeep_1(apis));
 	  return reduce_1(apiArr, function (pre, _ref) {
 	    var key = _ref[0],
 	        value = _ref[1];

@@ -28,8 +28,8 @@ function setOpt({
   if (isFormData && !isFormDataFunc(opt)) {
     const formData = new FormData();
     for (const key in opt) {
-      if (opt.hasOwnProperty(key)) {
-        const value = opt[key];
+      const value = opt[key];
+      if (opt.hasOwnProperty(key) && typeof value !== "undefined") {
         formData.append(key, value);
       }
     }
