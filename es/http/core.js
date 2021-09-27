@@ -1,19 +1,5 @@
-import _extends from "@babel/runtime/helpers/esm/extends";
-import axios from 'axios';
+import axios from 'axios/dist/axios.min.js';
 import assign from "lodash/assign";
-import _jsonp from 'jsonp';
-
-var GetJsonp = function GetJsonp(config) {
-  return new Promise(function (resolve, reject) {
-    _jsonp(config.url, config.params, function (err, data) {
-      if (!err) {
-        resolve(data);
-      } else {
-        reject(err);
-      }
-    });
-  });
-};
 
 var getXhr = function getXhr(method) {
   return function xhr(config) {
@@ -35,6 +21,4 @@ var xhrs = methods.reduce(function (prev, cur) {
   prev[cur] = getXhr(cur);
   return prev;
 }, {});
-export default _extends({}, xhrs, {
-  GetJsonp: GetJsonp
-});
+export default xhrs;

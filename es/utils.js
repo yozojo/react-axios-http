@@ -134,7 +134,6 @@ function resolveQuery(query, extraQuery, _parseQuery) {
   try {
     parsedQuery = parse(query || "");
   } catch (e) {
-    process.env.NODE_ENV !== "production";
     parsedQuery = {};
   }
 

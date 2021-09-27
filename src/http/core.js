@@ -1,18 +1,5 @@
-import axios from 'axios';
+import axios from 'axios/dist/axios.min.js';
 import assign from "lodash/assign";
-import _jsonp from 'jsonp'
-
-const GetJsonp = config => {
-  return new Promise((resolve, reject) => {
-    _jsonp(config.url, config.params, (err, data) => {
-      if (!err) {
-        resolve(data);
-      } else {
-        reject(err);
-      }
-    });
-  });
-};
 
 const getXhr = method => {
   return function xhr(config) {
@@ -36,4 +23,4 @@ const xhrs = methods.reduce((prev, cur) => {
   return prev;
 }, {});
 
-export default { ...xhrs, GetJsonp };
+export default xhrs;
