@@ -7137,8 +7137,9 @@
 	    var formData = new FormData();
 
 	    for (var key in opt) {
-	      if (opt.hasOwnProperty(key)) {
-	        var value = opt[key];
+	      var value = opt[key];
+
+	      if (opt.hasOwnProperty(key) && typeof value !== "undefined") {
 	        formData.append(key, value);
 	      }
 	    }
