@@ -9593,14 +9593,6 @@
 	  }, children);
 	}
 
-	{
-	  ProviderApi.propTypes = {
-	    apis: PropTypes.object,
-	    context: PropTypes.object,
-	    children: PropTypes.any
-	  };
-	}
-
 	/**
 	 * The base implementation of `_.toPairs` and `_.toPairsIn` which creates an array
 	 * of key-value pairs for `object` corresponding to the property names of `props`.

@@ -15,12 +15,4 @@ function ProviderApi(_ref) {
   }, children);
 }
 
-if (process.env.NODE_ENV !== 'production') {
-  ProviderApi.propTypes = {
-    apis: PropTypes.object,
-    context: PropTypes.object,
-    children: PropTypes.any
-  };
-}
-
 export default ProviderApi;

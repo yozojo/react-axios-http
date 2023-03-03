@@ -15,7 +15,7 @@ module.exports = {
       {
         corejs: hasCorejs && 2,
         useESModules: !cjs,
-        version: require('./package.json').dependencies[
+        version: require('./package.json').devDependencies[
           '@babel/runtime'
         ].replace(/^[^0-9]*/, '')
       }
